@@ -1,0 +1,26 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+/* Trạng thái bình thường của nút */
+.btn-dat-lich {
+  margin-top: 15px;
+  padding: 10px 20px;
+  width: 100%;
+  background-color: #3498db;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  /* Dòng này giúp hiệu ứng chuyển đổi mượt mà trong 0.3 giây */
+  transition: all 0.3s ease; 
+}
+
+/* Hiệu ứng khi KÉO CHUỘT VÀO (hover) */
+.btn-dat-lich:hover {
+  background-color: #2980b9; /* Đổi sang màu xanh đậm hơn */
+  transform: scale(1.05); /* Phóng to cái nút lên 5% */
+  box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4); /* Tỏa hào quang màu xanh xung quanh */
+}
