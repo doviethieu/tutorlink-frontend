@@ -2,11 +2,20 @@ import { Link, useNavigate } from 'react-router-dom';
 
 function Navbar({ setTuKhoa, soLuongGioHang }) {
   const navigate = useNavigate();
-  const token = localStorage.getItem('token');
+  
+  // 1. SỬA LẠI TÊN CHÌA KHÓA CHO KHỚP 100% VỚI FILE ĐĂNG NHẬP
+  const token = localStorage.getItem('tutorlinkToken');
+  
+  // 2. MỞ KÉT SẮT LẤY THÔNG TIN TÀI KHOẢN (ĐỂ HIỆN TÊN + ẢNH)
+  const userString = localStorage.getItem('tutorlinkUser');
+  const user = userString ? JSON.parse(userString) : null; 
+
   const role = localStorage.getItem('role');
 
   const handleDangXuat = () => {
-    localStorage.removeItem('token');
+    // 3. ĐĂNG XUẤT THÌ PHẢI XÓA ĐÚNG TÊN CHÌA KHÓA
+    localStorage.removeItem('tutorlinkToken');
+    localStorage.removeItem('tutorlinkUser');
     localStorage.removeItem('role');
     navigate('/login');
   };
@@ -31,9 +40,7 @@ function Navbar({ setTuKhoa, soLuongGioHang }) {
       {/* Cụm nút bên phải */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '25px' }}>
         
-        {/* ========================================= */}
-        {/* Đã được bọc Link để bấm vào bay sang trang Giỏ Hàng */}
-        {/* ========================================= */}
+        {/* Nút Giỏ Hàng */}
         <Link to="/giohang" style={{ textDecoration: 'none', color: 'inherit' }}>
           <div style={{ position: 'relative', cursor: 'pointer', fontSize: '24px' }}>
             🛒
@@ -48,7 +55,9 @@ function Navbar({ setTuKhoa, soLuongGioHang }) {
           </div>
         </Link>
 
-        {/* Nút Đăng nhập / Quản trị */}
+        {/* ========================================= */}
+        {/* HIỆN NGƯỜI DÙNG HOẶC NÚT ĐĂNG NHẬP (ĐÃ SỬA LẠI) */}
+        {/* ========================================= */}
         {!token ? (
           <Link to="/login">
             <button style={{ padding: '10px 20px', backgroundColor: '#3498db', color: 'white', border: 'none', borderRadius: '25px', cursor: 'pointer', fontWeight: 'bold' }}>
@@ -57,6 +66,19 @@ function Navbar({ setTuKhoa, soLuongGioHang }) {
           </Link>
         ) : (
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+            
+            {/* 4. HIỆN TÊN VÀ AVATAR CỦA USER KHI ĐĂNG NHẬP THÀNH CÔNG */}
+            {user && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <img 
+                  src={user.picture || 'https://i.pravatar.cc/150'} 
+                  alt="Avatar" 
+                  style={{ width: '35px', height: '35px', borderRadius: '50%', objectFit: 'cover' }} 
+                />
+                <span style={{ fontWeight: 'bold', fontSize: '16px' }}>{user.name}</span>
+              </div>
+            )}
+
             {role === 'admin' && (
               <Link to="/dashboard">
                 <button style={{ padding: '10px 20px', backgroundColor: '#f39c12', color: 'white', border: 'none', borderRadius: '25px', cursor: 'pointer', fontWeight: 'bold' }}>
@@ -64,6 +86,8 @@ function Navbar({ setTuKhoa, soLuongGioHang }) {
                 </button>
               </Link>
             )}
+
+            {/* Nút Đăng xuất */}
             <button onClick={handleDangXuat} style={{ padding: '10px 20px', backgroundColor: '#e74c3c', color: 'white', border: 'none', borderRadius: '25px', cursor: 'pointer', fontWeight: 'bold' }}>
               Đăng xuất
             </button>
