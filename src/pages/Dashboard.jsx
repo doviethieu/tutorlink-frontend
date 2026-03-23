@@ -3,14 +3,16 @@ import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const token = localStorage.getItem('token'); 
-  const currentRole = localStorage.getItem('role');
+  
+  const token = localStorage.getItem('tutorlinkToken'); 
+  const userString = localStorage.getItem('tutorlinkUser');
+  const user = userString ? JSON.parse(userString) : null;
+  const currentRole = user ? user.role : null; 
 
   const [name, setName] = useState('');
   const [subject, setSubject] = useState('');
   const [price, setPrice] = useState('');
   const [image, setImage] = useState('');
-
   const [allTutors, setAllTutors] = useState([]);
 
   useEffect(() => {
@@ -19,19 +21,19 @@ const Dashboard = () => {
       navigate('/login');
     }
 
-    if (currentRole === 'admin') {
-      fetch('http://localhost:8000/api/tutors')
-        .then(res => res.json())
-        .then(data => setAllTutors(data))
-        .catch(err => console.error(err));
-    }
-  }, [token, navigate, currentRole]);
+    // Load dữ liệu cho Admin hoặc User thường đều cần để xem trạng thái
+    fetch('http://localhost:8000/api/tutors')
+      .then(res => res.json())
+      .then(data => setAllTutors(data))
+      .catch(err => console.error(err));
+  }, [token, navigate]);
 
   const giaSuChoDuyet = allTutors.filter(nguoi => nguoi.status !== 'Đã duyệt');
+  const giaSuDaLenSong = allTutors.filter(nguoi => nguoi.status === 'Đã duyệt');
 
   const handleDangXuat = () => {
-    localStorage.clear();
-    // Báo cho Navbar biết để cập nhật
+    localStorage.removeItem('tutorlinkToken');
+    localStorage.removeItem('tutorlinkUser');
     window.dispatchEvent(new Event("storage"));
     navigate('/login');
   };
@@ -48,8 +50,12 @@ const Dashboard = () => {
         })
       });
       if (response.ok) {
-        alert('🎉 Hồ sơ đã được gửi đi thành công! Vui lòng chờ CEO duyệt để được lên sóng.');
-        setName(''); setSubject(''); setPrice(''); setImage('');
+        alert('🎉 Hồ sơ đã được gửi đi thành công! Vui lòng chờ Admin duyệt để được lên sóng.');
+        setName(''); setSubject(''); setPrice('');
+        // Load lại danh sách
+        const res = await fetch('http://localhost:8000/api/tutors');
+        const data = await res.json();
+        setAllTutors(data);
       }
     } catch (error) {
       console.error(error);
@@ -65,10 +71,23 @@ const Dashboard = () => {
       });
 
       if (response.ok) {
-        alert('✅ Đã duyệt thành công! Gia sư đã được lên sóng.');
+        alert('✅ Đã duyệt thành công!');
         setAllTutors(allTutors.map(t => t._id === id ? { ...t, status: 'Đã duyệt' } : t));
-      } else {
-        alert('❌ Lỗi khi duyệt hồ sơ!');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleXoa = async (id) => {
+    if (!window.confirm("⚠️ Sếp có chắc chắn muốn XÓA hồ sơ này không?")) return;
+    try {
+      const response = await fetch(`http://localhost:8000/api/tutors/${id}`, {
+        method: 'DELETE'
+      });
+      if (response.ok) {
+        alert(' Đã xoá thành công!');
+        setAllTutors(allTutors.filter(t => t._id !== id));
       }
     } catch (error) {
       console.error(error);
@@ -77,56 +96,61 @@ const Dashboard = () => {
 
   return (
     <div style={{ padding: '40px', maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
-      {currentRole === 'tutor' && (
-        <div style={{ backgroundColor: '#fff3cd', padding: '30px', borderRadius: '12px', border: '2px solid #ffeeba' }}>
-          <h2 style={{ color: '#856404' }}>👨‍🏫 KHU VỰC GIA SƯ</h2>
-          <form onSubmit={handleTaoHoSo} style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '20px', backgroundColor: 'white', padding: '20px', borderRadius: '8px', textAlign: 'left' }}>
-            <input type="text" placeholder="Họ và Tên (VD: Thầy Giáo Ba)" value={name} onChange={(e) => setName(e.target.value)} required style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
-            <input type="text" placeholder="Môn dạy (VD: Toán)" value={subject} onChange={(e) => setSubject(e.target.value)} required style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
-            <input type="number" placeholder="Giá tiền/giờ (VNĐ)" value={price} onChange={(e) => setPrice(e.target.value)} required style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
-            <button type="submit" style={{ padding: '12px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '5px', fontWeight: 'bold', cursor: 'pointer' }}>🚀 Gửi Hồ Sơ Kiểm Duyệt</button>
-          </form>
+      
+      {/* ---------------- KHU VỰC NGƯỜI DÙNG THƯỜNG / HỌC VIÊN ---------------- */}
+      {(currentRole === 'user' || currentRole === 'student' || currentRole === 'tutor') && (
+        <div style={{ marginBottom: '40px' }}>
+            <div style={{ backgroundColor: '#fff3cd', padding: '30px', borderRadius: '12px', border: '2px solid #ffeeba', marginBottom: '20px' }}>
+                <h2 style={{ color: '#856404' }}>🎓 ĐĂNG KÝ LÀM GIA SƯ</h2>
+                <p>Bạn muốn kiếm thêm thu nhập? Hãy điền thông tin bên dưới.</p>
+                <form onSubmit={handleTaoHoSo} style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '20px', backgroundColor: 'white', padding: '20px', borderRadius: '8px', textAlign: 'left' }}>
+                    <input type="text" placeholder="Họ và Tên" value={name} onChange={(e) => setName(e.target.value)} required style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
+                    <input type="text" placeholder="Môn dạy" value={subject} onChange={(e) => setSubject(e.target.value)} required style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
+                    <input type="number" placeholder="Giá tiền/giờ (VNĐ)" value={price} onChange={(e) => setPrice(e.target.value)} required style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
+                    <button type="submit" style={{ padding: '12px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '5px', fontWeight: 'bold', cursor: 'pointer' }}> Gửi Hồ Sơ Ngay</button>
+                </form>
+            </div>
         </div>
       )}
 
-      {currentRole === 'student' && (
-        <div style={{ backgroundColor: '#d1ecf1', padding: '30px', borderRadius: '12px', border: '2px solid #bee5eb' }}>
-          <h2 style={{ color: '#0c5460' }}>👨‍🎓 KHU VỰC HỌC VIÊN</h2>
-          <button onClick={() => navigate('/')} style={{ padding: '10px 20px', backgroundColor: '#17a2b8', color: 'white', border: 'none', borderRadius: '5px', fontWeight: 'bold', cursor: 'pointer' }}>🔍 Ra Trang Chủ Tìm Gia Sư</button>
-        </div>
-      )}
-
+      {/* ---------------- KHU VỰC CEO / ADMIN ---------------- */}
       {currentRole === 'admin' && (
         <div style={{ backgroundColor: '#f8d7da', padding: '30px', borderRadius: '12px', border: '2px solid #f5c6cb' }}>
-          <h2 style={{ color: '#721c24' }}>👑 KHU VỰC CEO (ADMIN)</h2>
-          <p>Quyền lực tối thượng. Những hồ sơ dưới đây đang chờ Sếp xét duyệt.</p>
+          <h2 style={{ color: '#721c24' }}>👑 KHU VỰC QUẢN TRỊ VIÊN</h2>
+          
+          {/* CHỜ DUYỆT */}
+          <h3 style={{ textAlign: 'left', color: '#721c24' }}>⏳ Hồ sơ chờ duyệt ({giaSuChoDuyet.length})</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '30px' }}>
+            {giaSuChoDuyet.map(nguoi => (
+              <div key={nguoi._id} style={{ display: 'flex', justifyContent: 'space-between', backgroundColor: 'white', padding: '15px', borderRadius: '8px' }}>
+                <div style={{ textAlign: 'left' }}>
+                    <strong>{nguoi.name}</strong> - {nguoi.subject}
+                </div>
+                <div>
+                    <button onClick={() => handleDuyet(nguoi._id)} style={{ marginRight: '10px', backgroundColor: '#2ecc71', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}>Duyệt</button>
+                    <button onClick={() => handleXoa(nguoi._id)} style={{ backgroundColor: '#e74c3c', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}>Xóa</button>
+                </div>
+              </div>
+            ))}
+          </div>
 
-          <div style={{ marginTop: '20px', textAlign: 'left' }}>
-            {giaSuChoDuyet.length === 0 ? (
-              <div style={{ padding: '15px', backgroundColor: '#d4edda', color: '#155724', borderRadius: '8px', textAlign: 'center' }}>
-                🎉 Mọi hồ sơ đã được duyệt hết. Sếp có thể đi uống cafe! ☕
+          {/* ĐÃ LÊN SÓNG */}
+          <h3 style={{ textAlign: 'left', color: '#155724' }}>✅ Đã lên sóng </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {giaSuDaLenSong.map(nguoi => (
+              <div key={nguoi._id} style={{ display: 'flex', justifyContent: 'space-between', backgroundColor: '#d4edda', padding: '15px', borderRadius: '8px' }}>
+                <div style={{ textAlign: 'left' }}>
+                    <strong>{nguoi.name}</strong> - {nguoi.subject}
+                </div>
+                <button onClick={() => handleXoa(nguoi._id)} style={{ backgroundColor: '#e74c3c', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}>🗑️ Xóa</button>
               </div>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                {giaSuChoDuyet.map(nguoi => (
-                  <div key={nguoi._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'white', padding: '15px', borderRadius: '8px', border: '1px solid #ccc', boxShadow: '0 2px 5px rgba(0,0,0,0.05)' }}>
-                    <div>
-                      <strong style={{ fontSize: '18px' }}>{nguoi.name}</strong> <br/>
-                      <span style={{ color: '#666' }}>📚 Môn: {nguoi.subject} | 💰 Giá: {nguoi.price.toLocaleString()}đ</span>
-                    </div>
-                    <button onClick={() => handleDuyet(nguoi._id)} style={{ padding: '10px 20px', backgroundColor: '#2ecc71', color: 'white', border: 'none', borderRadius: '5px', fontWeight: 'bold', cursor: 'pointer' }}>
-                      ✅ Duyệt Lên Sóng
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
+            ))}
           </div>
         </div>
       )}
 
       <button onClick={handleDangXuat} style={{ marginTop: '30px', padding: '10px 20px', backgroundColor: '#34495e', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>
-        🚪 Đăng Xuất
+        Đăng Xuất
       </button>
     </div>
   );

@@ -3,20 +3,15 @@ import { Link, useNavigate } from 'react-router-dom';
 function Navbar({ setTuKhoa, soLuongGioHang }) {
   const navigate = useNavigate();
   
-  // 1. SỬA LẠI TÊN CHÌA KHÓA CHO KHỚP 100% VỚI FILE ĐĂNG NHẬP
+  // MỞ NGĂN TỦ LẤY CHÌA KHÓA VÀ HỒ SƠ
   const token = localStorage.getItem('tutorlinkToken');
-  
-  // 2. MỞ KÉT SẮT LẤY THÔNG TIN TÀI KHOẢN (ĐỂ HIỆN TÊN + ẢNH)
   const userString = localStorage.getItem('tutorlinkUser');
   const user = userString ? JSON.parse(userString) : null; 
 
-  const role = localStorage.getItem('role');
-
   const handleDangXuat = () => {
-    // 3. ĐĂNG XUẤT THÌ PHẢI XÓA ĐÚNG TÊN CHÌA KHÓA
+    // ĐĂNG XUẤT THÌ TRẢ LẠI CHÌA KHÓA
     localStorage.removeItem('tutorlinkToken');
     localStorage.removeItem('tutorlinkUser');
-    localStorage.removeItem('role');
     navigate('/login');
   };
 
@@ -55,19 +50,17 @@ function Navbar({ setTuKhoa, soLuongGioHang }) {
           </div>
         </Link>
 
-        {/* ========================================= */}
-        {/* HIỆN NGƯỜI DÙNG HOẶC NÚT ĐĂNG NHẬP (ĐÃ SỬA LẠI) */}
-        {/* ========================================= */}
+        {/* HIỆN NGƯỜI DÙNG HOẶC NÚT ĐĂNG NHẬP */}
         {!token ? (
           <Link to="/login">
             <button style={{ padding: '10px 20px', backgroundColor: '#3498db', color: 'white', border: 'none', borderRadius: '25px', cursor: 'pointer', fontWeight: 'bold' }}>
-              Đăng nhập
+               Đăng nhập
             </button>
           </Link>
         ) : (
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
             
-            {/* 4. HIỆN TÊN VÀ AVATAR CỦA USER KHI ĐĂNG NHẬP THÀNH CÔNG */}
+            {/* HIỆN TÊN VÀ AVATAR CỦA USER */}
             {user && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <img 
@@ -79,10 +72,20 @@ function Navbar({ setTuKhoa, soLuongGioHang }) {
               </div>
             )}
 
-            {role === 'admin' && (
+            {/* Nút dành riêng cho Admin (ĐÃ XÓA DUPLICATE) */}
+            {user && user.role === 'admin' && (
               <Link to="/dashboard">
                 <button style={{ padding: '10px 20px', backgroundColor: '#f39c12', color: 'white', border: 'none', borderRadius: '25px', cursor: 'pointer', fontWeight: 'bold' }}>
                   ⚙️ Quản trị (CEO)
+                </button>
+              </Link>
+            )}
+
+            {/* Nút dành cho Khách hàng (Học viên muốn làm Gia sư) */}
+            {user && user.role !== 'admin' && (
+              <Link to="/dashboard">
+                <button style={{ padding: '10px 20px', backgroundColor: '#27ae60', color: 'white', border: 'none', borderRadius: '25px', cursor: 'pointer', fontWeight: 'bold' }}>
+                  🎓 Trở thành Gia Sư
                 </button>
               </Link>
             )}
