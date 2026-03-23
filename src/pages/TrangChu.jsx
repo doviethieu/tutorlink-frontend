@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-// 1. Đưa cái handleDatLich từ tầng trên rớt xuống
-function TrangChu({ tuKhoa, handleDatLich }) {
+function TrangChu({ tuKhoa }) { 
   const [danhSachGiaSu, setDanhSachGiaSu] = useState([]);
+  const navigate = useNavigate(); 
 
   useEffect(() => {
-    // Gọi điện lên API lấy danh sách gia sư
     axios.get('http://localhost:8000/api/tutors')
       .then(response => {
         const nguoiDaDuyet = response.data.filter(gs => gs.status === 'Đã duyệt');
@@ -15,16 +15,46 @@ function TrangChu({ tuKhoa, handleDatLich }) {
       .catch(error => console.log("Lỗi tải dữ liệu:", error));
   }, []);
 
-  // BỘ LỌC
   const danhSachLoc = danhSachGiaSu.filter((gs) => {
     if (!tuKhoa) return true;
-    
     const ten = gs.name.toLowerCase();
     const monHoc = gs.subject.toLowerCase();
     const tuKhoaNho = tuKhoa.toLowerCase();
-
     return ten.includes(tuKhoaNho) || monHoc.includes(tuKhoaNho);
   });
+
+  // ==========================================
+  // CHỐT ĐƠN TỰ ĐỘNG
+  // ==========================================
+  const handleChotDon = async (giaSu) => {
+    const userString = localStorage.getItem('tutorlinkUser');
+    if (!userString) {
+      alert("🛑 Bạn phải đăng nhập thì mới được kết nối với Gia sư nhé!");
+      navigate('/login'); 
+      return;
+    }
+
+    const user = JSON.parse(userString);
+
+    try {
+      const response = await axios.post('http://localhost:8000/api/bookings', {
+        tutorId: giaSu._id, 
+        studentName: user.name, 
+        studentEmail: user.email, 
+        studentPhone: "Trao đổi qua Chat", 
+        message: `Chào gia sư ${giaSu.name}, mình muốn đặt lịch học môn ${giaSu.subject}!`
+      });
+
+      if (response.status === 201 || response.status === 200) {
+        alert(`🎉 Đã chốt đơn thành công với gia sư ${giaSu.name}!`);
+      }
+    } catch (error) {
+      console.error("Lỗi đặt lịch:", error);
+      // Đọc đúng lời nhắn chống spam từ Backend!
+      const thongBaoLoi = error.response?.data?.message || "Lỗi đường truyền, chưa chốt được đơn!";
+      alert(`❌ ${thongBaoLoi}`);
+    }
+  };
 
   return (
     <div style={{ padding: '40px', maxWidth: '1200px', margin: '0 auto' }}>
@@ -50,11 +80,10 @@ function TrangChu({ tuKhoa, handleDatLich }) {
                 <p style={{ margin: '5px 0', color: '#e74c3c', fontSize: '18px', fontWeight: 'bold' }}>
                   💰 {gs.price.toLocaleString()}đ/h
                 </p>
-                <p style={{ margin: '5px 0', color: '#f39c12' }}>⭐ {gs.rating}/5.0</p>
+                <p style={{ margin: '5px 0', color: '#f39c12' }}>⭐ {gs.rating || "5.0"}/5.0</p>
                 
-                {/* 2. Nối công tắc vào cái nút bấm để khi click nó nảy số */}
                 <button 
-                  onClick={() => handleDatLich(gs)}
+                  onClick={() => handleChotDon(gs)}
                   style={{
                   width: '100%', padding: '12px', marginTop: '15px', backgroundColor: '#3498db',
                   color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '16px'

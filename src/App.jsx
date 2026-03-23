@@ -15,7 +15,7 @@ function App() {
   const handleDatLich = (giaSu) => {
     const daCo = gioHang.find(item => item._id === giaSu._id);
     if(daCo) {
-        alert("Sếp đã chọn gia sư này rồi, chọn người khác nhé!");
+        alert("Bạn đã chọn gia sư này rồi, chọn người khác nhé!");
     } else {
         setGioHang([...gioHang, giaSu]);
         alert(`🎉 Đã thêm gia sư ${giaSu.name} vào giỏ hàng!`);
@@ -31,7 +31,7 @@ function App() {
 
   // 3. Hàm Thanh toán thành công
   const thanhToanThanhCong = () => {
-    alert("🎉 CHỐT ĐƠN THÀNH CÔNG! Gia sư sẽ sớm liên hệ với Sếp nhé!");
+    alert("🎉 CHỐT ĐƠN THÀNH CÔNG! Gia sư sẽ sớm liên hệ với bạn nhé!");
     setGioHang([]); // Xả sạch giỏ hàng về 0
     navigate('/'); // Đá khách về lại Trang chủ để mua tiếp
   };

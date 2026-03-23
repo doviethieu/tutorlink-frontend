@@ -33,7 +33,7 @@ const DangNhap = () => {
         localStorage.setItem('tutorlinkToken', res.data.token);
         localStorage.setItem('tutorlinkUser', JSON.stringify(res.data.user));
         
-        alert('Chào mừng Sếp đã quay lại!');
+        alert('Chào mừng bạn đã quay lại!');
         navigate('/'); // Đẩy về trang chủ (TrangChu.jsx)
       } else {
         // Gọi API Đăng ký

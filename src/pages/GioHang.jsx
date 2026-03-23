@@ -7,7 +7,7 @@ function GioHang({ gioHang, xoaKhoiGioHang, thanhToanThanhCong }) {
   return (
     <div style={{ padding: '40px', maxWidth: '800px', margin: '0 auto' }}>
       <h2 style={{ textAlign: 'center', color: '#2c3e50', marginBottom: '30px' }}>
-        🛒 Giỏ hàng của Sếp
+        🛒 Giỏ hàng của Bạn
       </h2>
 
       {gioHang.length === 0 ? (
