@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 
-function Navbar({ setTuKhoa, soLuongGioHang }) {
+function Navbar({ setTuKhoa }) {
   const navigate = useNavigate();
   
   // MỞ NGĂN TỦ LẤY CHÌA KHÓA VÀ HỒ SƠ
@@ -34,21 +34,6 @@ function Navbar({ setTuKhoa, soLuongGioHang }) {
 
       {/* Cụm nút bên phải */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '25px' }}>
-        
-        {/* Nút Giỏ Hàng */}
-        <Link to="/giohang" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <div style={{ position: 'relative', cursor: 'pointer', fontSize: '24px' }}>
-            🛒
-            {soLuongGioHang > 0 && (
-              <span style={{
-                position: 'absolute', top: '-8px', right: '-12px', backgroundColor: '#e74c3c',
-                color: 'white', borderRadius: '50%', padding: '2px 8px', fontSize: '12px', fontWeight: 'bold'
-              }}>
-                {soLuongGioHang}
-              </span>
-            )}
-          </div>
-        </Link>
 
         {/* HIỆN NGƯỜI DÙNG HOẶC NÚT ĐĂNG NHẬP */}
         {!token ? (
@@ -76,7 +61,7 @@ function Navbar({ setTuKhoa, soLuongGioHang }) {
             {user && user.role === 'admin' && (
               <Link to="/dashboard">
                 <button style={{ padding: '10px 20px', backgroundColor: '#f39c12', color: 'white', border: 'none', borderRadius: '25px', cursor: 'pointer', fontWeight: 'bold' }}>
-                  ⚙️ Quản trị (CEO)
+                  ⚙️ Quản trị (Admin)
                 </button>
               </Link>
             )}
