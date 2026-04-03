@@ -5,6 +5,8 @@ import TrangChu from './pages/TrangChu';
 import DangNhap from './pages/DangNhap';
 import Dashboard from './pages/Dashboard';
 import GioHang from './pages/GioHang';
+import ChiTietGiaSu from './pages/ChiTietGiaSu';
+import TaoHoSoCV from './pages/TaoHoSoCV'; // 👈 1. Thêm import trang Tạo CV ở đây
 
 function App() {
   const [tuKhoa, setTuKhoa] = useState("");
@@ -53,6 +55,10 @@ function App() {
         
         <Route path="/login" element={<DangNhap />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/giasu/:id" element={<ChiTietGiaSu />} />
+        
+        {/* 👈 2. Khai báo đường dẫn /tao-cv ở đây */}
+        <Route path="/tao-cv" element={<TaoHoSoCV />} /> 
       </Routes>
     </div>
   );

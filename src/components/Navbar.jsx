@@ -70,7 +70,7 @@ function Navbar({ setTuKhoa }) {
             {user && user.role !== 'admin' && (
               <Link to="/dashboard">
                 <button style={{ padding: '10px 20px', backgroundColor: '#27ae60', color: 'white', border: 'none', borderRadius: '25px', cursor: 'pointer', fontWeight: 'bold' }}>
-                  🎓 Trở thành Gia Sư
+                  🎓 Trở Thành Gia Sư
                 </button>
               </Link>
             )}
