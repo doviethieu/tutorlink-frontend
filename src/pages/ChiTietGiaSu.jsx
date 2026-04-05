@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import ChatBox from './ChatBox'; // Nhớ check lại đường dẫn tương đối nhé Sếp
 
 function ChiTietGiaSu() {
   const { id } = useParams(); 
@@ -8,11 +9,12 @@ function ChiTietGiaSu() {
   const [giaSu, setGiaSu] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const currentUser = JSON.parse(localStorage.getItem('tutorlinkUser')); 
+
   useEffect(() => {
-    axios.get('http://localhost:8000/api/tutors')
+    axios.get(`http://localhost:8000/api/tutors/${id}`)
       .then(response => {
-        const thongTinGiaSu = response.data.find(gs => gs._id === id);
-        setGiaSu(thongTinGiaSu);
+        setGiaSu(response.data);
         setLoading(false);
       })
       .catch(error => {
@@ -52,7 +54,6 @@ function ChiTietGiaSu() {
     <div style={{ padding: '40px 20px', backgroundColor: '#F8FAFC', minHeight: '100vh' }}>
       <div style={{ maxWidth: '1000px', margin: '0 auto', backgroundColor: 'white', borderRadius: '15px', boxShadow: '0 10px 30px rgba(0,0,0,0.08)', overflow: 'hidden', display: 'flex', flexWrap: 'wrap' }}>
         
-        {/* CỘT TRÁI: THÔNG TIN CÁ NHÂN & CHỐT ĐƠN */}
         <div style={{ flex: '1 1 300px', backgroundColor: '#1E293B', color: 'white', padding: '40px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <img src={giaSu.image} alt={giaSu.name} style={{ width: '180px', height: '180px', borderRadius: '50%', objectFit: 'cover', border: '4px solid #3B82F6' }} />
           <h2 style={{ marginTop: '20px', marginBottom: '5px', fontSize: '28px', textAlign: 'center' }}>{giaSu.name}</h2>
@@ -78,21 +79,17 @@ function ChiTietGiaSu() {
           </button>
         </div>
 
-        {/* CỘT PHẢI: CHI TIẾT CV (HỌC VẤN, KINH NGHIỆM, KỸ NĂNG) */}
         <div style={{ flex: '2 1 500px', padding: '40px' }}>
           
-          {/* GIỚI THIỆU */}
           <h3 style={cvHeadingStyle}>Giới thiệu bản thân</h3>
           <p style={{ color: '#475569', lineHeight: '1.8', fontSize: '16px' }}>
             {giaSu.description || `Xin chào! Mình là ${giaSu.name}, gia sư môn ${giaSu.subject} với nhiều năm tâm huyết trong nghề giáo dục.`}
           </p>
 
-          {/* KỸ NĂNG */}
           {giaSu.skills && (
             <>
               <h3 style={cvHeadingStyle}>Kỹ năng nổi bật</h3>
               <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                {/* Tách chuỗi kỹ năng bằng dấu phẩy để tạo thành các thẻ tag */}
                 {giaSu.skills.split(',').map((skill, idx) => (
                   <span key={idx} style={{ backgroundColor: '#DBEAFE', color: '#1D4ED8', padding: '6px 15px', borderRadius: '20px', fontSize: '14px', fontWeight: 'bold' }}>
                     {skill.trim()}
@@ -102,7 +99,6 @@ function ChiTietGiaSu() {
             </>
           )}
 
-          {/* HỌC VẤN */}
           {giaSu.education && giaSu.education.length > 0 && (
             <>
               <h3 style={cvHeadingStyle}>🎓 Quá trình học tập</h3>
@@ -117,7 +113,6 @@ function ChiTietGiaSu() {
             </>
           )}
 
-          {/* KINH NGHIỆM */}
           {giaSu.experience && giaSu.experience.length > 0 && (
             <>
               <h3 style={cvHeadingStyle}>💼 Kinh nghiệm làm việc</h3>
@@ -130,6 +125,23 @@ function ChiTietGiaSu() {
                 ))}
               </div>
             </>
+          )}
+
+          {currentUser ? (
+            <div style={{ marginTop: '50px' }}>
+              <h3 style={cvHeadingStyle}>Đánh giá về gia sư</h3>
+              <ChatBox 
+                nguoiDangChat={giaSu} 
+                currentUser={currentUser} 
+                idTuUrl={id} 
+              />
+            </div>
+          ) : (
+            <div style={{ marginTop: '50px', padding: '20px', backgroundColor: '#FEF2F2', borderRadius: '10px', textAlign: 'center', border: '1px dashed #FCA5A5' }}>
+              <p style={{ color: '#EF4444', margin: 0, fontSize: '16px' }}>
+                Vui lòng <strong style={{ cursor: 'pointer', color: '#DC2626', textDecoration: 'underline' }} onClick={() => navigate('/login')}>đăng nhập</strong> để có thể nhắn tin cho gia sư!
+              </p>
+            </div>
           )}
 
         </div>

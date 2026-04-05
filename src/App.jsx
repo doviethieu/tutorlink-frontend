@@ -6,12 +6,12 @@ import DangNhap from './pages/DangNhap';
 import Dashboard from './pages/Dashboard';
 import GioHang from './pages/GioHang';
 import ChiTietGiaSu from './pages/ChiTietGiaSu';
-import TaoHoSoCV from './pages/TaoHoSoCV'; // 👈 1. Thêm import trang Tạo CV ở đây
+import TaoHoSoCV from './pages/TaoHoSoCV'; 
 
 function App() {
   const [tuKhoa, setTuKhoa] = useState("");
   const [gioHang, setGioHang] = useState([]);
-  const navigate = useNavigate(); // Dùng để chuyển trang sau khi thanh toán
+  const navigate = useNavigate(); 
 
   // 1. Hàm Thêm vào giỏ
   const handleDatLich = (giaSu) => {
@@ -26,7 +26,6 @@ function App() {
 
   // 2. Hàm Xóa khỏi giỏ
   const xoaKhoiGioHang = (idGiaSu) => {
-    // Lọc ra những người KHÁC với cái ID bị xóa (Tức là giữ lại những người không bị xóa)
     const gioHangMoi = gioHang.filter(gs => gs._id !== idGiaSu);
     setGioHang(gioHangMoi);
   };
@@ -34,8 +33,8 @@ function App() {
   // 3. Hàm Thanh toán thành công
   const thanhToanThanhCong = () => {
     alert("🎉 CHỐT ĐƠN THÀNH CÔNG! Gia sư sẽ sớm liên hệ với bạn nhé!");
-    setGioHang([]); // Xả sạch giỏ hàng về 0
-    navigate('/'); // Đá khách về lại Trang chủ để mua tiếp
+    setGioHang([]); 
+    navigate('/'); 
   };
 
   return (
@@ -46,7 +45,6 @@ function App() {
       <Routes>
         <Route path="/" element={<TrangChu tuKhoa={tuKhoa} handleDatLich={handleDatLich} />} />
         
-        {/* Truyền 2 cái mới xuống cho phòng Giỏ Hàng */}
         <Route path="/giohang" element={<GioHang 
           gioHang={gioHang} 
           xoaKhoiGioHang={xoaKhoiGioHang} 
@@ -57,7 +55,6 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/giasu/:id" element={<ChiTietGiaSu />} />
         
-        {/* 👈 2. Khai báo đường dẫn /tao-cv ở đây */}
         <Route path="/tao-cv" element={<TaoHoSoCV />} /> 
       </Routes>
     </div>
