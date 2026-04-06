@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import ChatBox from './ChatBox'; // Nhớ check lại đường dẫn tương đối nhé Sếp
 
 function ChiTietGiaSu() {
   const { id } = useParams(); 
@@ -9,8 +8,10 @@ function ChiTietGiaSu() {
   const [giaSu, setGiaSu] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Lấy thông tin user hiện tại
   const currentUser = JSON.parse(localStorage.getItem('tutorlinkUser')); 
 
+  // 1. Tải hồ sơ gia sư
   useEffect(() => {
     axios.get(`http://localhost:8000/api/tutors/${id}`)
       .then(response => {
@@ -23,24 +24,27 @@ function ChiTietGiaSu() {
       });
   }, [id]);
 
+  // 2. Xử lý đăng ký học thử
   const handleDangKyHocThu = async () => {
-    const userString = localStorage.getItem('tutorlinkUser');
-    if (!userString) {
+    if (!currentUser) {
       alert("🛑 Bạn phải đăng nhập thì mới đăng ký học thử được nhé!");
       navigate('/login'); 
       return;
     }
-    const user = JSON.parse(userString);
+    
     try {
       const response = await axios.post('http://localhost:8000/api/bookings', {
         tutorId: giaSu._id, 
-        studentName: user.name, 
-        studentEmail: user.email, 
+        studentName: currentUser.name, 
+        studentEmail: currentUser.email, 
         studentPhone: "Trao đổi qua Chat", 
         message: `Chào gia sư ${giaSu.name}, mình muốn đăng ký học thử miễn phí môn ${giaSu.subject} với bạn!`
       });
+      
       if (response.status === 201 || response.status === 200) {
-        alert(`🎉 Đã gửi yêu cầu học thử thành công đến gia sư ${giaSu.name}!`);
+        alert(`🎉 Đã gửi yêu cầu học thử thành công đến gia sư ${giaSu.name}! Vui lòng vào mục Tin nhắn / Quản lý của bạn để trao đổi chi tiết nhé.`);
+        // Sếp có thể mở comment dòng dưới đây nếu muốn đăng ký xong thì tự động nhảy sang trang Chat/Inbox luôn:
+        // navigate('/inbox'); 
       }
     } catch (error) {
       alert(`❌ ${error.response?.data?.message || "Lỗi đường truyền!"}`);
@@ -54,6 +58,7 @@ function ChiTietGiaSu() {
     <div style={{ padding: '40px 20px', backgroundColor: '#F8FAFC', minHeight: '100vh' }}>
       <div style={{ maxWidth: '1000px', margin: '0 auto', backgroundColor: 'white', borderRadius: '15px', boxShadow: '0 10px 30px rgba(0,0,0,0.08)', overflow: 'hidden', display: 'flex', flexWrap: 'wrap' }}>
         
+        {/* Cột trái (Thông tin cơ bản) */}
         <div style={{ flex: '1 1 300px', backgroundColor: '#1E293B', color: 'white', padding: '40px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <img src={giaSu.image} alt={giaSu.name} style={{ width: '180px', height: '180px', borderRadius: '50%', objectFit: 'cover', border: '4px solid #3B82F6' }} />
           <h2 style={{ marginTop: '20px', marginBottom: '5px', fontSize: '28px', textAlign: 'center' }}>{giaSu.name}</h2>
@@ -71,19 +76,21 @@ function ChiTietGiaSu() {
             </p>
           </div>
 
-          <button onClick={handleDangKyHocThu} style={{ width: '100%', padding: '15px', marginTop: '30px', backgroundColor: '#3B82F6', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '16px' }}>
+          <button onClick={handleDangKyHocThu} style={{ width: '100%', padding: '15px', marginTop: '30px', backgroundColor: '#3B82F6', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '16px', transition: 'background-color 0.3s' }} onMouseOver={(e) => e.target.style.backgroundColor = '#2563EB'} onMouseOut={(e) => e.target.style.backgroundColor = '#3B82F6'}>
             🎁 Đăng ký học thử ngay
           </button>
-          <button onClick={() => navigate(-1)} style={{ width: '100%', padding: '12px', marginTop: '15px', backgroundColor: 'transparent', color: '#94A3B8', border: '1px solid #475569', borderRadius: '8px', cursor: 'pointer' }}>
+          
+          <button onClick={() => navigate(-1)} style={{ width: '100%', padding: '12px', marginTop: '15px', backgroundColor: 'transparent', color: '#94A3B8', border: '1px solid #475569', borderRadius: '8px', cursor: 'pointer', transition: 'color 0.3s, border-color 0.3s' }} onMouseOver={(e) => { e.target.style.color = 'white'; e.target.style.borderColor = 'white'; }} onMouseOut={(e) => { e.target.style.color = '#94A3B8'; e.target.style.borderColor = '#475569'; }}>
             ⬅️ Quay lại
           </button>
         </div>
 
+        {/* Cột phải (Chi tiết CV) */}
         <div style={{ flex: '2 1 500px', padding: '40px' }}>
           
           <h3 style={cvHeadingStyle}>Giới thiệu bản thân</h3>
           <p style={{ color: '#475569', lineHeight: '1.8', fontSize: '16px' }}>
-            {giaSu.description || `Xin chào! Mình là ${giaSu.name}, gia sư môn ${giaSu.subject} với nhiều năm tâm huyết trong nghề giáo dục.`}
+            {giaSu.description || `Xin chào! Mình là ${giaSu.name}, gia sư môn ${giaSu.subject} với nhiều năm tâm huyết trong nghề giáo dục. Mình cam kết mang lại phương pháp học tập hiệu quả và thú vị nhất cho học viên.`}
           </p>
 
           {giaSu.skills && (
@@ -125,23 +132,6 @@ function ChiTietGiaSu() {
                 ))}
               </div>
             </>
-          )}
-
-          {currentUser ? (
-            <div style={{ marginTop: '50px' }}>
-              <h3 style={cvHeadingStyle}>Đánh giá về gia sư</h3>
-              <ChatBox 
-                nguoiDangChat={giaSu} 
-                currentUser={currentUser} 
-                idTuUrl={id} 
-              />
-            </div>
-          ) : (
-            <div style={{ marginTop: '50px', padding: '20px', backgroundColor: '#FEF2F2', borderRadius: '10px', textAlign: 'center', border: '1px dashed #FCA5A5' }}>
-              <p style={{ color: '#EF4444', margin: 0, fontSize: '16px' }}>
-                Vui lòng <strong style={{ cursor: 'pointer', color: '#DC2626', textDecoration: 'underline' }} onClick={() => navigate('/login')}>đăng nhập</strong> để có thể nhắn tin cho gia sư!
-              </p>
-            </div>
           )}
 
         </div>
