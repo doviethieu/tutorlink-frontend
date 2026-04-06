@@ -18,17 +18,18 @@ const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
   
   let roomID = id || idTuUrl; 
   if (!roomID && nguoiDangChat) {
-     // Ghép 2 email lại và sắp xếp A->Z. Đảm bảo dù ai click ai cũng ra đúng 1 chuỗi ký tự duy nhất!
      roomID = [emailCuaToi, emailNguoiKia].sort().join("___");
   }
 
+  // Cuộn xuống cuối khi có tin nhắn mới
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [tinNhanHienThi]);
 
+  // 1. QUẢN LÝ VÀO PHÒNG VÀ RỜI PHÒNG (CHỐT CHẶN CHỐNG LẶP TIN NHẮN)
   useEffect(() => {
     if (roomID) {
-      console.log("Đang vào phòng chat CHUNG:", roomID); // Sếp có thể F12 xem tên phòng 2 bên đã giống nhau chưa nhé
+      console.log("Đang vào phòng chat CHUNG:", roomID); 
       socket.emit("join_room", roomID);
 
       axios.get(`http://localhost:8000/api/messages/${roomID}`)
@@ -37,11 +38,21 @@ const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
         })
         .catch((err) => console.error("Lỗi tải tin nhắn:", err));
     }
+
+    // DỌN DẸP: Khi chuyển sang chat với người khác, tháo tai nghe phòng cũ ra!
+    return () => {
+      if (roomID) {
+        console.log("Đã rời phòng:", roomID);
+        socket.emit("leave_room", roomID);
+      }
+    };
   }, [roomID]);
 
+  // 2. LẮNG NGHE TIN NHẮN TỪ SERVER
   useEffect(() => {
     const handleReceive = (data) => {
       setTinNhanHienThi((prev) => {
+        // Lọc tin nhắn trùng lặp do React StrictMode hoặc lỗi mạng
         const isDuplicated = prev.some(m => 
           (m._id && m._id === data._id) || 
           (m.noiDung === data.noiDung && m.thoiGian === data.thoiGian && m.emailGui === data.emailGui) 
@@ -59,6 +70,7 @@ const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
     };
   }, []);
 
+  // 3. XỬ LÝ GỬI TIN NHẮN
   const handleSend = async () => {
     if (!roomID) {
       alert("❌ Lỗi: Không thể khởi tạo phòng chat chung!");
@@ -67,7 +79,7 @@ const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
 
     if (tinNhanMoi.trim() !== '') {
       const dataTinNhan = {
-        room: roomID, // Gửi vào đúng cái phòng chung đó
+        room: roomID, 
         emailGui: currentUser?.email || "khach@gmail.com",
         nguoiGui: currentUser?.name || "Khách",
         noiDung: tinNhanMoi,
