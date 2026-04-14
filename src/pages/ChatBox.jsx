@@ -96,9 +96,38 @@ const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
   return (
     <div style={{ flex: 1, backgroundColor: '#F9FAFB', borderRadius: '12px', border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column', height: '480px', overflow: 'hidden' }}>
       
-      <div style={{ backgroundColor: '#1E3A8A', color: 'white', padding: '15px', fontWeight: 'bold' }}>
-        {nguoiDangChat ? `💬 Đang chat với: ${nguoiDangChat.name}` : "💬 Kênh Chat"}
+      {/* ======================================================== */}
+      {/* KHU VỰC ĐÃ SỬA: THANH TIÊU ĐỀ + NÚT GỌI VIDEO */}
+      {/* ======================================================== */}
+      <div style={{ backgroundColor: '#1E3A8A', color: 'white', padding: '15px', fontWeight: 'bold', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          {nguoiDangChat ? `💬 Đang chat với: ${nguoiDangChat.name}` : "💬 Kênh Chat"}
+        </div>
+        
+        {/* Nút chỉ hiện ra khi đã chọn người để chat */}
+        {nguoiDangChat && roomID && (
+          <button 
+            onClick={() => window.open(`/room/${roomID}`, '_blank')}
+            style={{
+              padding: '6px 12px', 
+              backgroundColor: '#10B981', 
+              color: 'white', 
+              border: 'none', 
+              borderRadius: '8px', 
+              cursor: 'pointer', 
+              fontWeight: 'bold',
+              fontSize: '14px',
+              transition: '0.2s',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+            }}
+            onMouseOver={(e) => e.target.style.backgroundColor = '#059669'}
+            onMouseOut={(e) => e.target.style.backgroundColor = '#10B981'}
+          >
+            📹 Vào lớp ngay
+          </button>
+        )}
       </div>
+      {/* ======================================================== */}
       
       <div style={{ flex: 1, padding: '15px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', backgroundColor: 'white' }}>
         {!nguoiDangChat ? (

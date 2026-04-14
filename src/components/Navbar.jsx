@@ -49,7 +49,8 @@ function Navbar({ setTuKhoa }) {
             {user && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <img 
-                  src={user.picture || 'https://i.pravatar.cc/150'} 
+                  // ĐÃ SỬA: Thay thế link pravatar bằng link ui-avatars để đồng bộ tuyệt đối với Backend!
+                  src={user.picture || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=random&color=fff&size=128`} 
                   alt="Avatar" 
                   style={{ width: '35px', height: '35px', borderRadius: '50%', objectFit: 'cover' }} 
                 />
@@ -57,7 +58,7 @@ function Navbar({ setTuKhoa }) {
               </div>
             )}
 
-            {/* Nút dành riêng cho Admin (ĐÃ XÓA DUPLICATE) */}
+            {/* Nút dành riêng cho Admin */}
             {user && user.role === 'admin' && (
               <Link to="/dashboard">
                 <button style={{ padding: '10px 20px', backgroundColor: '#f39c12', color: 'white', border: 'none', borderRadius: '25px', cursor: 'pointer', fontWeight: 'bold' }}>

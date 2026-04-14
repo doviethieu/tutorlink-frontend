@@ -53,7 +53,7 @@ const Dashboard = () => {
     }
   };
 
-  // Lắng nghe bộ đàm từ Backend gửi về
+  // Lắng nghe bộ đàm từ Backend gửi về (DÀNH CHO CHAT)
   useEffect(() => {
     socket.on('receive_message', (data) => {
       setDanhSachTinNhan((tinNhanCu) => [...tinNhanCu, data]);
@@ -154,6 +154,8 @@ const Dashboard = () => {
 
       if (response.ok) {
         alert(`✅ Đã chuyển trạng thái thành: ${trangThaiMoi}`);
+        // Ghi chú: Có Socket rồi nên dòng setDanhSachHocVien dưới đây có thể không cần thiết nữa, 
+        // nhưng cứ giữ nguyên code của Sếp cho an tâm.
         setDanhSachHocVien(danhSachHocVien.map(don => 
           don._id === idDon ? { ...don, status: trangThaiMoi } : don
         ));
@@ -207,6 +209,48 @@ const Dashboard = () => {
         .catch(err => console.error("Lỗi lấy đơn hàng:", err));
     }
   }, [myTutorProfile]);
+
+  // ==========================================
+  // ⚡ MỚI THÊM: REAL-TIME LẮNG NGHE ĐƠN ĐẶT LỊCH QUA SOCKET
+  // ==========================================
+  useEffect(() => {
+    // 1. DÀNH CHO GIA SƯ: Nghe xem có ai đặt lịch mình không
+    const handleNewBooking = (bookingData) => {
+      if (myTutorProfile && bookingData.tutorId === myTutorProfile._id) {
+        alert(`🔔 Ting ting! Học viên ${bookingData.studentName} vừa gửi yêu cầu đặt lịch!`);
+        setDanhSachHocVien(prev => [bookingData, ...prev]);
+      }
+    };
+
+    // 2. DÀNH CHO CẢ 2 BÊN: Nghe xem trạng thái đơn thay đổi (Accept/Reject)
+    const handleStatusUpdated = (updatedBooking) => {
+      // Nếu mình là Học sinh vừa được duyệt đơn
+      if (user && updatedBooking.studentEmail === user.email) {
+        alert(`📣 Đơn học của bạn đã được gia sư đổi thành: ${updatedBooking.status}`);
+        setLichSuHoc(prev => prev.map(don => 
+          don._id === updatedBooking._id ? updatedBooking : don
+        ));
+      }
+      
+      // Nếu mình là Gia sư vừa bấm duyệt đơn (Đồng bộ cho màn hình mượt)
+      if (myTutorProfile && updatedBooking.tutorId === myTutorProfile._id) {
+          setDanhSachHocVien(prev => prev.map(don => 
+              don._id === updatedBooking._id ? updatedBooking : don
+          ));
+      }
+    };
+
+    socket.on('new_booking', handleNewBooking);
+    socket.on('booking_status_updated', handleStatusUpdated);
+
+    // Dọn dẹp Listener khi thoát trang
+    return () => {
+      socket.off('new_booking', handleNewBooking);
+      socket.off('booking_status_updated', handleStatusUpdated);
+    };
+  }, [myTutorProfile, user]);
+  // ==========================================
+
 
   // BIẾN COMPONENT KHUNG CHAT SẴN ĐỂ TRUYỀN XUỐNG DƯỚI
   const ChatBoxComponent = (
