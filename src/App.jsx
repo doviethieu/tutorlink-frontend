@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import GioHang from './pages/GioHang';
 import ChiTietGiaSu from './pages/ChiTietGiaSu';
 import TaoHoSoCV from './pages/TaoHoSoCV'; 
+import VideoCall from './pages/VideoCall'; // <-- 1. THÊM DÒNG NÀY ĐỂ GỌI COMPONENT VIDEOCALL VÀO SẾP NHÉ
 
 function App() {
   const [tuKhoa, setTuKhoa] = useState("");
@@ -54,8 +55,10 @@ function App() {
         <Route path="/login" element={<DangNhap />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/giasu/:id" element={<ChiTietGiaSu />} />
-        
         <Route path="/tao-cv" element={<TaoHoSoCV />} /> 
+
+        {/* <-- 2. THÊM ĐƯỜNG RAY NÀY ĐỂ KHI GỌI /room/... THÌ NÓ MỞ PHÒNG CHAT VIDEO --> */}
+        <Route path="/room/:roomId" element={<VideoCall />} /> 
       </Routes>
     </div>
   );
