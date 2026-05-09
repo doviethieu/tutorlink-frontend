@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+// --- 1. IMPORT COMPONENT REVIEW ---
+import ReviewSection from '../components/ReviewSection';
 
 function ChiTietGiaSu() {
   const { id } = useParams(); 
@@ -8,8 +10,10 @@ function ChiTietGiaSu() {
   const [giaSu, setGiaSu] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Lấy thông tin user hiện tại
-  const currentUser = JSON.parse(localStorage.getItem('tutorlinkUser')); 
+  // --- 2. LẤY USER CHUẨN: TUYỆT ĐỐI KHÔNG DÙNG EMAIL LÀM ID ---
+  const userData = JSON.parse(localStorage.getItem('tutorlinkUser')) || JSON.parse(localStorage.getItem('user')); 
+  // Chỉ lấy ID chuẩn xác, nếu không có thì để null
+  const studentId = userData?._id || userData?.id || userData?.user?._id || userData?.user?.id || null;
 
   // 1. Tải hồ sơ gia sư
   useEffect(() => {
@@ -26,7 +30,7 @@ function ChiTietGiaSu() {
 
   // 2. Xử lý đăng ký học thử
   const handleDangKyHocThu = async () => {
-    if (!currentUser) {
+    if (!studentId) {
       alert("🛑 Bạn phải đăng nhập thì mới đăng ký học thử được nhé!");
       navigate('/login'); 
       return;
@@ -35,16 +39,14 @@ function ChiTietGiaSu() {
     try {
       const response = await axios.post('http://localhost:8000/api/bookings', {
         tutorId: giaSu._id, 
-        studentName: currentUser.name, 
-        studentEmail: currentUser.email, 
+        studentName: userData?.name || "Học viên", 
+        studentEmail: userData?.email || "Trao đổi qua Chat", 
         studentPhone: "Trao đổi qua Chat", 
         message: `Chào gia sư ${giaSu.name}, mình muốn đăng ký học thử miễn phí môn ${giaSu.subject} với bạn!`
       });
       
       if (response.status === 201 || response.status === 200) {
         alert(`🎉 Đã gửi yêu cầu học thử thành công đến gia sư ${giaSu.name}! Vui lòng vào mục Tin nhắn / Quản lý của bạn để trao đổi chi tiết nhé.`);
-        // Sếp có thể mở comment dòng dưới đây nếu muốn đăng ký xong thì tự động nhảy sang trang Chat/Inbox luôn:
-        // navigate('/inbox'); 
       }
     } catch (error) {
       alert(`❌ ${error.response?.data?.message || "Lỗi đường truyền!"}`);
@@ -66,7 +68,7 @@ function ChiTietGiaSu() {
           
           <div style={{ marginTop: '30px', width: '100%' }}>
             <p style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #334155', paddingBottom: '10px' }}>
-              <span>Đánh giá:</span> <strong style={{ color: '#FBBF24' }}>⭐ {giaSu.rating || "5.0"}/5.0</strong>
+              <span>Đánh giá:</span> <strong style={{ color: '#FBBF24' }}>⭐ {giaSu.rating || "0"}/5.0</strong>
             </p>
             <p style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #334155', paddingBottom: '10px' }}>
               <span>Học phí:</span> <strong style={{ color: '#10B981' }}>{giaSu.price.toLocaleString()}đ/h</strong>
@@ -133,6 +135,10 @@ function ChiTietGiaSu() {
               </div>
             </>
           )}
+
+          {/* --- 3. HIỂN THỊ REVIEW Ở ĐÂY VỚI ID CHUẨN --- */}
+          <hr style={{ margin: '40px 0', border: '1px solid #E2E8F0' }} />
+          <ReviewSection tutorId={giaSu._id} studentId={studentId} />
 
         </div>
       </div>
