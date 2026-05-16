@@ -59,17 +59,34 @@ const TutorPanel = ({ myTutorProfile, danhSachHocVien, nguoiDangChat, setNguoiDa
                   <strong style={{ fontSize: '16px', color: '#1F2937' }}>{hocVien.studentName}</strong>
                   
                   <div style={{ display: 'flex', gap: '8px' }}>
-                    <button 
-                      onClick={() => setNguoiDangChat({ email: hocVien.studentEmail, name: hocVien.studentName })}
-                      style={{ 
-                        padding: '6px 12px', borderRadius: '20px', fontSize: '13px',
-                        backgroundColor: nguoiDangChat?.email === hocVien.studentEmail ? '#1E3A8A' : '#E5E7EB', 
-                        color: nguoiDangChat?.email === hocVien.studentEmail ? 'white' : '#1F2937', 
-                        border: 'none', cursor: 'pointer', fontWeight: 'bold' 
-                      }}
-                    >
-                      💬 Chat
-                    </button>
+                    
+                    {/* === NÚT CHAT ĐÃ ĐƯỢC GẮN ĐIỀU KIỆN === */}
+                    {hocVien.status === 'Chấp nhận' ? (
+                      <button 
+                        onClick={() => setNguoiDangChat({ email: hocVien.studentEmail, name: hocVien.studentName })}
+                        style={{ 
+                          padding: '6px 12px', borderRadius: '20px', fontSize: '13px',
+                          backgroundColor: nguoiDangChat?.email === hocVien.studentEmail ? '#1E3A8A' : '#3B82F6', 
+                          color: 'white', 
+                          border: 'none', cursor: 'pointer', fontWeight: 'bold' 
+                        }}
+                      >
+                        💬 Chat
+                      </button>
+                    ) : (
+                      <button 
+                        disabled
+                        title="Bạn cần chấp nhận đơn để mở khóa Chat"
+                        style={{ 
+                          padding: '6px 12px', borderRadius: '20px', fontSize: '13px',
+                          backgroundColor: '#E5E7EB', color: '#9CA3AF', 
+                          border: 'none', cursor: 'not-allowed', fontWeight: 'bold' 
+                        }}
+                      >
+                        🔒 Chat
+                      </button>
+                    )}
+                    {/* ======================================= */}
 
                     <button 
                       onClick={() => handleXoaDonHoc(hocVien._id)}
