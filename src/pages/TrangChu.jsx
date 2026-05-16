@@ -6,6 +6,42 @@ function TrangChu({ tuKhoa }) {
   const [danhSachGiaSu, setDanhSachGiaSu] = useState([]);
   const navigate = useNavigate(); 
 
+  // --- STATE QUẢN LÝ BẬT/TẮT MODAL ĐẶT LỊCH NGAY TẠI TRANG CHỦ ---
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTutor, setSelectedTutor] = useState(null); 
+  const [selectedSlots, setSelectedSlots] = useState([]);  
+
+  const userData = JSON.parse(localStorage.getItem('tutorlinkUser')) || JSON.parse(localStorage.getItem('user')); 
+  const studentId = userData?._id || userData?.id || userData?.user?._id || userData?.user?.id || null;
+
+  // 🚀 TẠO LỊCH THÔNG MINH TỰ ĐỘNG LẤY 7 NGÀY TỚI KÈM NGÀY/THÁNG THỰC TẾ
+  const generateSmartSchedule = () => {
+    const schedule = [];
+    const daysOfWeek = ['Chủ Nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+    const cacCaHoc = ['08:00 - 10:00', '10:00 - 12:00', '14:00 - 16:00', '16:00 - 18:00', '18:00 - 20:00', '20:00 - 22:00'];
+
+    for (let i = 0; i < 7; i++) {
+      const date = new Date();
+      date.setDate(date.getDate() + i); // Tự động cộng thêm ngày
+      
+      let dayName = daysOfWeek[date.getDay()];
+      // Nâng cấp: Hiển thị chữ "Hôm nay" và "Ngày mai" cho thân thiện
+      if (i === 0) dayName = "Hôm nay";
+      if (i === 1) dayName = "Ngày mai";
+
+      // Định dạng ngày tháng thành 01/05, 12/10...
+      const dateString = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+      
+      schedule.push({
+        day: `${dayName} (${dateString})`,
+        times: cacCaHoc
+      });
+    }
+    return schedule;
+  };
+
+  const lichThongMinh = generateSmartSchedule();
+
   useEffect(() => {
     axios.get('http://localhost:8000/api/tutors')
       .then(response => {
@@ -23,50 +59,66 @@ function TrangChu({ tuKhoa }) {
     return ten.includes(tuKhoaNho) || monHoc.includes(tuKhoaNho);
   });
 
-  // ==========================================
-  // CHỐT ĐƠN HỌC THỬ TỰ ĐỘNG
-  // ==========================================
-  const handleDangKyHocThu = async (giaSu) => {
-    const userString = localStorage.getItem('tutorlinkUser');
-    if (!userString) {
-      alert("🛑 Bạn phải đăng nhập thì mới đăng ký học thử được nhé!");
+  // --- HÀM MỞ BẢNG ĐẶT LỊCH TẠI TRANG CHỦ ---
+  const handleMoBangDatLich = (giaSu) => {
+    if (!studentId) {
+      alert("🛑 Bạn phải đăng nhập thì mới đặt lịch học được nhé!");
       navigate('/login'); 
       return;
     }
+    setSelectedTutor(giaSu);
+    setSelectedSlots([]); 
+    setIsModalOpen(true);
+  };
 
-    const user = JSON.parse(userString);
-
-    try {
-      const response = await axios.post('http://localhost:8000/api/bookings', {
-        tutorId: giaSu._id, 
-        studentName: user.name, 
-        studentEmail: user.email, 
-        studentPhone: "Trao đổi qua Chat", 
-        // Đã sửa lại lời nhắn thành Học thử miễn phí
-        message: `Chào gia sư ${giaSu.name}, mình muốn đăng ký học thử miễn phí môn ${giaSu.subject} với bạn!`
-      });
-
-      if (response.status === 201 || response.status === 200) {
-        alert(`🎉 Đã gửi yêu cầu học thử thành công đến gia sư ${giaSu.name}! Vui lòng chờ gia sư phản hồi.`);
-      }
-    } catch (error) {
-      console.error("Lỗi đặt lịch:", error);
-      const thongBaoLoi = error.response?.data?.message || "Lỗi đường truyền, chưa gửi được yêu cầu!";
-      alert(`❌ ${thongBaoLoi}`);
+  // --- HÀM CLICK CHỌN KHUNG GIỜ ---
+  const handleToggleSlot = (day, time) => {
+    const slotString = `${day}: ${time}`;
+    if (selectedSlots.includes(slotString)) {
+      setSelectedSlots(selectedSlots.filter(slot => slot !== slotString));
+    } else {
+      setSelectedSlots([...selectedSlots, slotString]);
     }
   };
 
-  // ==========================================
-  // CHUYỂN HƯỚNG SANG TRANG XEM HỒ SƠ
-  // ==========================================
+  // --- HÀM GỬI YÊU CẦU LÊN BACKEND ---
+  const handleXacNhanDatLich = async () => {
+    if (selectedSlots.length === 0) {
+      alert("📅 Bạn vui lòng chọn ít nhất 1 khung giờ trống nhé!");
+      return;
+    }
+    
+    // GHÉP CÁC KHUNG GIỜ ĐÃ CHỌN THÀNH MỘT CHUỖI
+    const chuoiLichHoc = selectedSlots.join(', ');
+
+    try {
+      const response = await axios.post('http://localhost:8000/api/bookings', {
+        tutorId: selectedTutor._id, 
+        studentName: userData?.name || "Học viên", 
+        studentEmail: userData?.email || "Trao đổi qua Chat", 
+        studentPhone: "Trao đổi qua Chat", 
+        message: `Chào gia sư ${selectedTutor.name}, mình muốn đăng ký học môn ${selectedTutor.subject} với bạn vào: ${chuoiLichHoc}.`,
+        selectedSchedule: selectedSlots 
+      });
+      
+      if (response.status === 201 || response.status === 200) {
+        alert(`🎉 Đã đặt lịch thành công với gia sư ${selectedTutor.name}! Bạn đã chọn: \n${selectedSlots.join('\n')}\nVui lòng chờ gia sư xác nhận.`);
+        setIsModalOpen(false); 
+        setSelectedTutor(null);
+        setSelectedSlots([]);  
+      }
+    } catch (error) {
+      alert(`❌ ${error.response?.data?.message || "Lỗi đường truyền!"}`);
+    }
+  };
+
+  // --- HÀM XEM CHI TIẾT CV ---
   const handleXemHoSo = (idGiaSu) => {
-    // Tạm thời em để navigate tới /giasu/id. 
-    // Nếu Sếp chưa làm trang chi tiết này thì nó sẽ ra màn hình trắng, lúc đó Sếp báo em để làm thêm trang chi tiết nha!
     navigate(`/giasu/${idGiaSu}`);
   };
 
   return (
-    <>
+    <div style={{ position: 'relative' }}>
       {/* ======================================================= */}
       {/* 🌟 PHẦN GIỚI THIỆU (CHỈ HIỆN KHI CHƯA ĐĂNG NHẬP) 🌟 */}
       {/* ======================================================= */}
@@ -152,7 +204,8 @@ function TrangChu({ tuKhoa }) {
                 backgroundColor: 'white', borderRadius: '16px', overflow: 'hidden',
                 boxShadow: '0 4px 20px rgba(0,0,0,0.06)', width: '320px',
                 transition: 'all 0.3s', cursor: 'default',
-                border: '1px solid #F1F5F9'
+                border: '1px solid #F1F5F9',
+                display: 'flex', flexDirection: 'column' 
               }}
                 onMouseOver={(e) => {
                   e.currentTarget.style.transform = 'translateY(-8px)';
@@ -167,10 +220,34 @@ function TrangChu({ tuKhoa }) {
                 <img src={gs.image} alt={gs.name} style={{ width: '100%', height: '240px', objectFit: 'cover' }} />
                 
                 {/* Thông tin gia sư */}
-                <div style={{ padding: '24px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
-                    <h3 style={{ margin: '0', fontSize: '22px', color: '#1E293B', fontWeight: 'bold' }}>{gs.name}</h3>
-                    <span style={{ backgroundColor: '#FEF3C7', color: '#D97706', padding: '4px 8px', borderRadius: '8px', fontSize: '14px', fontWeight: 'bold' }}>
+                <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                  
+                  {/* PHẦN ĐÃ FIX LỖI TRÀN TÊN */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px', gap: '10px' }}>
+                    <h3 
+                      title={gs.name} 
+                      style={{ 
+                        margin: '0', 
+                        fontSize: '22px', 
+                        color: '#1E293B', 
+                        fontWeight: 'bold',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        flex: 1 
+                      }}
+                    >
+                      {gs.name}
+                    </h3>
+                    <span style={{ 
+                      backgroundColor: '#FEF3C7', 
+                      color: '#D97706', 
+                      padding: '4px 8px', 
+                      borderRadius: '8px', 
+                      fontSize: '14px', 
+                      fontWeight: 'bold',
+                      flexShrink: 0 
+                    }}>
                       ⭐ {gs.rating || "5.0"}
                     </span>
                   </div>
@@ -180,12 +257,11 @@ function TrangChu({ tuKhoa }) {
                     💰 {gs.price.toLocaleString()}đ<span style={{ color: '#94A3B8', fontSize: '14px', fontWeight: 'normal' }}>/giờ</span>
                   </p>
                   
-                  {/* KHU VỰC 2 NÚT BẤM MỚI */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '20px' }}>
+                  {/* KHU VỰC 2 NÚT BẤM */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: 'auto', paddingTop: '20px' }}>
                     
-                    {/* Nút 1: Học thử miễn phí (Nút chính) */}
                     <button 
-                      onClick={() => handleDangKyHocThu(gs)}
+                      onClick={() => handleMoBangDatLich(gs)}
                       style={{
                         width: '100%', padding: '12px', backgroundColor: '#3B82F6',
                         color: 'white', border: 'none', borderRadius: '10px', cursor: 'pointer', 
@@ -195,10 +271,9 @@ function TrangChu({ tuKhoa }) {
                       onMouseOver={(e) => e.target.style.backgroundColor = '#2563EB'}
                       onMouseOut={(e) => e.target.style.backgroundColor = '#3B82F6'}
                     >
-                      🎁 Đăng ký học thử miễn phí
+                      📅 Chọn Lịch & Đặt Học
                     </button>
 
-                    {/* Nút 2: Xem hồ sơ (Nút phụ) */}
                     <button 
                       onClick={() => handleXemHoSo(gs._id)}
                       style={{
@@ -233,7 +308,84 @@ function TrangChu({ tuKhoa }) {
           )}
         </div>
       </div>
-    </>
+
+      {/* ======================================================= */}
+      {/* 📅 POPUP MODAL CHỌN LỊCH TRỐNG NGAY TẠI TRANG CHỦ */}
+      {/* ======================================================= */}
+      {isModalOpen && selectedTutor && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.6)', backdropFilter: 'blur(3px)',
+          display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: 'white', padding: '30px', borderRadius: '15px',
+            width: '90%', maxWidth: '850px', maxHeight: '85vh', overflowY: 'auto',
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #E2E8F0', paddingBottom: '15px', marginBottom: '20px' }}>
+              <h2 style={{ margin: 0, color: '#1E293B', fontSize: '22px' }}>📅 Chọn lịch học với {selectedTutor.name}</h2>
+              <button onClick={() => { setIsModalOpen(false); setSelectedTutor(null); }} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', color: '#94A3B8' }}>✖</button>
+            </div>
+            
+            <p style={{ color: '#64748B', fontSize: '14px', marginBottom: '20px' }}>Bấm vào các khung giờ dưới đây để chọn lịch bạn muốn học (Lịch 7 ngày tới):</p>
+            
+            {/* 🚀 BẢNG LỊCH THÔNG MINH HIỂN THỊ "HÔM NAY, NGÀY MAI, 01/05..." */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginBottom: '30px' }}>
+              {lichThongMinh.map((item, index) => (
+                <div key={index} style={{ display: 'flex', alignItems: 'flex-start', borderBottom: '1px dashed #E2E8F0', paddingBottom: '15px' }}>
+                  
+                  {/* Cột Thứ ngày tháng (Đã nới rộng thành 140px để chứa đủ chữ) */}
+                  <div style={{ width: '140px', fontWeight: 'bold', color: '#1E293B', marginTop: '5px', fontSize: '15px' }}>
+                    {item.day}
+                  </div>
+                  
+                  {/* Cột các Khung giờ */}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', flex: 1 }}>
+                    {item.times.map((time, idx) => {
+                      const slotString = `${item.day}: ${time}`;
+                      const isSelected = selectedSlots.includes(slotString);
+                      
+                      return (
+                        <button 
+                          key={idx}
+                          onClick={() => handleToggleSlot(item.day, time)}
+                          style={{
+                            padding: '8px 15px', borderRadius: '8px',
+                            border: isSelected ? '2px solid #3B82F6' : '1px solid #CBD5E1',
+                            backgroundColor: isSelected ? '#EFF6FF' : 'white',
+                            color: isSelected ? '#1D4ED8' : '#475569',
+                            cursor: 'pointer', fontWeight: isSelected ? 'bold' : 'normal',
+                            transition: 'all 0.2s'
+                          }}
+                        >
+                          {time} {isSelected && '✓'}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {selectedSlots.length > 0 && (
+              <div style={{ backgroundColor: '#F0FDF4', color: '#166534', padding: '10px 15px', borderRadius: '8px', marginBottom: '20px', fontSize: '14px', fontWeight: 'bold' }}>
+                Đã chọn {selectedSlots.length} buổi học.
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <button onClick={() => { setIsModalOpen(false); setSelectedTutor(null); }} style={{ padding: '10px 20px', borderRadius: '8px', border: '1px solid #CBD5E1', backgroundColor: 'white', color: '#475569', cursor: 'pointer', fontWeight: 'bold' }}>
+                Hủy
+              </button>
+              <button onClick={handleXacNhanDatLich} style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', backgroundColor: '#10B981', color: 'white', cursor: 'pointer', fontWeight: 'bold' }}>
+                ✅ Xác Nhận Đặt Lịch
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
