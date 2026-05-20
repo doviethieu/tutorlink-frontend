@@ -26,7 +26,7 @@ const StudentPanel = ({ lichSuHoc, allTutors, nguoiDangChat, setNguoiDangChat, h
                     
                     <div style={{ display: 'flex', gap: '8px' }}>
                       
-                      {/* === NÚT CHAT ĐÃ ĐƯỢC GẮN ĐIỀU KIỆN === */}
+                      {/* === NÚT CHAT ĐÃ ĐƯỢC GẮN ĐIỀU KIỆN (CÓ THÊM CASE HOÀN THÀNH) === */}
                       {emailGiaSu && (
                         don.status === 'Chấp nhận' ? (
                           <button 
@@ -43,14 +43,14 @@ const StudentPanel = ({ lichSuHoc, allTutors, nguoiDangChat, setNguoiDangChat, h
                         ) : (
                           <button 
                             disabled
-                            title="Gia sư cần chấp nhận để mở khóa Chat"
+                            title={don.status === 'Hoàn thành' ? "Buổi học đã kết thúc" : "Gia sư cần chấp nhận để mở khóa Chat"}
                             style={{ 
                               padding: '6px 12px', borderRadius: '20px', fontSize: '13px',
                               backgroundColor: '#E5E7EB', color: '#9CA3AF', 
                               border: 'none', cursor: 'not-allowed', fontWeight: 'bold'
                             }}
                           >
-                            🔒 Chat
+                            🔒 {don.status === 'Hoàn thành' ? 'Đã đóng' : 'Chat'}
                           </button>
                         )
                       )}
@@ -68,13 +68,16 @@ const StudentPanel = ({ lichSuHoc, allTutors, nguoiDangChat, setNguoiDangChat, h
                       </button>
                     </div>
                   </div>
+
+                  {/* TAG TRẠNG THÁI ĐÃ CẬP NHẬT THÊM MÀU XÁM CHO "HOÀN THÀNH" */}
                   <span style={{ display: 'inline-block', marginTop: '10px', padding: '5px 10px', borderRadius: '15px', fontSize: '12px', fontWeight: 'bold', 
-                      backgroundColor: don.status === 'Chấp nhận' ? '#D1FAE5' : don.status === 'Từ chối' ? '#FEE2E2' : '#FEF3C7',
-                      color: don.status === 'Chấp nhận' ? '#065F46' : don.status === 'Từ chối' ? '#991B1B' : '#92400E'
+                      backgroundColor: don.status === 'Chấp nhận' ? '#D1FAE5' : don.status === 'Từ chối' ? '#FEE2E2' : don.status === 'Hoàn thành' ? '#F3F4F6' : '#FEF3C7',
+                      color: don.status === 'Chấp nhận' ? '#065F46' : don.status === 'Từ chối' ? '#991B1B' : don.status === 'Hoàn thành' ? '#4B5563' : '#92400E'
                     }}>
-                      {don.status === 'Chấp nhận' ? '✅ ' : don.status === 'Từ chối' ? '❌ ' : '⏳ '} 
+                      {don.status === 'Chấp nhận' ? '✅ ' : don.status === 'Từ chối' ? '❌ ' : don.status === 'Hoàn thành' ? '🏁 ' : '⏳ '} 
                       {don.status}
                   </span>
+                  
                   <p style={{ margin: '10px 0 0 0', color: '#4B5563', fontSize: '14px' }}>Lời nhắn: <em>"{don.message}"</em></p>
                 </div>
               );
