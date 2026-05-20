@@ -8,6 +8,7 @@ import GioHang from './pages/GioHang';
 import ChiTietGiaSu from './pages/ChiTietGiaSu';
 import TaoHoSoCV from './pages/TaoHoSoCV'; 
 import VideoCall from './pages/VideoCall'; 
+import TroGiup from './pages/TroGiup'; // 🔥 THÊM ĐƯỜNG IMPORT TRANG TRỢ GIÚP MỚI VÀO ĐÂY
 
 // <-- 1. IMPORT ADMIN DASHBOARD VÀO ĐÂY -->
 import AdminDashboard from './components/AdminDashboard'; 
@@ -60,6 +61,9 @@ function App() {
         <Route path="/giasu/:id" element={<ChiTietGiaSu />} />
         <Route path="/tao-cv" element={<TaoHoSoCV />} /> 
         <Route path="/room/:roomId" element={<VideoCall />} /> 
+        
+        {/* 🔥 ĐƯỜNG RAY MỚI: Dẫn lối học sinh, gia sư đi tới trang nhắn tin với Admin */}
+        <Route path="/support" element={<TroGiup />} /> 
 
         {/* <-- 2. THÊM ĐƯỜNG RAY CHO ADMIN DASHBOARD --> */}
         <Route path="/admin" element={<AdminDashboard />} /> 
