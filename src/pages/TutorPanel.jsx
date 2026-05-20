@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 const TutorPanel = ({ myTutorProfile, danhSachHocVien, nguoiDangChat, setNguoiDangChat, handleXoaDonHoc, handleCapNhatDon, chatBox }) => {
   const navigate = useNavigate();
 
-  // 1. CHƯA CÓ HỒ SƠ -> NÚT DẪN SANG TRANG TẠO CV
   if (!myTutorProfile) {
     return (
       <div style={{ backgroundColor: '#F9FAFB', padding: '40px 30px', borderRadius: '12px', border: '1px solid #E5E7EB', textAlign: 'center' }}>
@@ -22,7 +21,6 @@ const TutorPanel = ({ myTutorProfile, danhSachHocVien, nguoiDangChat, setNguoiDa
     );
   }
 
-  // 2. ĐÃ NỘP CV -> CHỜ PHỎNG VẤN VỚI ADMIN
   if (myTutorProfile.status === 'Chờ duyệt') {
     return (
       <div style={{ backgroundColor: '#FFFBEB', padding: '30px', borderRadius: '12px', border: '1px solid #FDE68A', textAlign: 'center' }}>
@@ -35,13 +33,11 @@ const TutorPanel = ({ myTutorProfile, danhSachHocVien, nguoiDangChat, setNguoiDa
     );
   }
 
-  // 3. ĐÃ ĐẬU PHỎNG VẤN (ĐÃ DUYỆT) -> HIỆN THÔNG TIN GIA SƯ
   return (
     <div style={{ textAlign: 'left' }}>
       <h2 style={{ color: '#1E3A8A', marginBottom: '20px', borderBottom: '2px solid #E5E7EB', paddingBottom: '10px' }}>🌟 XIN CHÀO GIA SƯ: {myTutorProfile.name}</h2>
       <div style={{ display: 'flex', gap: '20px' }}>
         
-        {/* CỘT 1: DANH SÁCH HỌC VIÊN */}
         <div style={{ flex: 1, backgroundColor: '#F9FAFB', padding: '20px', borderRadius: '12px', border: '1px solid #E5E7EB' }}>
           <h3 style={{ color: '#1F2937', marginTop: 0 }}>📚 Học viên của tôi</h3>
           {(() => {
@@ -60,58 +56,68 @@ const TutorPanel = ({ myTutorProfile, danhSachHocVien, nguoiDangChat, setNguoiDa
                   
                   <div style={{ display: 'flex', gap: '8px' }}>
                     
-                    {/* === NÚT CHAT ĐÃ ĐƯỢC GẮN ĐIỀU KIỆN === */}
+                    {/* LOGIC NÚT CHAT BÊN GIA SƯ */}
                     {hocVien.status === 'Chấp nhận' ? (
                       <button 
                         onClick={() => setNguoiDangChat({ email: hocVien.studentEmail, name: hocVien.studentName })}
-                        style={{ 
-                          padding: '6px 12px', borderRadius: '20px', fontSize: '13px',
-                          backgroundColor: nguoiDangChat?.email === hocVien.studentEmail ? '#1E3A8A' : '#3B82F6', 
-                          color: 'white', 
-                          border: 'none', cursor: 'pointer', fontWeight: 'bold' 
-                        }}
+                        style={{ padding: '6px 12px', borderRadius: '20px', fontSize: '13px', backgroundColor: nguoiDangChat?.email === hocVien.studentEmail ? '#1E3A8A' : '#3B82F6', color: 'white', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}
                       >
                         💬 Chat
                       </button>
                     ) : (
                       <button 
                         disabled
-                        title="Bạn cần chấp nhận đơn để mở khóa Chat"
-                        style={{ 
-                          padding: '6px 12px', borderRadius: '20px', fontSize: '13px',
-                          backgroundColor: '#E5E7EB', color: '#9CA3AF', 
-                          border: 'none', cursor: 'not-allowed', fontWeight: 'bold' 
-                        }}
+                        title={hocVien.status === 'Hoàn thành' ? "Buổi học đã kết thúc" : "Chưa chấp nhận đơn"}
+                        style={{ padding: '6px 12px', borderRadius: '20px', fontSize: '13px', backgroundColor: '#E5E7EB', color: '#9CA3AF', border: 'none', cursor: 'not-allowed', fontWeight: 'bold' }}
                       >
-                        🔒 Chat
+                        🔒 {hocVien.status === 'Hoàn thành' ? 'Đã đóng' : 'Chat'}
                       </button>
                     )}
-                    {/* ======================================= */}
 
                     <button 
                       onClick={() => handleXoaDonHoc(hocVien._id)}
-                      style={{ 
-                        padding: '6px 12px', borderRadius: '20px', fontSize: '13px',
-                        backgroundColor: '#EF4444', color: 'white', 
-                        border: 'none', cursor: 'pointer', fontWeight: 'bold' 
-                      }}
+                      style={{ padding: '6px 12px', borderRadius: '20px', fontSize: '13px', backgroundColor: '#EF4444', color: 'white', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}
                     >
                       🗑️ Xóa
                     </button>
                   </div>
                 </div>
+
                 <div style={{ marginTop: '10px' }}>
-                  <span style={{ color: hocVien.status === 'Chấp nhận' ? '#10B981' : hocVien.status === 'Từ chối' ? '#EF4444' : '#F59E0B', fontSize: '14px', fontWeight: 'bold' }}>
-                    {hocVien.status}
+                  <span style={{ 
+                    color: hocVien.status === 'Chấp nhận' ? '#10B981' : hocVien.status === 'Từ chối' ? '#EF4444' : hocVien.status === 'Hoàn thành' ? '#6B7280' : '#F59E0B', 
+                    fontSize: '14px', fontWeight: 'bold' 
+                  }}>
+                    {hocVien.status === 'Hoàn thành' ? '🏁 Đã hoàn thành' : hocVien.status}
                   </span>
                 </div>
+                
                 <p style={{ margin: '8px 0 0 0', fontSize: '13px', color: '#4B5563' }}>📞 {hocVien.studentPhone} | 📧 {hocVien.studentEmail}</p>
                 <p style={{ margin: '8px 0 0 0', fontSize: '14px', color: '#1F2937', fontStyle: 'italic', backgroundColor: '#F9FAFB', padding: '8px', borderRadius: '4px' }}>"{hocVien.message}"</p>
                 
+                {/* HIỂN THỊ NÚT DUYỆT ĐƠN HOẶC NÚT HOÀN THÀNH */}
                 {hocVien.status === 'Chờ xác nhận' && (
                   <div style={{ marginTop: '15px', display: 'flex', gap: '10px' }}>
                     <button onClick={() => handleCapNhatDon(hocVien._id, 'Chấp nhận')} style={{ flex: 1, padding: '10px', backgroundColor: '#10B981', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>✅ Chấp nhận</button>
                     <button onClick={() => handleCapNhatDon(hocVien._id, 'Từ chối')} style={{ flex: 1, padding: '10px', backgroundColor: '#EF4444', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>❌ Từ chối</button>
+                  </div>
+                )}
+
+                {/* 🚀 NÚT MỚI: ĐÁNH DẤU HOÀN THÀNH KHI ĐANG Ở TRẠNG THÁI CHẤP NHẬN */}
+                {hocVien.status === 'Chấp nhận' && (
+                  <div style={{ marginTop: '15px' }}>
+                    <button 
+                      onClick={() => {
+                        if(window.confirm('Bạn xác nhận buổi học này đã hoàn thành? Kênh chat sẽ bị khóa lại.')) {
+                          handleCapNhatDon(hocVien._id, 'Hoàn thành');
+                        }
+                      }} 
+                      style={{ width: '100%', padding: '10px', backgroundColor: '#F3F4F6', color: '#374151', border: '1px solid #D1D5DB', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', transition: '0.2s' }}
+                      onMouseOver={(e) => e.target.style.backgroundColor = '#E5E7EB'}
+                      onMouseOut={(e) => e.target.style.backgroundColor = '#F3F4F6'}
+                    >
+                      🎓 Đánh dấu đã học xong
+                    </button>
                   </div>
                 )}
               </div>
@@ -119,7 +125,6 @@ const TutorPanel = ({ myTutorProfile, danhSachHocVien, nguoiDangChat, setNguoiDa
           })()}
         </div>
 
-        {/* CỘT 2: KHUNG CHAT ĐƯỢC TRUYỀN VÀO */}
         {chatBox}
 
       </div>
