@@ -35,6 +35,25 @@ function Navbar({ setTuKhoa }) {
       {/* Cụm nút bên phải */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '25px' }}>
 
+        {/* NÚT TRỢ GIÚP ADMIN (HIỆN CHO CẢ KHÁCH VÀ USER ĐÃ ĐĂNG NHẬP) */}
+        <Link to="/support" style={{ textDecoration: 'none' }}>
+          <button style={{ 
+            padding: '10px 20px', 
+            backgroundColor: 'transparent', 
+            color: '#e67e22', 
+            border: '2px solid #e67e22', 
+            borderRadius: '25px', 
+            cursor: 'pointer', 
+            fontWeight: 'bold',
+            transition: 'all 0.3s'
+          }}
+          onMouseOver={(e) => { e.target.style.backgroundColor = '#e67e22'; e.target.style.color = 'white'; }}
+          onMouseOut={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#e67e22'; }}
+          >
+            📬 Trợ Giúp Admin
+          </button>
+        </Link>
+
         {/* HIỆN NGƯỜI DÙNG HOẶC NÚT ĐĂNG NHẬP */}
         {!token ? (
           <Link to="/login">
