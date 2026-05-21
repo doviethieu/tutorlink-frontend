@@ -1,7 +1,9 @@
 import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 function Navbar({ setTuKhoa }) {
   const navigate = useNavigate();
+  const [isHoveredCV, setIsHoveredCV] = useState(false);
   
   // MỞ NGĂN TỦ LẤY CHÌA KHÓA VÀ HỒ SƠ
   const token = localStorage.getItem('tutorlinkToken');
@@ -56,11 +58,19 @@ function Navbar({ setTuKhoa }) {
 
         {/* HIỆN NGƯỜI DÙNG HOẶC NÚT ĐĂNG NHẬP */}
         {!token ? (
-          <Link to="/login">
-            <button style={{ padding: '10px 20px', backgroundColor: '#3498db', color: 'white', border: 'none', borderRadius: '25px', cursor: 'pointer', fontWeight: 'bold' }}>
-               Đăng nhập
-            </button>
-          </Link>
+          <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+            {/* Nếu chưa đăng nhập, vẫn cho họ thấy nút đăng ký làm gia sư vãng lai */}
+            <Link to="/tutor/register">
+              <button style={{ padding: '10px 20px', backgroundColor: '#27ae60', color: 'white', border: 'none', borderRadius: '25px', cursor: 'pointer', fontWeight: 'bold' }}>
+                🎓 Trở Thành Gia Sư
+              </button>
+            </Link>
+            <Link to="/login">
+              <button style={{ padding: '10px 20px', backgroundColor: '#3498db', color: 'white', border: 'none', borderRadius: '25px', cursor: 'pointer', fontWeight: 'bold' }}>
+                 Đăng nhập
+              </button>
+            </Link>
+          </div>
         ) : (
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
             
@@ -68,7 +78,6 @@ function Navbar({ setTuKhoa }) {
             {user && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <img 
-                  // ĐÃ SỬA: Thay thế link pravatar bằng link ui-avatars để đồng bộ tuyệt đối với Backend!
                   src={user.picture || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=random&color=fff&size=128`} 
                   alt="Avatar" 
                   style={{ width: '35px', height: '35px', borderRadius: '50%', objectFit: 'cover' }} 
@@ -79,17 +88,31 @@ function Navbar({ setTuKhoa }) {
 
             {/* Nút dành riêng cho Admin */}
             {user && user.role === 'admin' && (
-              <Link to="/dashboard">
+              <Link to="/admin">
                 <button style={{ padding: '10px 20px', backgroundColor: '#f39c12', color: 'white', border: 'none', borderRadius: '25px', cursor: 'pointer', fontWeight: 'bold' }}>
                   ⚙️ Quản trị (Admin)
                 </button>
               </Link>
             )}
 
-            {/* Nút dành cho Khách hàng (Học viên muốn làm Gia sư) */}
+            {/* 🔥 ĐÃ SỬA: Nút dành cho học viên muốn làm Gia sư - chuyển route sang /tutor/register */}
             {user && user.role !== 'admin' && (
-              <Link to="/dashboard">
-                <button style={{ padding: '10px 20px', backgroundColor: '#27ae60', color: 'white', border: 'none', borderRadius: '25px', cursor: 'pointer', fontWeight: 'bold' }}>
+              <Link to="/tutor/register">
+                <button 
+                  onMouseEnter={() => setIsHoveredCV(true)}
+                  onMouseLeave={() => setIsHoveredCV(false)}
+                  style={{ 
+                    padding: '10px 20px', 
+                    backgroundColor: isHoveredCV ? '#218838' : '#27ae60', 
+                    color: 'white', 
+                    border: 'none', 
+                    borderRadius: '25px', 
+                    cursor: 'pointer', 
+                    fontWeight: 'bold',
+                    transition: 'background-color 0.2s ease',
+                    boxShadow: isHoveredCV ? '0 4px 8px rgba(0,0,0,0.2)' : 'none'
+                  }}
+                >
                   🎓 Trở Thành Gia Sư
                 </button>
               </Link>
