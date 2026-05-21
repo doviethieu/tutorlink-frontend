@@ -1,4 +1,44 @@
-# Logs
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# =========================================================================
+# 📦 DEPENDENCIES & PACKAGES (Thư viện cài đặt)
+# =========================================================================
+node_modules/
+/node_modules
+/.pnp
+.pnp.*
+
+# =========================================================================
+# 🚀 BUILD & CACHE OUTPUTS (Bộ nhớ đệm và File sinh ra khi chạy/build)
+# =========================================================================
+# Khóa triệt để các folder cache độc quyền của Vite, Next, Nuxt...
+.vite/
+.next/
+.nuxt/
+/dist
+/build
+/out
+dist-ssr
+/coverage
+*.tsbuildinfo
+
+# =========================================================================
+# ⚙️ SYSTEM & EDITORS (File rác của máy tính và phần mềm code)
+# =========================================================================
+.DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# =========================================================================
+# 📝 LOGS (Lịch sử chạy lỗi)
+# =========================================================================
 logs
 *.log
 npm-debug.log*
@@ -6,22 +46,15 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+.pnpm-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# Security / Environment variables
+# =========================================================================
+# 🔐 SECURITY & ENVIRONMENT (Biến môi trường bảo mật, mật khẩu)
+# =========================================================================
 .env
+*.local
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.pem
