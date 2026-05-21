@@ -1,350 +1,256 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-// Socket.io
-import { io } from 'socket.io-client';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-// IMPORT CÁC COMPONENT CON
-import AdminPanel from './AdminPanel'; 
-import ChatBox from './ChatBox';
-import StudentPanel from './StudentPanel';
-import TutorPanel from './TutorPanel';
-
-// Nối dây cáp tới trạm Backend
-const socket = io('http://localhost:8000');
-
-const Dashboard = () => {
+export default function Dashboard() {
   const navigate = useNavigate();
-  
-  const token = localStorage.getItem('tutorlinkToken'); 
-  const userString = localStorage.getItem('tutorlinkUser');
-  const user = userString ? JSON.parse(userString) : null;
-  const currentRole = user ? user.role : null; 
 
-  const [activeTab, setActiveTab] = useState('lichSu');
-  const [allTutors, setAllTutors] = useState([]);
-  const [danhSachHocVien, setDanhSachHocVien] = useState([]);
-  const [lichSuHoc, setLichSuHoc] = useState([]);
+  // --- STATES QUẢN LÝ DỮ LIỆU THẬT ---
+  const [me, setMe] = useState(null);
+  const [bookings, setBookings] = useState([]);
+  const [favorites, setFavorites] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // ==========================================
-  // KHU VỰC STATE CHO CHAT 1-1 (MESSENGER)
-  // ==========================================
-  const [danhSachTinNhan, setDanhSachTinNhan] = useState([]);
-  const [nguoiDangChat, setNguoiDangChat] = useState(null); 
-
-  // ==========================================
-  // HÀM XÓA ĐƠN Ở TAB LỊCH SỬ HỌC TẬP
-  // ==========================================
-  const handleXoaDonLichSu = async (idDon) => {
-    if (!window.confirm("🗑️ Bạn có chắc chắn muốn xóa lịch sử đơn này không?")) return;
-    try {
-      const response = await fetch(`http://localhost:8000/api/bookings/${idDon}`, {
-        method: 'DELETE'
-      });
-      if (response.ok) {
-        setLichSuHoc(lichSuHoc.filter(don => don._id !== idDon));
-        if (nguoiDangChat && lichSuHoc.find(d => d._id === idDon)?.studentEmail === nguoiDangChat.email) {
-            setNguoiDangChat(null);
+  // --- TRUY XUẤT DỮ LIỆU TỪ HỆ THỐNG API THẬT ---
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      setLoading(true);
+      try {
+        const token = localStorage.getItem('tutorlinkToken');
+        
+        // Nếu không có token bảo mật thì đẩy ngay ra trang đăng nhập
+        if (!token) {
+          navigate('/login');
+          return;
         }
-      } else {
-        alert("❌ Xóa thất bại, Sếp kiểm tra lại Backend nhé!");
-      }
-    } catch (error) {
-      console.error("Lỗi xóa đơn:", error);
-    }
-  };
 
-  // Lắng nghe bộ đàm từ Backend gửi về (DÀNH CHO CHAT)
-  useEffect(() => {
-    socket.on('receive_message', (data) => {
-      setDanhSachTinNhan((tinNhanCu) => [...tinNhanCu, data]);
-    });
+        const headers = { Authorization: `Bearer ${token}` };
 
-    return () => {
-      socket.off('receive_message');
-    };
-  }, []);
+        // Gọi đồng thời các API lấy thông tin cá nhân, lịch học và danh sách yêu thích thật từ DB
+        const [userRes, bookingsRes, favoritesRes] = await Promise.all([
+          axios.get('http://localhost:8000/api/auth/me', { headers }),
+          axios.get('http://localhost:8000/api/bookings?limit=5', { headers }),
+          axios.get('http://localhost:8000/api/favorites', { headers })
+        ]);
 
-  // Hàm bấm nút Gửi tin nhắn 1-1
-  const handleGuiTinNhan = (noiDungTinNhan) => {
-    if (nguoiDangChat) {
-      const duLieuTinNhan = {
-        nguoiGui: user ? user.name : "Người ẩn danh",
-        emailGui: user?.email,             
-        nguoiNhan: nguoiDangChat.name,
-        emailNhan: nguoiDangChat.email,   
-        noiDung: noiDungTinNhan,
-        thoiGian: new Date().toLocaleTimeString() 
-      };
-      
-      socket.emit('send_message', duLieuTinNhan);
-    }
-  };
-
-  const tinNhanHienThi = danhSachTinNhan.filter(msg => 
-    (msg.emailGui === user?.email && msg.emailNhan === nguoiDangChat?.email) || 
-    (msg.emailGui === nguoiDangChat?.email && msg.emailNhan === user?.email)
-  );
-
-  useEffect(() => {
-    if (!token) {
-      alert('🛑 Bạn cần đăng nhập để vào đây!');
-      navigate('/login');
-    }
-
-    fetch('http://localhost:8000/api/tutors')
-      .then(res => res.json())
-      .then(data => setAllTutors(data))
-      .catch(err => console.error(err));
-  }, [token, navigate]);
-
-  useEffect(() => {
-    if (user && user.email) {
-      fetch(`http://localhost:8000/api/bookings/student/${user.email}`)
-        .then(res => res.json())
-        .then(data => setLichSuHoc(data))
-        .catch(err => console.error("Lỗi lấy lịch sử học:", err));
-    }
-  }, [user?.email]);
-
-  const handleDangXuat = () => {
-    localStorage.removeItem('tutorlinkToken');
-    localStorage.removeItem('tutorlinkUser');
-    window.dispatchEvent(new Event("storage"));
-    navigate('/login');
-  };
-
-  const handleDuyet = async (id) => {
-    try {
-      const response = await fetch(`http://localhost:8000/api/tutors/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'Đã duyệt' })
-      });
-      if (response.ok) {
-        setAllTutors(allTutors.map(t => t._id === id ? { ...t, status: 'Đã duyệt' } : t));
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleXoa = async (id) => {
-    if (!window.confirm("⚠️ Sếp có chắc chắn muốn XÓA hồ sơ này không?")) return;
-    try {
-      const response = await fetch(`http://localhost:8000/api/tutors/${id}`, { method: 'DELETE' });
-      if (response.ok) {
-        setAllTutors(allTutors.filter(t => t._id !== id));
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  // ==========================================
-  // HÀM CẬP NHẬT TRẠNG THÁI ĐƠN HỌC (ĐÃ ĐỘ THÊM BÁO LỖI)
-  // ==========================================
-  const handleCapNhatDon = async (idDon, trangThaiMoi) => {
-    console.log("👉 Đang gọi API Cập nhật cho đơn ID:", idDon);
-    try {
-      const response = await fetch(`http://localhost:8000/api/bookings/${idDon}/status`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: trangThaiMoi })
-      });
-
-      if (response.ok) {
-        alert(`✅ Đã chuyển trạng thái thành: ${trangThaiMoi}`);
-        // Ghi chú: Có Socket rồi nên dòng setDanhSachHocVien dưới đây có thể không cần thiết nữa, 
-        // nhưng cứ giữ nguyên code của Sếp cho an tâm.
-        setDanhSachHocVien(danhSachHocVien.map(don => 
-          don._id === idDon ? { ...don, status: trangThaiMoi } : don
-        ));
-      } else {
-        const errorData = await response.json();
-        alert(`❌ Lỗi từ Backend: ${errorData.message}`);
-        console.error("Chi tiết lỗi:", errorData);
-      }
-    } catch (error) {
-      alert(`❌ Lỗi Mạng/CORS: Không thể kết nối tới Backend. Chi tiết: ${error.message}`);
-      console.error("Lỗi mạng/CORS:", error);
-    }
-  };
-
-  // ==========================================
-  // HÀM XÓA ĐƠN HỌC (ĐÃ ĐỘ THÊM BÁO LỖI)
-  // ==========================================
-  const handleXoaDonHoc = async (idDon) => {
-    if (!window.confirm("🗑️ Sếp có chắc chắn muốn XÓA đơn đặt lịch này không?")) return;
-    
-    console.log("👉 Đang gọi API Xóa cho đơn ID:", idDon);
-    try {
-      const response = await fetch(`http://localhost:8000/api/bookings/${idDon}`, {
-        method: 'DELETE'
-      });
-
-      if (response.ok) {
-        alert("✅ Đã xóa đơn thành công!");
-        setDanhSachHocVien(danhSachHocVien.filter(don => don._id !== idDon));
-        if (nguoiDangChat && danhSachHocVien.find(d => d._id === idDon)?.studentEmail === nguoiDangChat.email) {
-          setNguoiDangChat(null);
+        // 1. Đồng bộ thông tin cá nhân của sếp
+        if (userRes?.data) {
+          setMe(userRes.data.data || userRes.data);
         }
-      } else {
-        const errorData = await response.json();
-        alert(`❌ Xóa thất bại: ${errorData.message}`);
-        console.error("Chi tiết lỗi:", errorData);
-      }
-    } catch (error) {
-      alert(`❌ Lỗi Mạng/CORS: Không thể kết nối tới Backend. Chi tiết: ${error.message}`);
-      console.error("Lỗi mạng/CORS:", error);
-    }
-  };
+        
+        // 2. Đồng bộ lịch đặt chỗ thật (Xử lý map dữ liệu từ Mongo sang bảng hiển thị)
+        if (bookingsRes?.data) {
+          const rawBookings = bookingsRes.data.data || bookingsRes.data;
+          const cleanBookings = (Array.isArray(rawBookings) ? rawBookings : []).map(bk => ({
+            _id: bk._id,
+            // Lấy mã đơn rút gọn hoặc bookingId có sẵn
+            id: bk.bookingId || bk._id?.substring(0, 7).toUpperCase() || 'BK-N/A', 
+            // Khớp nối tên môn học hoặc tên lớp
+            subject: bk.subject || bk.className || bk.classId?.subject || 'Môn học chưa phân loại',
+            // Định dạng lại ngày tháng từ chuỗi ISO gửi về từ DB
+            date: bk.date || (bk.startTime ? new Date(bk.startTime).toLocaleDateString('vi-VN') : 'Chưa xếp lịch'),
+            // Map trạng thái để ăn khớp màu badge CSS bên dưới
+            status: bk.status === 'Chấp nhận' ? 'confirmed' : bk.status === 'Từ chối' ? 'failed' : bk.status === 'Hoàn thành' ? 'completed' : 'pending',
+            amount: bk.amount || bk.totalPrice || 0
+          }));
+          setBookings(cleanBookings);
+        }
+        
+        // 3. Đồng bộ danh sách gia sư yêu thích thật từ DB
+        if (favoritesRes?.data) {
+          const rawFavorites = favoritesRes.data.data || favoritesRes.data;
+          const cleanFavorites = (Array.isArray(rawFavorites) ? rawFavorites : []).map(fv => ({
+            _id: fv._id || fv.tutorId?._id,
+            name: fv.name || fv.tutorId?.name || 'Gia sư hệ thống',
+            title: fv.title || fv.tutorId?.bio || fv.tutorId?.specialization || 'Gia sư TutorLink',
+            avatarUrl: fv.avatarUrl || fv.tutorId?.avatar || ''
+          }));
+          setFavorites(cleanFavorites);
+        }
 
-  const myTutorProfile = user ? allTutors.find(t => t.email === user.email || t.name === user.name) : null;
-
-  useEffect(() => {
-    if (myTutorProfile && myTutorProfile._id) {
-      fetch(`http://localhost:8000/api/bookings/tutor/${myTutorProfile._id}`)
-        .then(res => res.json())
-        .then(data => setDanhSachHocVien(data))
-        .catch(err => console.error("Lỗi lấy đơn hàng:", err));
-    }
-  }, [myTutorProfile]);
-
-  // ==========================================
-  // ⚡ MỚI THÊM: REAL-TIME LẮNG NGHE ĐƠN ĐẶT LỊCH QUA SOCKET
-  // ==========================================
-  useEffect(() => {
-    // 1. DÀNH CHO GIA SƯ: Nghe xem có ai đặt lịch mình không
-    const handleNewBooking = (bookingData) => {
-      if (myTutorProfile && bookingData.tutorId === myTutorProfile._id) {
-        alert(`🔔 Ting ting! Học viên ${bookingData.studentName} vừa gửi yêu cầu đặt lịch!`);
-        setDanhSachHocVien(prev => [bookingData, ...prev]);
-      }
-    };
-
-    // 2. DÀNH CHO CẢ 2 BÊN: Nghe xem trạng thái đơn thay đổi (Accept/Reject)
-    const handleStatusUpdated = (updatedBooking) => {
-      // Nếu mình là Học sinh vừa được duyệt đơn
-      if (user && updatedBooking.studentEmail === user.email) {
-        alert(`📣 Đơn học của bạn đã được gia sư đổi thành: ${updatedBooking.status}`);
-        setLichSuHoc(prev => prev.map(don => 
-          don._id === updatedBooking._id ? updatedBooking : don
-        ));
-      }
-      
-      // Nếu mình là Gia sư vừa bấm duyệt đơn (Đồng bộ cho màn hình mượt)
-      if (myTutorProfile && updatedBooking.tutorId === myTutorProfile._id) {
-          setDanhSachHocVien(prev => prev.map(don => 
-              don._id === updatedBooking._id ? updatedBooking : don
-          ));
+      } catch (error) {
+        console.error("🔴 Lỗi nạp dữ liệu thật từ Server:", error.message);
+        
+        // 🔥 ĐÃ ĐỔI: Chuyển sang mảng rỗng [] khi lỗi kết nối, loại bỏ hoàn toàn dữ liệu ảo (Mock Data)
+        setMe(null);
+        setBookings([]);
+        setFavorites([]);
+      } finally {
+        setLoading(false);
       }
     };
 
-    socket.on('new_booking', handleNewBooking);
-    socket.on('booking_status_updated', handleStatusUpdated);
+    fetchDashboardData();
+  }, [navigate]);
 
-    // Dọn dẹp Listener khi thoát trang
-    return () => {
-      socket.off('new_booking', handleNewBooking);
-      socket.off('booking_status_updated', handleStatusUpdated);
-    };
-  }, [myTutorProfile, user]);
-  // ==========================================
+  // --- LOGIC TÍNH TOÁN CÁC CHỈ SỐ THỐNG KÊ (KPI) THẬT ---
+  const upcomingCount = useMemo(() => {
+    const safeBookings = Array.isArray(bookings) ? bookings : [];
+    return safeBookings.filter((item) => item && ['pending', 'confirmed'].includes(item.status)).length;
+  }, [bookings]);
 
+  const totalHocPhi = useMemo(() => {
+    const safeBookings = Array.isArray(bookings) ? bookings : [];
+    return safeBookings.reduce((sum, item) => sum + ((item && item.amount) ?? 0), 0);
+  }, [bookings]);
 
-  // BIẾN COMPONENT KHUNG CHAT SẴN ĐỂ TRUYỀN XUỐNG DƯỚI
-  const ChatBoxComponent = (
-    <ChatBox 
-      nguoiDangChat={nguoiDangChat} 
-      tinNhanHienThi={tinNhanHienThi} 
-      currentUser={user} 
-      onSendMessage={handleGuiTinNhan} 
-    />
-  );
+  // Lấy chính xác tên gọi cuối cùng từ trường dữ liệu thật
+  const tenGoi = me?.fullName ? me.fullName.split(' ').pop() : 'sếp';
+
+  if (loading) {
+    return (
+      <div style={{ backgroundColor: '#0f172a', minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#cbd5e1' }}>
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ fontSize: '18px', fontWeight: 'bold' }}>⏳ Đang đồng bộ hóa dữ liệu trung tâm...</p>
+          <p style={{ fontSize: '14px', color: '#64748b' }}>Hệ thống đang quét luồng dữ liệu thực tế từ Database.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const renderBookings = Array.isArray(bookings) ? bookings : [];
+  const renderFavorites = Array.isArray(favorites) ? favorites : [];
 
   return (
-    <div style={{ padding: '40px', maxWidth: '1000px', margin: '0 auto', textAlign: 'center', color: '#1F2937' }}>
+    <div style={styles.container}>
       
-      {/* MENU TABS CHUYỂN ĐỔI */}
-      {currentRole !== 'admin' && (
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginBottom: '30px' }}>
-          <button 
-            onClick={() => { setActiveTab('lichSu'); setNguoiDangChat(null); }}
-            style={{ 
-              padding: '12px 25px', borderRadius: '30px', fontWeight: 'bold', cursor: 'pointer', transition: '0.3s',
-              backgroundColor: activeTab === 'lichSu' ? '#1E3A8A' : '#E5E7EB', 
-              color: activeTab === 'lichSu' ? 'white' : '#4B5563',
-              border: 'none', boxShadow: activeTab === 'lichSu' ? '0 4px 6px rgba(0,0,0,0.1)' : 'none'
-            }}
-          >
-            Lịch Sử Học Tập
-          </button>
-          
-          <button 
-            onClick={() => { setActiveTab('giaSu'); setNguoiDangChat(null); }}
-            style={{ 
-              padding: '12px 25px', borderRadius: '30px', fontWeight: 'bold', cursor: 'pointer', transition: '0.3s',
-              backgroundColor: activeTab === 'giaSu' ? '#F97316' : '#E5E7EB', 
-              color: activeTab === 'giaSu' ? 'white' : '#4B5563',
-              border: 'none', boxShadow: activeTab === 'giaSu' ? '0 4px 6px rgba(0,0,0,0.1)' : 'none'
-            }}
-          >
-            Góc Gia Sư
-          </button>
+      {/* KHUNG KHỞI ĐỘNG HERO WELCOME */}
+      <div style={styles.heroCard}>
+        <div>
+          <span style={styles.accentBadge}>Tổng quan thực tế</span>
+          <h1 style={styles.mainTitle}>Xin chào, {tenGoi} 👋</h1>
+          <p style={styles.subtitle}>Lịch học, gia sư yêu thích và các yêu cầu đặt lịch gần đây của sếp trên hệ thống.</p>
         </div>
-      )}
+        <Link to="/tutors" style={{ textDecoration: 'none' }}>
+          <button style={styles.btnSearch}>🔍 Tìm gia sư ngay</button>
+        </Link>
+      </div>
 
-      {/* KHU VỰC HIỂN THỊ CỦA NGƯỜI DÙNG BÌNH THƯỜNG */}
-      {currentRole !== 'admin' && (
-        <div style={{ marginBottom: '40px' }}>
-          
-          {/* KÊNH 1: LỊCH SỬ ĐẶT LỊCH (Đã được gói gọn vào StudentPanel) */}
-          {activeTab === 'lichSu' && (
-            <div style={{ animation: 'fadeIn 0.5s' }}>
-              <StudentPanel 
-                lichSuHoc={lichSuHoc}
-                allTutors={allTutors}
-                nguoiDangChat={nguoiDangChat}
-                setNguoiDangChat={setNguoiDangChat}
-                handleXoaDonLichSu={handleXoaDonLichSu}
-                chatBox={ChatBoxComponent}
-              />
+      {/* BỘ BA THẺ THỐNG KÊ CHỬ SỐ (STATISTICS GRID) */}
+      <div style={styles.statsGrid}>
+        <div style={styles.statCard}>
+          <div style={{ ...styles.iconWrap, color: '#3498db', backgroundColor: 'rgba(52,152,219,0.1)' }}>📅</div>
+          <p style={styles.statLabel}>Buổi học sắp tới</p>
+          <p style={styles.statValue}>{upcomingCount}</p>
+        </div>
+
+        <div style={styles.statCard}>
+          <div style={{ ...styles.iconWrap, color: '#e74c3c', backgroundColor: 'rgba(231,76,60,0.1)' }}>⭐</div>
+          <p style={styles.statLabel}>Gia sư yêu thích</p>
+          <p style={styles.statValue}>{renderFavorites.length}</p>
+        </div>
+
+        <div style={styles.statCard}>
+          <div style={{ ...styles.iconWrap, color: '#2ecc71', backgroundColor: 'rgba(46,204,113,0.1)' }}>💳</div>
+          <p style={styles.statLabel}>Tổng học phí thực tế</p>
+          <p style={styles.statValue}>{totalHocPhi.toLocaleString('vi-VN')} đ</p>
+        </div>
+      </div>
+
+      {/* BỐ CỤC CHÍNH: BẢNG LỊCH HỌC BÊN TRÁI & GIA SƯ ĐÃ LƯU BÊN PHẢI */}
+      <div style={styles.mainLayout}>
+        
+        {/* KHỐI TRÁI: DANH SÁCH ĐẶT CHỖ THẬT */}
+        <div style={styles.contentCard}>
+          <h2 style={styles.cardTitle}>📅 Lịch Đặt Chỗ Gần Đây</h2>
+          {renderBookings.length === 0 ? (
+            <div style={styles.emptyContainer}>
+              <p style={styles.emptyText}>ℹ️ Chưa có lịch đặt chỗ nào được ghi nhận từ tài khoản này.</p>
+              <p style={{ color: '#64748b', fontSize: '13px', margin: '5px 0 0 0' }}>Sếp hãy thử bấm "Tìm gia sư ngay" để tạo đơn đặt lịch thật nhé!</p>
+            </div>
+          ) : (
+            <div style={{ overflowX: 'auto', marginTop: '15px' }}>
+              <table style={styles.table}>
+                <thead>
+                  <tr style={styles.thRow}>
+                    <th style={styles.th}>Mã đơn</th>
+                    <th style={styles.th}>Môn học</th>
+                    <th style={styles.th}>Ngày học</th>
+                    <th style={styles.th}>Trạng thái</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {renderBookings.map((booking) => (
+                    <tr key={booking._id || booking.id} style={styles.tr}>
+                      <td style={{ ...styles.td, fontWeight: 'bold', color: '#3498db' }}>{booking.id}</td>
+                      <td style={styles.td}>{booking.subject}</td>
+                      <td style={styles.td}>{booking.date}</td>
+                      <td style={styles.td}>
+                        <span style={renderStatusStyle(booking.status)}>
+                          {booking.status === 'confirmed' ? 'Đã duyệt' : booking.status === 'pending' ? 'Chờ xử lý' : booking.status === 'completed' ? 'Hoàn thành' : 'Đã huỷ'}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
-
-          {/* KÊNH 2: GÓC GIA SƯ (Đã được gói gọn vào TutorPanel) */}
-          {activeTab === 'giaSu' && (
-            <div style={{ animation: 'fadeIn 0.5s' }}>
-              <TutorPanel 
-                myTutorProfile={myTutorProfile}
-                danhSachHocVien={danhSachHocVien}
-                nguoiDangChat={nguoiDangChat}
-                setNguoiDangChat={setNguoiDangChat}
-                handleXoaDonHoc={handleXoaDonHoc}
-                handleCapNhatDon={handleCapNhatDon}
-                chatBox={ChatBoxComponent}
-              />
-            </div>
-          )}
         </div>
-      )}
 
-      {/* KHU VỰC HIỂN THỊ DÀNH RIÊNG CHO ADMIN */}
-      {currentRole === 'admin' && (
-        <AdminPanel 
-          allTutors={allTutors} 
-          handleDuyet={handleDuyet} 
-          handleXoa={handleXoa} 
-        />
-      )}
+        {/* KHỐI PHẢI: DANH SÁCH GIA SƯ YÊU THÍCH THẬT */}
+        <div style={styles.contentCard}>
+          <h2 style={styles.cardTitle}>💖 Gia sư đã lưu tâm đắc</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '15px' }}>
+            {renderFavorites.slice(0, 4).map((tutor) => (
+              <Link key={tutor._id || tutor.id} to={`/giasu/${tutor._id || tutor.id}`} style={styles.tutorRowLink}>
+                <div style={styles.avatarFake}>{tutor.name ? tutor.name.charAt(0) : 'U'}</div>
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <p style={styles.tutorName}>{tutor.name}</p>
+                  <p style={styles.tutorTitle}>{tutor.title}</p>
+                </div>
+              </Link>
+            ))}
+            {renderFavorites.length === 0 && (
+              <p style={styles.emptyText}>Sếp chưa nhấn lưu yêu thích gia sư nào trên hệ thống.</p>
+            )}
+          </div>
+        </div>
 
-      <button onClick={handleDangXuat} style={{ marginTop: '20px', padding: '12px 25px', backgroundColor: '#1F2937', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>
-        Đăng Xuất
-      </button>
-
-      <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+      </div>
     </div>
   );
+}
+
+// --- HÀM TỰ ĐỘNG ĐỔI MÀU BADGE TRẠNG THÁI ---
+function renderStatusStyle(status) {
+  const base = { fontSize: '12px', padding: '4px 10px', borderRadius: '6px', fontWeight: 'bold' };
+  if (status === 'confirmed') return { ...base, backgroundColor: 'rgba(46, 204, 113, 0.2)', color: '#2ecc71' };
+  if (status === 'pending') return { ...base, backgroundColor: 'rgba(230, 126, 34, 0.2)', color: '#e67e22' };
+  if (status === 'completed') return { ...base, backgroundColor: 'rgba(52, 152, 219, 0.2)', color: '#3498db' };
+  return { ...base, backgroundColor: 'rgba(231, 76, 60, 0.2)', color: '#e74c3c' };
+}
+
+// --- CSS INLINE ĐỒNG BỘ DARK MODE ---
+const styles = {
+  container: { backgroundColor: '#0f172a', padding: '20px', color: '#cbd5e1', fontFamily: 'Arial, sans-serif' },
+  heroCard: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#1e293b', border: '1px solid #334155', padding: '30px', borderRadius: '16px', marginBottom: '30px', flexWrap: 'wrap', gap: '20px' },
+  accentBadge: { backgroundColor: 'rgba(46, 204, 113, 0.15)', color: '#2ecc71', padding: '5px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase' },
+  mainTitle: { fontSize: '28px', fontWeight: 'bold', color: '#fff', margin: '12px 0 6px 0' },
+  subtitle: { fontSize: '15px', color: '#94a3b8', margin: 0 },
+  btnSearch: { backgroundColor: '#3498db', color: '#fff', border: 'none', padding: '12px 24px', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer', fontSize: '14px', transition: '0.2s' },
+  statsGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px', marginBottom: '30px' },
+  statCard: { backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '16px', padding: '24px' },
+  iconWrap: { width: '42px', height: '42px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' },
+  statLabel: { fontSize: '14px', color: '#94a3b8', margin: '16px 0 4px 0', fontWeight: '500' },
+  statValue: { fontSize: '26px', fontWeight: 'bold', color: '#fff', margin: 0 },
+  mainLayout: { display: 'grid', gridTemplateColumns: '1fr 340px', gap: '24px', alignItems: 'start' },
+  contentCard: { backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '16px', padding: '24px' },
+  cardTitle: { fontSize: '18px', fontWeight: 'bold', color: '#fff', margin: 0 },
+  emptyContainer: { textAlign: 'center', padding: '40px 10px' },
+  emptyText: { color: '#94a3b8', fontSize: '14px', margin: 0, fontStyle: 'italic' },
+  table: { width: '100%', borderCollapse: 'collapse', marginTop: '10px' },
+  thRow: { borderBottom: '1px solid #334155' },
+  th: { color: '#94a3b8', fontSize: '12px', textTransform: 'uppercase', padding: '12px', textAlign: 'left', fontWeight: 'bold' },
+  tr: { borderBottom: '1px solid #0f172a' },
+  td: { padding: '14px 12px', color: '#cbd5e1', fontSize: '14px' },
+  tutorRowLink: { display: 'flex', alignItems: 'center', gap: '15px', padding: '12px', borderRadius: '12px', border: '1px solid #334155', backgroundColor: '#0f172a', textDecoration: 'none' },
+  avatarFake: { width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#475569', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '16px' },
+  tutorName: { margin: 0, color: '#fff', fontWeight: 'bold', fontSize: '14px' },
+  tutorTitle: { margin: '2px 0 0 0', color: '#94a3b8', fontSize: '12px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }
 };
 
-export default Dashboard;
+// Đảm bảo responsive trên thiết bị di động
+if (window.innerWidth < 992) {
+  styles.mainLayout = { display: 'flex', flexDirection: 'column', gap: '24px' };
+}

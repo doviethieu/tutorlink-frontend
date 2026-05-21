@@ -1,135 +1,352 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
 
-const TutorPanel = ({ myTutorProfile, danhSachHocVien, nguoiDangChat, setNguoiDangChat, handleXoaDonHoc, handleCapNhatDon, chatBox }) => {
-  const navigate = useNavigate();
+export default function TutorPanel() {
+  const [bookings, setBookings] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  if (!myTutorProfile) {
-    return (
-      <div style={{ backgroundColor: '#F9FAFB', padding: '40px 30px', borderRadius: '12px', border: '1px solid #E5E7EB', textAlign: 'center' }}>
-          <h2 style={{ color: '#1E3A8A', marginTop: 0, fontSize: '24px' }}>🎓 TRỞ THÀNH GIA SƯ ĐỐI TÁC</h2>
-          <p style={{ color: '#4B5563', fontSize: '16px', marginBottom: '25px', lineHeight: '1.6' }}>
-            Để đảm bảo chất lượng giảng dạy, bạn cần tạo Hồ sơ CV chi tiết và tham gia một buổi phỏng vấn ngắn với Admin trước khi chính thức lên sóng.
-          </p>
-          <button 
-            onClick={() => navigate('/tao-cv')} 
-            style={{ padding: '15px 30px', backgroundColor: '#F97316', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', fontSize: '16px', boxShadow: '0 4px 6px rgba(249, 115, 22, 0.3)' }}
-          >
-            📝 Bắt đầu tạo CV Gia sư
-          </button>
-      </div>
-    );
-  }
+  // --- FETCH BOOKING ĐỂ TÍNH TOÁN THỐNG KÊ ---
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setIsLoading(true);
+        const token = localStorage.getItem('tutorlinkToken');
+        if (!token) {
+          loadMockDashboard();
+          return;
+        }
 
-  if (myTutorProfile.status === 'Chờ duyệt') {
-    return (
-      <div style={{ backgroundColor: '#FFFBEB', padding: '30px', borderRadius: '12px', border: '1px solid #FDE68A', textAlign: 'center' }}>
-        <h2 style={{ color: '#B45309', marginTop: 0 }}>⏳ ĐANG CHỜ SẮP XẾP PHỎNG VẤN</h2>
-        <p style={{ color: '#92400E', fontSize: '16px', lineHeight: '1.6' }}>
-          🎉 CV của bạn đã được gửi thành công! <br/>
-          Admin đang xem xét hồ sơ và sẽ sớm liên hệ với bạn (qua Số điện thoại/Email) để sắp xếp lịch phỏng vấn online. Hãy để ý điện thoại nhé!
-        </p>
-      </div>
-    );
-  }
+        // Gọi API lấy tối đa 5 booking mới nhất của gia sư này
+        const res = await axios.get('http://localhost:8000/api/bookings?role=tutor&limit=5', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setBookings(Array.isArray(res.data) ? res.data : []);
+      } catch (error) {
+        console.error("Lỗi fetch dữ liệu Dashboard, hệ thống kích hoạt Mock data dự phòng:");
+        loadMockDashboard();
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchDashboardData();
+  }, []);
+
+  // Bộ dữ liệu mẫu vận hành khi không có mạng hoặc chưa kết nối API
+  const loadMockDashboard = () => {
+    setBookings([
+      { id: 'BK-88291', subject: 'Toán học nâng cao đại số lớp 12', date: '2026-05-25', time: '19:00 - 21:00', status: 'pending' },
+      { id: 'BK-77412', subject: 'Tiếng Anh Giao Tiếp Chuẩn Bản Xứ', date: '2026-05-23', time: '14:00 - 15:30', status: 'confirmed' },
+      { id: 'BK-61209', subject: 'Lập trình JavaScript từ số 0', date: '2026-05-18', time: '09:00 - 11:00', status: 'completed' }
+    ]);
+  };
+
+  // --- TRÍCH XUẤT CÁC CHỈ SỐ THỐNG KÊ TỪ MẢNG DỮ LIỆU ---
+  const pendingCount = bookings.filter(b => b.status === 'pending').length;
+  const confirmedCount = bookings.filter(b => b.status === 'confirmed').length;
+  const completedCount = bookings.filter(b => b.status === 'completed').length;
+
+  // Hàm hiển thị nhanh Badge trạng thái cho danh sách
+  const renderStatusBadge = (status) => {
+    switch(status) {
+      case 'pending': return <span style={{ ...styles.badge, backgroundColor: '#f1c40f', color: '#1e1b4b' }}>Chờ duyệt</span>;
+      case 'confirmed': return <span style={{ ...styles.badge, backgroundColor: '#2ecc71', color: '#064e3b' }}>Đã nhận</span>;
+      case 'completed': return <span style={{ ...styles.badge, backgroundColor: '#3498db', color: '#0f172a' }}>Đã xong</span>;
+      default: return <span style={{ ...styles.badge, backgroundColor: '#64748b', color: '#fff' }}>{status}</span>;
+    }
+  };
 
   return (
-    <div style={{ textAlign: 'left' }}>
-      <h2 style={{ color: '#1E3A8A', marginBottom: '20px', borderBottom: '2px solid #E5E7EB', paddingBottom: '10px' }}>🌟 XIN CHÀO GIA SƯ: {myTutorProfile.name}</h2>
-      <div style={{ display: 'flex', gap: '20px' }}>
+    <div style={styles.container}>
+      
+      {/* 1. KHỐI WELCOME BANNER HÀNH ĐỘNG NHANH */}
+      <div style={styles.bannerGrid}>
+        <div>
+          <span style={styles.accentBadge}>Không gian gia sư</span>
+          <h1 style={styles.mainTitle}>Tổng quan công việc</h1>
+          <p style={styles.subtitle}>Theo dõi hiệu suất dạy học, lịch trình trống và các yêu cầu đặt lịch mới nhất từ học viên.</p>
+        </div>
+        <div style={styles.actionGroup}>
+          <Link to="/profile" style={styles.btnOutline}>📝 Hồ sơ cá nhân</Link>
+          <Link to="/tutor/availability" style={styles.btnPrimary}>📅 Cài đặt lịch rảnh</Link>
+        </div>
+      </div>
+
+      {/* 2. CỤM THẺ THỐNG KÊ (STAT CARDS) */}
+      <div style={styles.statsGrid}>
+        <div style={styles.statCard}>
+          <div style={{ ...styles.iconBox, color: '#f1c40f', backgroundColor: 'rgba(241, 196, 15, 0.1)' }}>⏰</div>
+          <p style={styles.statLabel}>Booking cần xử lý</p>
+          <h2 style={styles.statValue}>{pendingCount}</h2>
+        </div>
+        <div style={styles.statCard}>
+          <div style={{ ...styles.iconBox, color: '#2ecc71', backgroundColor: 'rgba(46, 204, 113, 0.1)' }}>✓</div>
+          <p style={styles.statLabel}>Lịch đã xác nhận</p>
+          <h2 style={styles.statValue}>{confirmedCount}</h2>
+        </div>
+        <div style={styles.statCard}>
+          <div style={{ ...styles.iconBox, color: '#3498db', backgroundColor: 'rgba(52, 152, 219, 0.1)' }}>⭐</div>
+          <p style={styles.statLabel}>Buổi đã hoàn thành</p>
+          <h2 style={styles.statValue}>{completedCount}</h2>
+        </div>
+      </div>
+
+      {/* 3. PHÂN KHU NỘI DUNG CHÍNH (GRID LỚN) */}
+      <div style={styles.mainLayoutGrid}>
         
-        <div style={{ flex: 1, backgroundColor: '#F9FAFB', padding: '20px', borderRadius: '12px', border: '1px solid #E5E7EB' }}>
-          <h3 style={{ color: '#1F2937', marginTop: 0 }}>📚 Học viên của tôi</h3>
-          {(() => {
-            const danhSachDaLoc = danhSachHocVien.filter((hocVien, index, mangGoc) =>
-              index === mangGoc.findIndex((t) => t.studentEmail === hocVien.studentEmail)
-            );
+        {/* BÊN TRÁI: DANH SÁCH BOOKING MỚI NHẤT */}
+        <div style={styles.panelCard}>
+          <div style={styles.panelHeader}>
+            <h3 style={styles.panelTitle}>Booking mới nhận</h3>
+            <Link to="/tutor/bookings" style={styles.linkViewAll}>Xem tất cả →</Link>
+          </div>
+          
+          <div style={styles.listSpace}>
+            {isLoading && <p style={styles.centeredText}>🔄 Đang đồng bộ lịch học...</p>}
+            
+            {!isLoading && bookings.length === 0 && (
+              <p style={styles.centeredText}>📭 Chưa có yêu cầu đặt lịch nào trong thời gian này.</p>
+            )}
 
-            if (danhSachDaLoc.length === 0) {
-              return <p style={{ color: '#6B7280', fontStyle: 'italic', marginTop: '15px' }}>Chưa có học viên nào đặt lịch.</p>;
-            }
-
-            return danhSachDaLoc.map((hocVien) => (
-              <div key={hocVien._id} style={{ padding: '15px', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #E5E7EB', marginTop: '15px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <strong style={{ fontSize: '16px', color: '#1F2937' }}>{hocVien.studentName}</strong>
-                  
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    
-                    {/* LOGIC NÚT CHAT BÊN GIA SƯ */}
-                    {hocVien.status === 'Chấp nhận' ? (
-                      <button 
-                        onClick={() => setNguoiDangChat({ email: hocVien.studentEmail, name: hocVien.studentName })}
-                        style={{ padding: '6px 12px', borderRadius: '20px', fontSize: '13px', backgroundColor: nguoiDangChat?.email === hocVien.studentEmail ? '#1E3A8A' : '#3B82F6', color: 'white', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}
-                      >
-                        💬 Chat
-                      </button>
-                    ) : (
-                      <button 
-                        disabled
-                        title={hocVien.status === 'Hoàn thành' ? "Buổi học đã kết thúc" : "Chưa chấp nhận đơn"}
-                        style={{ padding: '6px 12px', borderRadius: '20px', fontSize: '13px', backgroundColor: '#E5E7EB', color: '#9CA3AF', border: 'none', cursor: 'not-allowed', fontWeight: 'bold' }}
-                      >
-                        🔒 {hocVien.status === 'Hoàn thành' ? 'Đã đóng' : 'Chat'}
-                      </button>
-                    )}
-
-                    <button 
-                      onClick={() => handleXoaDonHoc(hocVien._id)}
-                      style={{ padding: '6px 12px', borderRadius: '20px', fontSize: '13px', backgroundColor: '#EF4444', color: 'white', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}
-                    >
-                      🗑️ Xóa
-                    </button>
-                  </div>
+            {!isLoading && bookings.map((booking) => (
+              <div key={booking.id} style={styles.bookingRow}>
+                <div style={styles.avatarMini}>
+                  {booking.subject.charAt(0).toUpperCase()}
                 </div>
-
-                <div style={{ marginTop: '10px' }}>
-                  <span style={{ 
-                    color: hocVien.status === 'Chấp nhận' ? '#10B981' : hocVien.status === 'Từ chối' ? '#EF4444' : hocVien.status === 'Hoàn thành' ? '#6B7280' : '#F59E0B', 
-                    fontSize: '14px', fontWeight: 'bold' 
-                  }}>
-                    {hocVien.status === 'Hoàn thành' ? '🏁 Đã hoàn thành' : hocVien.status}
-                  </span>
+                <div style={styles.bookingMeta}>
+                  <p style={styles.bookingSubject}>{booking.subject}</p>
+                  <p style={styles.bookingTimeDetails}>
+                    {booking.id} · 📅 {booking.date} · ⏰ {booking.time}
+                  </p>
                 </div>
-                
-                <p style={{ margin: '8px 0 0 0', fontSize: '13px', color: '#4B5563' }}>📞 {hocVien.studentPhone} | 📧 {hocVien.studentEmail}</p>
-                <p style={{ margin: '8px 0 0 0', fontSize: '14px', color: '#1F2937', fontStyle: 'italic', backgroundColor: '#F9FAFB', padding: '8px', borderRadius: '4px' }}>"{hocVien.message}"</p>
-                
-                {/* HIỂN THỊ NÚT DUYỆT ĐƠN HOẶC NÚT HOÀN THÀNH */}
-                {hocVien.status === 'Chờ xác nhận' && (
-                  <div style={{ marginTop: '15px', display: 'flex', gap: '10px' }}>
-                    <button onClick={() => handleCapNhatDon(hocVien._id, 'Chấp nhận')} style={{ flex: 1, padding: '10px', backgroundColor: '#10B981', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>✅ Chấp nhận</button>
-                    <button onClick={() => handleCapNhatDon(hocVien._id, 'Từ chối')} style={{ flex: 1, padding: '10px', backgroundColor: '#EF4444', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>❌ Từ chối</button>
-                  </div>
-                )}
-
-                {/* 🚀 NÚT MỚI: ĐÁNH DẤU HOÀN THÀNH KHI ĐANG Ở TRẠNG THÁI CHẤP NHẬN */}
-                {hocVien.status === 'Chấp nhận' && (
-                  <div style={{ marginTop: '15px' }}>
-                    <button 
-                      onClick={() => {
-                        if(window.confirm('Bạn xác nhận buổi học này đã hoàn thành? Kênh chat sẽ bị khóa lại.')) {
-                          handleCapNhatDon(hocVien._id, 'Hoàn thành');
-                        }
-                      }} 
-                      style={{ width: '100%', padding: '10px', backgroundColor: '#F3F4F6', color: '#374151', border: '1px solid #D1D5DB', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', transition: '0.2s' }}
-                      onMouseOver={(e) => e.target.style.backgroundColor = '#E5E7EB'}
-                      onMouseOut={(e) => e.target.style.backgroundColor = '#F3F4F6'}
-                    >
-                      🎓 Đánh dấu đã học xong
-                    </button>
-                  </div>
-                )}
+                <div>
+                  {renderStatusBadge(booking.status)}
+                </div>
               </div>
-            ));
-          })()}
+            ))}
+          </div>
         </div>
 
-        {chatBox}
+        {/* BÊN PHẢI: ĐIỀU HƯỚNG QUẢN LÝ LỊCH NHANH */}
+        <div style={{ ...styles.panelCard, justifyContent: 'center', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ fontSize: '32px', marginBottom: '12px' }}>📆</div>
+          <h4 style={{ margin: '0 0 4px 0', fontSize: '18px', fontWeight: 'bold' }}>Quản lý khung giờ trống</h4>
+          <p style={{ color: '#94a3b8', fontSize: '14px', margin: '0 0 20px 0', lineHeight: '1.4' }}>
+            Cập nhật thường xuyên các khung giờ rảnh trong tuần để học viên có thể tìm thấy và đặt lịch học với bạn một cách chủ động.
+          </p>
+          <Link to="/tutor/availability" style={styles.btnFullWidth}>
+            Cấu hình thời gian rảnh
+          </Link>
+        </div>
 
       </div>
+
     </div>
   );
-};
+}
 
-export default TutorPanel;
+// --- HỆ THỐNG PHONG CÁCH ĐỒNG BỘ DARK MODE ---
+const styles = {
+  container: {
+    backgroundColor: '#0f172a',
+    minHeight: '100vh',
+    padding: '40px 20px',
+    fontFamily: 'Arial, sans-serif',
+    color: '#fff'
+  },
+  bannerGrid: {
+    maxWidth: '1200px',
+    margin: '0 auto 24px auto',
+    backgroundColor: '#1e293b',
+    border: '1px solid #334155',
+    borderRadius: '12px',
+    padding: '24px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    flexWrap: 'wrap',
+    gap: '20px'
+  },
+  accentBadge: {
+    backgroundColor: 'rgba(52, 152, 219, 0.2)',
+    color: '#3498db',
+    fontSize: '11px',
+    fontWeight: 'bold',
+    padding: '4px 10px',
+    borderRadius: '6px',
+    display: 'inline-block'
+  },
+  mainTitle: {
+    fontSize: '26px',
+    fontWeight: 'bold',
+    margin: '10px 0 6px 0'
+  },
+  subtitle: {
+    color: '#94a3b8',
+    fontSize: '14px',
+    margin: 0,
+    lineHeight: '1.4'
+  },
+  actionGroup: {
+    display: 'flex',
+    gap: '12px'
+  },
+  btnOutline: {
+    border: '1px solid #475569',
+    backgroundColor: 'transparent',
+    color: '#cbd5e1',
+    padding: '10px 16px',
+    borderRadius: '8px',
+    textDecoration: 'none',
+    fontSize: '14px',
+    fontWeight: 'bold',
+  },
+  btnPrimary: {
+    backgroundColor: '#3498db',
+    color: '#fff',
+    padding: '10px 18px',
+    borderRadius: '8px',
+    textDecoration: 'none',
+    fontSize: '14px',
+    fontWeight: 'bold',
+  },
+  statsGrid: {
+    maxWidth: '1200px',
+    margin: '0 auto 24px auto',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+    gap: '16px'
+  },
+  statCard: {
+    backgroundColor: '#1e293b',
+    border: '1px solid #334155',
+    borderRadius: '12px',
+    padding: '20px'
+  },
+  iconBox: {
+    width: '38px',
+    height: '38px',
+    borderRadius: '8px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '18px',
+    fontWeight: 'bold'
+  },
+  statLabel: {
+    color: '#94a3b8',
+    fontSize: '14px',
+    margin: '16px 0 4px 0'
+  },
+  statValue: {
+    fontSize: '28px',
+    fontWeight: 'bold',
+    margin: 0,
+    color: '#f8fafc'
+  },
+  mainLayoutGrid: {
+    maxWidth: '1200px',
+    margin: '0 auto',
+    display: 'grid',
+    gridTemplateColumns: '2fr 1fr',
+    gap: '20px',
+    onClick: 'wrap',
+    '@media (max-width: 900px)': {
+      gridTemplateColumns: '1fr'
+    }
+  },
+  panelCard: {
+    backgroundColor: '#1e293b',
+    border: '1px solid #334155',
+    borderRadius: '12px',
+    padding: '24px'
+  },
+  panelHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '20px',
+    borderBottom: '1px solid #334155',
+    paddingBottom: '12px'
+  },
+  panelTitle: {
+    fontSize: '18px',
+    fontWeight: 'bold',
+    margin: 0
+  },
+  linkViewAll: {
+    color: '#3498db',
+    textDecoration: 'none',
+    fontSize: '13px',
+    fontWeight: 'bold'
+  },
+  listSpace: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px'
+  },
+  centeredText: {
+    textAlign: 'center',
+    color: '#64748b',
+    padding: '30px 0',
+    fontSize: '14px'
+  },
+  bookingRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '14px',
+    padding: '12px',
+    border: '1px solid #334155',
+    borderRadius: '8px',
+    backgroundColor: '#0f172a'
+  },
+  avatarMini: {
+    width: '40px',
+    height: '40px',
+    borderRadius: '50%',
+    backgroundColor: '#475569',
+    color: '#fff',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontWeight: 'bold',
+    fontSize: '16px'
+  },
+  bookingMeta: {
+    flex: 1,
+    minWidth: 0
+  },
+  bookingSubject: {
+    margin: '0 0 2px 0',
+    fontWeight: 'bold',
+    fontSize: '15px',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
+  },
+  bookingTimeDetails: {
+    margin: 0,
+    fontSize: '12px',
+    color: '#64748b'
+  },
+  badge: {
+    fontSize: '11px',
+    fontWeight: 'bold',
+    padding: '3px 8px',
+    borderRadius: '4px',
+    whiteSpace: 'nowrap'
+  },
+  btnFullWidth: {
+    backgroundColor: 'transparent',
+    border: '1px solid #3498db',
+    color: '#3498db',
+    padding: '12px',
+    borderRadius: '8px',
+    textAlign: 'center',
+    textDecoration: 'none',
+    fontWeight: 'bold',
+    fontSize: '14px',
+    display: 'block',
+    transition: 'background 0.2s'
+  }
+};
