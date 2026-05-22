@@ -13,7 +13,7 @@ export const api = axios.create({
 
 // ── Request Interceptor: Tự động đính kèm Access Token ───────────────────
 api.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().accessToken;
+  const token = useAuthStore.getState().accessToken || localStorage.getItem('tutorlinkToken');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

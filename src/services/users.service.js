@@ -29,4 +29,18 @@ export const usersService = {
     });
     return unwrap(data);
   },
+
+  async getWallet() {
+    const { data } = await api.get('/users/me/wallet');
+    return unwrap(data);
+  },
+
+  async depositWallet(amount) {
+    const { data } = await api.post('/users/me/wallet/deposit', { amount });
+    return unwrap(data);
+  },
+
+  async getHistory() {
+    return [];
+  },
 };

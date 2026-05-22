@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, Outlet, Link, Navigate } from 'react-router-dom'; 
-import axios from 'axios';
 import Navbar from './components/common/Navbar';
 import AuthLayout from './layouts/AuthLayout'; 
 
 // 🛠️ ĐÃ SỬA: Khớp 100% với file thực tế của sếp (thư mục stores/ và file auth-store.js)
 import { useAuthStore } from './stores/auth-store.js';
+import { adminService } from './services/admin.service';
+import { tutorService } from './services/tutor.service';
 
 // IMPORT CÁC TRANG CỦA HỆ THỐNG
 import TrangChu from './pages/public/HomePage';
@@ -43,6 +44,7 @@ import ThuNhapGiaSu from './pages/tutor/EarningsPage';
 import AdminTongQuan from './pages/admin/AdminDashboardPage'; 
 import AdminDuyetGiaSu from './pages/admin/AdminTutorsPage'; 
 import AdminNguoiDung from './pages/admin/AdminUsersPage'; 
+import AdminTaiChinh from './pages/admin/AdminFinancePage'; 
 
 // =========================================================================
 // 🔒 COMPONENT BẢO VỆ ROUTE (PROTECTED ROUTE CORES)
@@ -58,6 +60,39 @@ function ProtectedRoute({ children }) {
   if (!token) {
     return <Navigate to="/login" replace />;
   }
+  return children;
+}
+
+function getStoredUser() {
+  try {
+    return JSON.parse(localStorage.getItem('tutorlinkUser') || 'null');
+  } catch {
+    return null;
+  }
+}
+
+function getHomeForRole(role) {
+  if (role === 'admin') return '/admin';
+  if (role === 'tutor') return '/tutor/panel';
+  return '/dashboard';
+}
+
+function RequireRole({ roles, children }) {
+  const storeUser = useAuthStore((state) => state.user);
+  const token = useAuthStore((state) => state.accessToken) || localStorage.getItem('tutorlinkToken');
+  const hasHydrated = useAuthStore((state) => state.hasHydrated);
+
+  if (!hasHydrated && localStorage.getItem('tutorlink-auth')) {
+    return <div style={{ color: '#38bdf8', padding: '20px', backgroundColor: '#0f172a', minHeight: '100vh' }}>🔄 Đang đồng bộ phiên đăng nhập TutorLink...</div>;
+  }
+
+  if (!token) return <Navigate to="/login" replace />;
+
+  const role = storeUser?.role || getStoredUser()?.role || 'student';
+  if (!roles.includes(role)) {
+    return <Navigate to={getHomeForRole(role)} replace />;
+  }
+
   return children;
 }
 
@@ -104,52 +139,45 @@ function App() {
   const [allTutors, setAllTutors] = useState([]);
   
   const currentToken = useAuthStore((state) => state.accessToken);
+  const currentUser = useAuthStore((state) => state.user);
 
   useEffect(() => {
     const fetchAllTutors = async () => {
       try {
+        const storedUser = JSON.parse(localStorage.getItem('tutorlinkUser') || 'null');
+        const role = currentUser?.role || storedUser?.role;
         const token = currentToken || localStorage.getItem('tutorlinkToken');
-        if (!token) return;
-        const res = await axios.get('http://localhost:8000/api/admin/tutors', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setAllTutors(Array.isArray(res?.data) ? res.data : (res?.data?.tutors || []));
+
+        const tutors = role === 'admin' && token
+          ? await adminService.tutorQueue({ status: 'all', limit: 50 })
+          : await tutorService.list({ limit: 50 });
+
+        setAllTutors(Array.isArray(tutors) ? tutors : []);
       } catch (error) {
-        setAllTutors([
-          { _id: 't1', name: 'Nguyễn Văn A', subject: 'Toán học lớp 12', subjects: ['Toán Học'], levels: ['Cấp 3'], phone: '0912345678', email: 'vana@gmail.com', status: 'pending', message: 'Mong muốn dạy học sinh thi đại học' },
-          { _id: 't2', name: 'Trần Thị B', subject: 'Tiếng Anh giao tiếp', subjects: ['Tiếng Anh'], levels: ['Giao tiếp'], phone: '0987654321', email: 'thib@gmail.com', status: 'Đã duyệt', message: 'Tập trung dạy giao tiếp thực hành' }
-        ]);
+        setAllTutors([]);
       }
     };
     fetchAllTutors();
-  }, [currentToken]);
+  }, [currentToken, currentUser?.role]);
 
   const handleDuyet = async (idGiaSu) => {
     try {
-      const token = currentToken || localStorage.getItem('tutorlinkToken');
-      await axios.post(`http://localhost:8000/api/admin/tutors/${idGiaSu}/approve`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await adminService.approveTutor(idGiaSu);
       setAllTutors(allTutors.map(gs => gs._id === idGiaSu ? { ...gs, status: 'approved' } : gs));
       alert("🎉 Đã duyệt nhanh gia sư lên sóng thành công!");
     } catch (error) {
-      setAllTutors(allTutors.map(gs => gs._id === idGiaSu ? { ...gs, status: 'approved' } : gs));
-      alert("[Mock Test] Giả lập duyệt nhanh gia sư lên sóng thành công!");
+      alert("Không thể duyệt nhanh gia sư. Vui lòng kiểm tra backend hoặc quyền admin.");
     }
   };
 
   const handleXoa = async (idGiaSu) => {
     if (!window.confirm("Sếp có chắc chắn muốn từ chối hoặc hạ sóng xóa gia sư này không?")) return;
     try {
-      const token = currentToken || localStorage.getItem('tutorlinkToken');
-      await axios.delete(`http://localhost:8000/api/admin/tutors/${idGiaSu}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setAllTutors(allTutors.filter(gs => gs._id !== idGiaSu));
-      alert("❌ Đã xóa hồ sơ gia sư khỏi hệ thống!");
+      await adminService.suspendTutor(idGiaSu, 'Admin hạ sóng hồ sơ');
+      setAllTutors(allTutors.map(gs => gs._id === idGiaSu ? { ...gs, status: 'suspended' } : gs));
+      alert("❌ Đã hạ sóng hồ sơ gia sư khỏi marketplace!");
     } catch (error) {
-      setAllTutors(allTutors.filter(gs => gs._id !== idGiaSu));
-      alert("[Mock Test] Giả lập xóa hồ sơ gia sư thành công!");
+      alert("Không thể hạ sóng hồ sơ gia sư. Vui lòng kiểm tra backend hoặc quyền admin.");
     }
   };
 
@@ -187,32 +215,34 @@ function App() {
         <Route path="/verify-email" element={<AuthLayout><XacMinhEmail /></AuthLayout>} /> 
 
         <Route element={<ProtectedRoute><AppDashboardLayout /></ProtectedRoute>}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/tutor/register" element={<TaoHoSoCV />} /> 
-          <Route path="/student/panel" element={<StudentPanel lichSuHoc={allTutors} allTutors={allTutors} handleXoaDonLichSu={handleXoa} />} /> 
-          <Route path="/bookings" element={<LichHocHocVien />} /> 
-          <Route path="/favorites" element={<GiaSuYeuThich />} /> 
+          <Route path="/dashboard" element={<RequireRole roles={['student', 'admin']}><Dashboard /></RequireRole>} />
+          <Route path="/tutor/register" element={<RequireRole roles={['student', 'tutor', 'admin']}><TaoHoSoCV /></RequireRole>} /> 
+          <Route path="/student/panel" element={<RequireRole roles={['student', 'admin']}><StudentPanel lichSuHoc={allTutors} allTutors={allTutors} handleXoaDonLichSu={handleXoa} /></RequireRole>} /> 
+          <Route path="/bookings" element={<RequireRole roles={['student', 'admin']}><LichHocHocVien /></RequireRole>} /> 
+          <Route path="/favorites" element={<RequireRole roles={['student', 'admin']}><GiaSuYeuThich /></RequireRole>} /> 
           <Route path="/chat" element={<TrangChat />} /> 
           <Route path="/profile" element={<Profile />} /> 
           
-          <Route path="/tutor/panel" element={<TutorPanel />} /> 
-          <Route path="/tutor/profile" element={<HoSoGiaSu />} /> 
-          <Route path="/tutor/availability" element={<LichRanhGiaSu />} />
-          <Route path="/tutor/bookings" element={<LichDayGiaSu />} />
-          <Route path="/tutor/earnings" element={<ThuNhapGiaSu />} /> 
+          <Route path="/tutor/panel" element={<RequireRole roles={['tutor', 'admin']}><TutorPanel /></RequireRole>} /> 
+          <Route path="/tutor/profile" element={<RequireRole roles={['tutor', 'admin']}><HoSoGiaSu /></RequireRole>} /> 
+          <Route path="/tutor/availability" element={<RequireRole roles={['tutor', 'admin']}><LichRanhGiaSu /></RequireRole>} />
+          <Route path="/tutor/bookings" element={<RequireRole roles={['tutor', 'admin']}><LichDayGiaSu /></RequireRole>} />
+          <Route path="/tutor/earnings" element={<RequireRole roles={['tutor', 'admin']}><ThuNhapGiaSu /></RequireRole>} /> 
         </Route>
 
         <Route path="/tutors" element={<DanhSachGiaSu />} /> 
         <Route path="/giasu/:id" element={<ChiTietGiaSu />} /> 
-        <Route path="/giasu/:id/book" element={<DatLichHoc />} /> 
+        <Route path="/giasu/:id/book" element={<RequireRole roles={['student', 'admin']}><DatLichHoc /></RequireRole>} /> 
         <Route path="/payment/result" element={<KetQuaThanhToan />} /> 
-        <Route path="/cong-thanh-toan" element={<CongThanhToan />} /> 
+        <Route path="/payment" element={<RequireRole roles={['student', 'admin']}><CongThanhToan /></RequireRole>} /> 
+        <Route path="/cong-thanh-toan" element={<RequireRole roles={['student', 'admin']}><CongThanhToan /></RequireRole>} /> 
         <Route path="/room/:roomId" element={<VideoCall />} /> 
-        <Route path="/support" element={<TroGiup />} /> 
+        <Route path="/support" element={<ProtectedRoute><TroGiup /></ProtectedRoute>} /> 
 
-        <Route path="/admin" element={<ProtectedRoute><AdminTongQuan allTutors={allTutors} handleDuyet={handleDuyet} handleXoa={handleXoa} /></ProtectedRoute>} /> 
-        <Route path="/admin/tutors/:id" element={<ProtectedRoute><AdminDuyetGiaSu /></ProtectedRoute>} /> 
-        <Route path="/admin/users" element={<ProtectedRoute><AdminNguoiDung /></ProtectedRoute>} /> 
+        <Route path="/admin" element={<RequireRole roles={['admin']}><AdminTongQuan allTutors={allTutors} handleDuyet={handleDuyet} handleXoa={handleXoa} /></RequireRole>} /> 
+        <Route path="/admin/tutors/:id" element={<RequireRole roles={['admin']}><AdminDuyetGiaSu /></RequireRole>} /> 
+        <Route path="/admin/users" element={<RequireRole roles={['admin']}><AdminNguoiDung /></RequireRole>} /> 
+        <Route path="/admin/finance" element={<RequireRole roles={['admin']}><AdminTaiChinh /></RequireRole>} /> 
       </Routes>
     </div>
   );

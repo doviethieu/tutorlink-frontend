@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { reportService } from '../../services/report.service';
 
 function TroGiup() {
   // Lấy data user đã đăng nhập sẵn từ hệ thống
   const userData = JSON.parse(localStorage.getItem('tutorlinkUser')) || JSON.parse(localStorage.getItem('user'));
-  const userId = userData?._id || userData?.id || userData?.user?._id || userData?.user?.id || null;
-  
   // Xác định vai trò chuẩn của tài khoản
   let userRole = "Khách";
   if (userData) {
@@ -22,6 +20,30 @@ function TroGiup() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [tickets, setTickets] = useState([]);
+  const [ticketsLoading, setTicketsLoading] = useState(true);
+
+  const loadTickets = async () => {
+    try {
+      const token = localStorage.getItem('tutorlinkToken') || localStorage.getItem('token');
+      if (!token) {
+        setTickets([]);
+        return;
+      }
+
+      const data = await reportService.listMine();
+      setTickets(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Không tải được lịch sử hỗ trợ:', error);
+      setTickets([]);
+    } finally {
+      setTicketsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadTickets();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -32,20 +54,26 @@ function TroGiup() {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:8000/api/support', {
-        userId,
-        ...formData
-      });
-      
-      if (response.status === 201 || response.status === 200) {
-        alert(`🎉 ${response.data.message || "Đã gửi phiếu hỗ trợ thành công! Ban quản trị sẽ phản hồi sếp qua email sớm nhất."}`);
-        setFormData(prev => ({ ...prev, message: '' }));
+      const token = localStorage.getItem('tutorlinkToken') || localStorage.getItem('token');
+      if (!token) {
+        alert('Bạn cần đăng nhập để gửi yêu cầu hỗ trợ.');
+        return;
       }
-    } catch (error) {
-      console.log("Kích hoạt luồng giả lập gửi Ticket liên hệ thành công để sếp bảo vệ đồ án mượt mà:");
-      // Hiện thông báo thành công trực quan khi chạy offline
-      alert(`🎉 [Mock Test] Đã gửi yêu cầu hỗ trợ thành công!\nHệ thống hỗ trợ của TutorLink đã ghi nhận chủ đề: [${formData.topic}] từ tài khoản của sếp.`);
+
+      const response = await reportService.create({
+        ...formData,
+        title: formData.topic,
+        body: formData.message,
+        type: formData.topic.includes('Khiếu nại') ? 'Complaint' : 'Support',
+        target: formData.topic,
+      });
+
+      alert(response?.meta?.message || "Đã gửi phiếu hỗ trợ thành công! Ban quản trị sẽ phản hồi qua email sớm nhất.");
       setFormData(prev => ({ ...prev, message: '' }));
+      loadTickets();
+    } catch (error) {
+      const message = error?.response?.data?.error?.message || 'Không thể gửi yêu cầu hỗ trợ. Vui lòng thử lại.';
+      alert(message);
     } finally {
       setLoading(false);
     }
@@ -153,9 +181,56 @@ function TroGiup() {
 
         </form>
 
+        <div style={styles.ticketHistory}>
+          <div style={styles.ticketHeader}>
+            <h3 style={styles.ticketTitle}>Lịch sử yêu cầu</h3>
+            <span style={styles.ticketCount}>{tickets.length} ticket</span>
+          </div>
+
+          {ticketsLoading ? (
+            <p style={styles.emptyText}>Đang tải lịch sử hỗ trợ...</p>
+          ) : tickets.length === 0 ? (
+            <p style={styles.emptyText}>Bạn chưa có yêu cầu hỗ trợ nào.</p>
+          ) : (
+            <div style={styles.ticketList}>
+              {tickets.slice(0, 5).map((ticket) => (
+                <div key={ticket._id || ticket.id} style={styles.ticketItem}>
+                  <div style={styles.ticketItemTop}>
+                    <strong style={styles.ticketSubject}>{ticket.title || ticket.topic}</strong>
+                    <span style={statusStyle(ticket.status)}>{translateStatus(ticket.status)}</span>
+                  </div>
+                  <p style={styles.ticketMessage}>{ticket.description || ticket.body || ticket.message}</p>
+                  {ticket.resolution && (
+                    <p style={styles.ticketResolution}>Phản hồi admin: {ticket.resolution}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
       </div>
     </div>
   );
+}
+
+function translateStatus(status) {
+  if (status === 'resolved') return 'Đã xử lý';
+  if (status === 'dismissed') return 'Đã đóng';
+  return 'Đang mở';
+}
+
+function statusStyle(status) {
+  const base = {
+    borderRadius: '999px',
+    padding: '4px 9px',
+    fontSize: '11px',
+    fontWeight: 700,
+    whiteSpace: 'nowrap'
+  };
+  if (status === 'resolved') return { ...base, color: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.12)' };
+  if (status === 'dismissed') return { ...base, color: '#94a3b8', backgroundColor: 'rgba(148, 163, 184, 0.12)' };
+  return { ...base, color: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.12)' };
 }
 
 // --- 🛠️ BỘ HỆ THỐNG DESIGN SYSTEM SLATE PREMIUM DARK MODE ĐỒNG BỘ ---
@@ -175,7 +250,7 @@ const styles = {
     borderRadius: '16px',
     boxShadow: '0 20px 40px rgba(0, 0, 0, 0.25)',
     width: '100%',
-    maxWidth: '650px',
+    maxWidth: '780px',
     padding: '40px',
     border: '1px solid #334155',
     boxSizing: 'border-box'
@@ -274,7 +349,72 @@ const styles = {
     boxShadow: '0 4px 14px rgba(56, 189, 248, 0.2)',
     transition: 'all 0.15s ease',
     marginTop: '10px'
-  }
+  },
+  ticketHistory: {
+    marginTop: '30px',
+    borderTop: '1px solid #334155',
+    paddingTop: '24px'
+  },
+  ticketHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: '12px',
+    marginBottom: '14px'
+  },
+  ticketTitle: {
+    margin: 0,
+    color: '#fff',
+    fontSize: '17px',
+    fontWeight: 800
+  },
+  ticketCount: {
+    color: '#38bdf8',
+    fontSize: '12px',
+    fontWeight: 700
+  },
+  ticketList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px'
+  },
+  ticketItem: {
+    backgroundColor: '#0f172a',
+    border: '1px solid #334155',
+    borderRadius: '10px',
+    padding: '14px'
+  },
+  ticketItemTop: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    gap: '12px'
+  },
+  ticketSubject: {
+    color: '#fff',
+    fontSize: '14px'
+  },
+  ticketMessage: {
+    color: '#cbd5e1',
+    fontSize: '13px',
+    lineHeight: 1.5,
+    margin: '10px 0 0 0'
+  },
+  ticketResolution: {
+    color: '#10b981',
+    backgroundColor: 'rgba(16, 185, 129, 0.08)',
+    border: '1px solid rgba(16, 185, 129, 0.18)',
+    borderRadius: '8px',
+    fontSize: '12.5px',
+    lineHeight: 1.5,
+    margin: '10px 0 0 0',
+    padding: '10px'
+  },
+  emptyText: {
+    color: '#94a3b8',
+    fontSize: '13px',
+    margin: 0
+  },
 };
 
 export default TroGiup;

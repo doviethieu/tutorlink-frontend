@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { tutorService } from '../../services/tutor.service';
 
 export default function DanhSachGiaSu() {
   // --- KHU VỰC QUẢN LÝ TRẠNG THÁI (STATES) ---
@@ -18,59 +18,11 @@ export default function DanhSachGiaSu() {
     const fetchTutors = async () => {
       setLoading(true);
       try {
-        const token = localStorage.getItem('tutorlinkToken');
-        // Gọi cổng API Backend thực tế của sếp
-        const res = await axios.get('http://localhost:8000/api/tutors', {
-          headers: token ? { Authorization: `Bearer ${token}` } : {}
-        });
-        
-        // Kiểm tra cấu trúc dữ liệu trả về để map chính xác vào mảng
-        if (res.data && Array.isArray(res.data)) {
-          setTutors(res.data);
-        } else if (res.data && Array.isArray(res.data.data)) {
-          setTutors(res.data.data);
-        } else {
-          throw new Error("Sai định dạng cấu trúc JSON trả về");
-        }
+        const data = await tutorService.list({ limit: 24 });
+        setTutors(Array.isArray(data) ? data : []);
       } catch (err) {
-        console.error("Lỗi API Backend, kích hoạt Mock Data để tránh lỗi trang trắng tinh:");
-        
-        // Dữ liệu mẫu hiển thị siêu đẹp cứu cánh khi Backend chưa bật hoặc lỗi mạng
-        setTutors([
-          { 
-            _id: '1', 
-            name: 'Nguyễn Văn Học', 
-            subject: 'Toán Học (Đại số & Giải tích)', 
-            level: 'Lớp 12 / Luyện thi ĐH', 
-            price: 250000, 
-            rate: 4.9, 
-            avatarUrl: '', 
-            bio: 'Kinh nghiệm 5 năm luyện thi đại học điểm cao, phương pháp dạy dễ hiểu, mẹo giải nhanh trắc nghiệm.', 
-            status: 'approved' 
-          },
-          { 
-            _id: '2', 
-            name: 'Trần Thị Mỹ Linh', 
-            subject: 'Tiếng Anh (IELTS / Giao tiếp)', 
-            level: 'Mọi cấp độ học viên', 
-            price: 300000, 
-            rate: 5.0, 
-            avatarUrl: '', 
-            bio: 'Sở hữu chứng chỉ 8.5 IELTS, phương pháp dạy tương tác phản xạ thực tế, cam kết tăng band điểm.', 
-            status: 'approved' 
-          },
-          { 
-            _id: '3', 
-            name: 'Phạm Hoàng Nam', 
-            subject: 'Vật Lý (Cơ học & Điện học)', 
-            level: 'Lớp 10 - Lớp 12', 
-            price: 220000, 
-            rate: 4.8, 
-            avatarUrl: '', 
-            bio: 'Cựu học sinh trường chuyên Lê Hồng Phong, giúp học sinh mất gốc lấy lại căn bản thần tốc.', 
-            status: 'approved' 
-          }
-        ]);
+        console.error("Lỗi tải danh sách gia sư:", err);
+        setTutors([]);
       } finally {
         setLoading(false);
       }
@@ -80,12 +32,14 @@ export default function DanhSachGiaSu() {
 
   // --- BỘ LỌC TÌM KIẾM THÔNG MINH (FILTER LOGIC) ---
   const filteredTutors = tutors.filter(tutor => {
+    const subjectsText = (tutor.subjects || []).join(' ');
     const matchTuKhoa = (
       tutor.name?.toLowerCase().includes(tuKhoa.toLowerCase()) || 
-      tutor.subject?.toLowerCase().includes(tuKhoa.toLowerCase())
+      subjectsText.toLowerCase().includes(tuKhoa.toLowerCase()) ||
+      tutor.bio?.toLowerCase().includes(tuKhoa.toLowerCase())
     );
     
-    const matchMonHoc = monHocFilter === 'all' || tutor.subject?.toLowerCase().includes(monHocFilter.toLowerCase());
+    const matchMonHoc = monHocFilter === 'all' || subjectsText.toLowerCase().includes(monHocFilter.toLowerCase());
     
     return matchTuKhoa && matchMonHoc;
   });
@@ -134,15 +88,15 @@ export default function DanhSachGiaSu() {
         <div style={styles.grid}>
           {filteredTutors.map(tutor => (
             <div 
-              key={tutor._id} 
+              key={tutor.id || tutor._id} 
               style={{
                 ...styles.tutorCard,
                 // Kích hoạt hiệu ứng nhấc thẻ card mượt mà kèm đổi màu border cam neon đồng bộ
-                transform: hoveredCard === tutor._id ? 'translateY(-5px)' : 'translateY(0)',
-                boxShadow: hoveredCard === tutor._id ? '0 20px 25px -5px rgba(0, 0, 0, 0.5)' : '0 4px 6px -1px rgba(0,0,0,0.1)',
-                borderColor: hoveredCard === tutor._id ? '#f97316' : '#334155'
+                transform: hoveredCard === (tutor.id || tutor._id) ? 'translateY(-5px)' : 'translateY(0)',
+                boxShadow: hoveredCard === (tutor.id || tutor._id) ? '0 20px 25px -5px rgba(0, 0, 0, 0.5)' : '0 4px 6px -1px rgba(0,0,0,0.1)',
+                borderColor: hoveredCard === (tutor.id || tutor._id) ? '#f97316' : '#334155'
               }}
-              onMouseEnter={() => setHoveredCard(tutor._id)}
+              onMouseEnter={() => setHoveredCard(tutor.id || tutor._id)}
               onMouseLeave={() => setHoveredCard(null)}
             >
               {/* KHU VỰC THÔNG TIN TRÊN CARD (AVATAR + TÊN) */}
@@ -153,10 +107,10 @@ export default function DanhSachGiaSu() {
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                     <h3 style={styles.tutorName}>{tutor.name}</h3>
-                    <span style={styles.rateBadge}>⭐ {tutor.rate || '5.0'}</span>
+                    <span style={styles.rateBadge}>⭐ {tutor.rating || '5.0'}</span>
                   </div>
-                  <p style={styles.tutorSubject}>{tutor.subject}</p>
-                  <p style={styles.tutorLevel}>🎓 {tutor.level}</p>
+                  <p style={styles.tutorSubject}>{(tutor.subjects || []).join(', ') || 'Chưa cập nhật môn học'}</p>
+                  <p style={styles.tutorLevel}>🎓 {(tutor.levels || []).join(', ') || 'Mọi cấp độ'}</p>
                 </div>
               </div>
 
@@ -173,13 +127,13 @@ export default function DanhSachGiaSu() {
                   </div>
                 </div>
                 <Link 
-                  to={`/giasu/${tutor._id}`} 
+                  to={`/giasu/${tutor.slug || tutor.id || tutor._id}`} 
                   style={{
                     ...styles.btnDetail,
                     // Đã thay bằng màu xanh Sky sáng chuẩn thiết kế mới
-                    backgroundColor: hoveredBtn === tutor._id ? '#0284c7' : '#38bdf8'
+                    backgroundColor: hoveredBtn === (tutor.id || tutor._id) ? '#0284c7' : '#38bdf8'
                   }}
-                  onMouseEnter={() => setHoveredBtn(tutor._id)}
+                  onMouseEnter={() => setHoveredBtn(tutor.id || tutor._id)}
                   onMouseLeave={() => setHoveredBtn(null)}
                 >
                   Xem hồ sơ →

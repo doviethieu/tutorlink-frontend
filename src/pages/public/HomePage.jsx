@@ -1,195 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; 
+import { tutorService } from '../../services/tutor.service';
 
 function TrangChu({ tuKhoa }) { 
   const [danhSachGiaSu, setDanhSachGiaSu] = useState([]);
-  
-  // 🔥 STATE QUẢN LÝ ĐƠN ĐẶT LỊCH CỦA GIA SƯ ĐANG CHỌN (Để ẩn ca trùng)
-  const [tutorBookings, setTutorBookings] = useState([]);
-  
   const navigate = useNavigate(); 
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedTutor, setSelectedTutor] = useState(null); 
-  const [selectedSlots, setSelectedSlots] = useState([]);  
-
-  const userData = JSON.parse(localStorage.getItem('tutorlinkUser')) || JSON.parse(localStorage.getItem('user')); 
-  const studentId = userData?._id || userData?.id || userData?.user?._id || userData?.user?.id || null;
-  const emailHienTai = userData?.email || userData?.user?.email;
-
-  // Thuật toán tạo lịch 7 ngày cuốn chiếu tự động cập nhật theo thời gian thực năm 2026
-  const generateSmartSchedule = () => {
-    const schedule = [];
-    const daysOfWeek = ['Chủ Nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
-    const cacCaHoc = ['08:00 - 10:00', '10:00 - 12:00', '14:00 - 16:00', '16:00 - 18:00', '18:00 - 20:00', '20:00 - 22:00'];
-
-    for (let i = 0; i < 7; i++) {
-      const date = new Date();
-      date.setDate(date.getDate() + i); 
-      
-      let dayName = daysOfWeek[date.getDay()];
-      if (i === 0) dayName = "Hôm nay";
-      if (i === 1) dayName = "Ngày mai";
-
-      const dateString = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}`;
-      
-      schedule.push({
-        day: `${dayName} (${dateString})`,
-        times: cacCaHoc
-      });
-    }
-    return schedule;
-  };
-
-  const lichThongMinh = generateSmartSchedule();
-
-  // 🛡️ BẢN VÁ: Gọi API danh sách và tự động kích hoạt Mock Data nếu server chưa bật
   useEffect(() => {
-    axios.get('http://localhost:8000/api/tutors')
-      .then(response => {
-        const dataXinh = response?.data?.data || response?.data || [];
-        const nguoiDaDuyet = dataXinh.filter(gs => gs.status === 'Đã duyệt' || gs.status === 'pending' || !gs.status);
-        
-        if (nguoiDaDuyet.length > 0) {
-          setDanhSachGiaSu(nguoiDaDuyet);
-        } else {
-          throw new Error("Mảng rỗng");
-        }
-      })
-      .catch(error => {
-        console.log("🚨 [MOCK DATA ACTIVATED] -> Server Local tắt hoặc trống, kích hoạt dữ liệu mẫu:");
-        setDanhSachGiaSu([
-          {
-            _id: '65f1a2b3c4d5e6f7a8b9c0d1',
-            name: 'Nguyễn Hoàng Nam',
-            subject: 'Vật Lý Lớp 12',
-            price: 250000,
-            rating: 4.9,
-            image: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400',
-            status: 'Đã duyệt'
-          },
-          {
-            _id: '65f1a2b3c4d5e6f7a8b9c0d2',
-            name: 'Phạm Thị Thùy Linh',
-            subject: 'Tiếng Anh Luyện Thi IELTS',
-            price: 350000,
-            rating: 5.0,
-            image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400',
-            status: 'Đã duyệt'
-          },
-          {
-            _id: '65f1a2b3c4d5e6f7a8b9c0d3',
-            name: 'Lê Hoàng Vũ',
-            subject: 'Toán Học Đại Cương & 12',
-            price: 300000,
-            rating: 4.8,
-            image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
-            status: 'Đã duyệt'
-          }
-        ]);
-      });
+    tutorService.list({ limit: 12 })
+      .then((rows) => setDanhSachGiaSu(Array.isArray(rows) ? rows : []))
+      .catch(() => setDanhSachGiaSu([]));
   }, []);
 
   const danhSachLoc = danhSachGiaSu.filter((gs) => {
     if (!tuKhoa) return true;
     const ten = gs?.name?.toLowerCase() || "";
-    const monHoc = gs?.subject?.toLowerCase() || "";
+    const monHoc = (gs?.subject || gs?.subjects?.join(' ') || '').toLowerCase();
     const tuKhoaNho = tuKhoa.toLowerCase();
     return ten.includes(tuKhoaNho) || monHoc.includes(tuKhoaNho);
   });
 
-  // --- MỞ BẢNG ĐẶT LỊCH THÔNG MINH ---
   const handleMoBangDatLich = (giaSu) => {
-    if (!studentId) {
-      alert("🛑 Hệ thống yêu cầu sếp đăng nhập tài khoản trước khi thực hiện đặt lịch!");
+    if (!localStorage.getItem('tutorlinkToken')) {
+      alert("Bạn cần đăng nhập trước khi đặt lịch.");
       navigate('/login'); 
       return;
     }
-    setSelectedTutor(giaSu);
-    setSelectedSlots([]); 
-    setIsModalOpen(true);
-
-    axios.get(`http://localhost:8000/api/bookings/tutor/${giaSu._id}`)
-      .then(response => {
-        setTutorBookings(Array.isArray(response.data) ? response.data : []);
-      })
-      .catch(error => {
-        console.log("Kích hoạt chế độ phòng chat trống để sếp tự do kiểm thử khung giờ.");
-        setTutorBookings([]);
-      });
-  };
-
-  const handleToggleSlot = (day, time) => {
-    const slotString = `${day}: ${time}`;
-    if (selectedSlots.includes(slotString)) {
-      setSelectedSlots(selectedSlots.filter(slot => slot !== slotString));
-    } else {
-      setSelectedSlots([...selectedSlots, slotString]);
-    }
-  };
-
-  // 🚀 LUỒNG XỬ LÝ KHÔNG THANH TOÁN (THEO TIÊU CHUẨN THỬ NGHIỆM LOCAL)
-  const handleXacNhanDatLich = async () => {
-    if (selectedSlots.length === 0) {
-      alert("📅 Vui lòng tick chọn ít nhất một khung giờ trống trên bảng biểu sếp nhé!");
-      return;
-    }
-    
-    const chuoiLichHoc = selectedSlots.join(', ');
-
-    try {
-      const response = await axios.post('http://localhost:8000/api/bookings', {
-        tutorId: selectedTutor._id, 
-        studentName: userData?.name || "Học viên thử nghiệm", 
-        studentEmail: emailHienTai, 
-        studentPhone: "Trao đổi qua Chat nội bộ", 
-        message: `Chào gia sư ${selectedTutor.name}, mình đăng ký học môn ${selectedTutor.subject}: ${chuoiLichHoc}.`,
-        selectedSchedule: selectedSlots 
-      });
-      
-      if (response.status === 201 || response.status === 200) {
-        alert(`🎉 Đặt lịch thành công!\nHệ thống tự động chuyển trạng thái đơn sang 'Chờ xác nhận'. Cổng thanh toán trực tuyến (API Gateway) tạm ẩn trong phiên thử nghiệm này.`);
-        setTutorBookings(prev => [response.data, ...prev]);
-        setIsModalOpen(false); 
-        setSelectedSlots([]);  
-      }
-    } catch (error) {
-      alert(`📅 Cấu hình thanh toán hiện đang tắt\nHệ thống tự động tạo yêu cầu đặt lịch thực tế và chờ gia sư phê duyệt trên Dashboard. Luồng cổng thanh toán trực tuyến không nằm trong phạm vi xử lý của phiên làm việc này.`);
-      
-      const donGiaLap = {
-        _id: Math.random().toString(),
-        studentEmail: emailHienTai,
-        status: 'Chờ xác nhận',
-        selectedSchedule: [...selectedSlots]
-      };
-      
-      setTutorBookings(prev => [donGiaLap, ...prev]);
-      setIsModalOpen(false); 
-      setSelectedSlots([]);
-    }
-  };
-
-  const handleHuyDonLich = async (bookingId) => {
-    if(!window.confirm("Sếp có chắc chắn muốn giải phóng khung giờ học này không?")) return;
-    
-    try {
-      await axios.delete(`http://localhost:8000/api/bookings/${bookingId}`);
-      alert("🗑️ Giải phóng ca dạy và trả lại giờ trống lên hệ thống thành công!");
-      setTutorBookings(prev => prev.filter(don => don._id !== bookingId));
-    } catch (error) {
-      alert("🗑️ [Mock Test] Đã giải phóng khung giờ học thành công!");
-      setTutorBookings(prev => prev.filter(don => don._id !== bookingId));
-    }
+    navigate(`/giasu/${giaSu._id || giaSu.id}/book`);
   };
 
   const handleXemHoSo = (idGiaSu) => {
     navigate(`/giasu/${idGiaSu}`);
   };
-
-  const donLichCuaToi = Array.isArray(tutorBookings) ? tutorBookings.filter(don => 
-    don?.studentEmail === emailHienTai && (don?.status === 'Chờ xác nhận' || don?.status === 'Chấp nhận')
-  ) : [];
 
   return (
     <div style={styles.container}>
@@ -233,7 +75,7 @@ function TrangChu({ tuKhoa }) {
                     {gs.name}
                   </h3>
                   
-                  <p style={styles.tutorSubject}>📚 Môn dạy: <span style={{ color: '#38bdf8', fontWeight: '700' }}>{gs.subject}</span></p>
+                  <p style={styles.tutorSubject}>📚 Môn dạy: <span style={{ color: '#38bdf8', fontWeight: '700' }}>{gs.subject || gs.subjects?.join(', ') || 'Đa môn'}</span></p>
                   <p style={styles.tutorPrice}>
                     💰 {Number(gs?.price) ? Number(gs.price).toLocaleString() : "250.000"} ₫<span style={styles.priceSub}>/giờ</span>
                   </p>
@@ -257,98 +99,6 @@ function TrangChu({ tuKhoa }) {
         </div>
       </div>
 
-      {/* MODAL POPUP ĐẶT LỊCH HỌC ĐỘNG THÔNG MINH */}
-      {isModalOpen && selectedTutor && (
-        <div style={styles.modalOverlay}>
-          <div style={styles.modalCard}>
-            
-            <div style={styles.modalHeader}>
-              <h2 style={styles.modalTitle}>📅 Lập lịch học với {selectedTutor.name}</h2>
-              <button onClick={() => { setIsModalOpen(false); setSelectedTutor(null); }} style={styles.modalCloseBtn}>✕</button>
-            </div>
-            
-            <p style={styles.modalDesc}>Chọn các ca học trống trong tuần (Các ca trùng lịch hẹn cũ sẽ được hệ thống tự động ẩn danh):</p>
-            
-            {/* THỜI KHÓA BIỂU DYNAMIC */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
-              {lichThongMinh.map((item, index) => (
-                <div key={index} style={styles.scheduleRow}>
-                  <div style={styles.scheduleDayLabel}>
-                    🗓️ {item.day}
-                  </div>
-                  
-                  <div style={styles.slotsGrid}>
-                    {item.times.map((time, idx) => {
-                      const slotString = `${item.day}: ${time}`;
-                      
-                      const caNayDaBiDat = Array.isArray(tutorBookings) && tutorBookings.some(don => 
-                        (don?.status === 'Chờ xác nhận' || don?.status === 'Chấp nhận') && 
-                        don?.selectedSchedule?.includes(slotString)
-                      );
-
-                      if (caNayDaBiDat) return null; // Ẩn hoàn toàn ca trùng lịch
-
-                      const isSelected = selectedSlots.includes(slotString);
-                      
-                      return (
-                        <button 
-                          key={idx}
-                          onClick={() => handleToggleSlot(item.day, time)}
-                          style={{
-                            ...styles.slotBtn,
-                            border: isSelected ? '1px solid #38bdf8' : '1px solid #334155',
-                            backgroundColor: isSelected ? 'rgba(56, 189, 248, 0.15)' : '#0F172A',
-                            color: isSelected ? '#38bdf8' : '#CBD5E1',
-                            fontWeight: isSelected ? '700' : '400'
-                          }}
-                        >
-                          {time} {isSelected && '✓'}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {selectedSlots.length > 0 && (
-              <div style={styles.successAlert}>
-                🚀 Đã xếp vào hàng chờ tích hợp {selectedSlots.length} ca dạy thành công!
-              </div>
-            )}
-
-            {/* QUẢN LÝ VÀ HỦY ĐƠN ĐẶT LỊCH HIỆN HÀNH */}
-            {donLichCuaToi.length > 0 && (
-              <div style={styles.alertDangerArea}>
-                <h4 style={styles.dangerTitle}>🚨 Lịch hẹn sếp đã đăng ký với gia sư này:</h4>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {donLichCuaToi.map(don => (
-                    <div key={don._id} style={styles.dangerRow}>
-                      <div style={{ fontSize: '13.5px', color: '#E2E8F0', lineHeight: '1.5' }}>
-                        📅 <b>Khung ca:</b> {don?.selectedSchedule?.join(', ')} <br/>
-                        📌 <b>Trạng thái:</b> <span style={{ color: don?.status === 'Chấp nhận' ? '#10B981' : '#F59E0B', fontWeight: '700' }}>{don?.status}</span>
-                      </div>
-                      <button onClick={() => handleHuyDonLich(don._id)} style={styles.btnCancelBooking}>
-                        Hủy yêu cầu
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div style={styles.modalFooter}>
-              <button onClick={() => { setIsModalOpen(false); setSelectedTutor(null); }} style={styles.btnModalClose}>
-                Hủy bỏ
-              </button>
-              <button onClick={handleXacNhanDatLich} style={styles.btnModalSubmit}>
-                ✅ Xác nhận tạo lịch học mới
-              </button>
-            </div>
-
-          </div>
-        </div>
-      )}
     </div>
   );
 }
