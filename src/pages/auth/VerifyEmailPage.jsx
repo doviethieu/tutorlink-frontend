@@ -23,19 +23,8 @@ export default function XacMinhEmail() {
       })
       .catch((err) => {
         console.error("Lỗi xác thực hệ thống:", err);
-        
-        // Luồng xử lý lỗi thông minh từ response backend hoặc kích hoạt luồng demo dự phòng
-        if (err.response?.data?.message) {
-          setState('error');
-          setError(err.response.data.message);
-        } else {
-          // Phòng hờ kịch bản sếp chạy offline khi demo báo cáo, tự động kích hoạt thành công sau 1.5 giây
-          console.warn("💡 Hệ thống đang chạy ở môi trường Offline Local. Kích hoạt luồng giả lập Demo:");
-          const fallbackTimer = setTimeout(() => {
-            setState('success');
-          }, 1500);
-          return () => clearTimeout(fallbackTimer);
-        }
+        setState('error');
+        setError(err.response?.data?.error?.message || err.message || 'Không thể xác minh email.');
       });
   }, [token]);
 

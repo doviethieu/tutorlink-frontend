@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { authService } from '../../services/auth.service';
+import { useAuthStore } from '../../stores/auth-store';
 // TÍCH HỢP HOOK ĐĂNG NHẬP GOOGLE CUSTOM CHO VITE
 import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
 
@@ -9,6 +10,7 @@ const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 export default function DangNhap() {
   const navigate = useNavigate();
+  const setSession = useAuthStore((state) => state.setSession);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [otp, setOtp] = useState(''); 
@@ -37,14 +39,16 @@ export default function DangNhap() {
     };
     
     localStorage.setItem('tutorlinkUser', JSON.stringify(normalizedUser));
+    setSession({ accessToken, refreshToken, user: normalizedUser });
 
     alert(`🎉 Chào mừng sếp trở lại với TutorLink, ${normalizedUser.name}!`);
     
-    // 3. Phân quyền điều hướng thông minh (Bỏ reload trang gây giật lag UX)
     if (normalizedUser.role === 'admin') {
-      navigate('/dashboard'); 
+      navigate('/admin'); 
+    } else if (normalizedUser.role === 'tutor') {
+      navigate('/tutor/panel'); 
     } else {
-      navigate('/'); 
+      navigate('/dashboard'); 
     }
   };
 
@@ -56,15 +60,10 @@ export default function DangNhap() {
       setError('');
       setLoading(true);
       try {
-        const response = await axios.post('http://localhost:8000/api/auth/google', {
-          token: tokenResponse.access_token
-        });
-
-        if (response.data && response.data.status === 'success') {
-          saveLoginSession(response.data.data);
-        }
+        const data = await authService.loginWithGoogle(tokenResponse.access_token);
+        saveLoginSession(data);
       } catch (err) {
-        setError(err.response?.data?.message || 'Backend từ chối xác thực Token Google này sếp ơi!');
+        setError(err.response?.data?.error?.message || 'Backend từ chối xác thực Token Google này.');
       } finally {
         setLoading(false);
       }
@@ -83,18 +82,10 @@ export default function DangNhap() {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/login', { 
-        email, 
-        password 
-      });
-
-      if (response.data && response.data.requiresOTP) {
-        setStep(2); 
-      } else if (response.data && (response.data.data?.accessToken || response.data.accessToken)) {
-        saveLoginSession(response.data.data || response.data);
-      }
+      const data = await authService.login({ email, password });
+      saveLoginSession(data);
     } catch (err) {
-      setError(err.response?.data?.message || 'Đăng nhập thất bại. Sếp kiểm tra lại tài khoản mật khẩu nhé!');
+      setError(err.response?.data?.error?.message || 'Đăng nhập thất bại. Kiểm tra lại tài khoản mật khẩu.');
     } finally {
       setLoading(false);
     }
@@ -109,16 +100,10 @@ export default function DangNhap() {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/verify-otp', {
-        email,
-        otp
-      });
-
-      if (response.data && response.data.status === 'success') {
-        saveLoginSession(response.data.data);
-      }
+      const data = await authService.verifyOtp(email, otp);
+      saveLoginSession(data);
     } catch (err) {
-      setError(err.response?.data?.message || 'Mã OTP không chính xác hoặc đã hết hạn sếp ơi!');
+      setError(err.response?.data?.error?.message || 'Mã OTP không chính xác hoặc đã hết hạn.');
     } finally {
       setLoading(false);
     }

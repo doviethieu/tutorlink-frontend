@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
+import { authService } from '../../services/auth.service';
 
 export default function DatLaiMatKhau() {
   const navigate = useNavigate();
@@ -56,17 +56,10 @@ export default function DatLaiMatKhau() {
     setLoading(true);
 
     try {
-      // Gọi API reset password đến Backend Node.js Express của TutorLink
-      const response = await axios.post('http://localhost:8000/api/auth/reset-password', {
-        token,
-        password: newPassword
-      });
-
-      if (response.status === 200 || response.status === 201) {
-        setDone(true);
-      }
+      await authService.resetPassword(token, newPassword);
+      setDone(true);
     } catch (err) {
-      setError(err.response?.data?.message || 'Đường link này đã hết hạn hoặc mã Token không chính xác. Sếp vui lòng yêu cầu gửi lại link mới nhé!');
+      setError(err.response?.data?.error?.message || 'Đường link này đã hết hạn hoặc mã Token không chính xác. Vui lòng yêu cầu gửi lại link mới.');
     } finally {
       setLoading(false);
     }

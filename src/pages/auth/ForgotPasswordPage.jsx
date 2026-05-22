@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { authService } from '../../services/auth.service';
 
 export default function QuenMatKhau() {
   const [email, setEmail] = useState('');
@@ -26,12 +26,8 @@ export default function QuenMatKhau() {
     setLoading(true);
 
     try {
-      // Gọi lên đúng API Auth backend Node.js Express của TutorLink
-      const response = await axios.post('http://localhost:8000/api/auth/forgot-password', { email });
-      
-      if (response.status === 200 || response.status === 201) {
-        setSubmitted(true);
-      }
+      await authService.forgotPassword(email);
+      setSubmitted(true);
     } catch (err) {
       // Kịch bản bảo mật đỉnh cao: Lỗi hay không vẫn báo thành công để tránh lộ Email người dùng
       setSubmitted(true);

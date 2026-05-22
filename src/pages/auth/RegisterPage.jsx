@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { authService } from '../../services/auth.service';
+import { useAuthStore } from '../../stores/auth-store';
 
 export default function DangKy() {
   const navigate = useNavigate();
+  const setSession = useAuthStore((state) => state.setSession);
 
   // Khởi tạo State lưu trữ form dữ liệu
   const [role, setRole] = useState('student'); // 'student' hoặc 'tutor'
@@ -43,32 +45,31 @@ export default function DangKy() {
     setLoading(true);
 
     try {
-      // Gọi API đăng ký đến Backend Node.js Express của TutorLink
-      const response = await axios.post('http://localhost:8000/api/auth/register', {
-        name: fullName, // Khớp chuẩn Schema Model MongoDB
+      const data = await authService.register({
+        fullName,
         email,
         password,
         role
       });
 
-      if (response.data) {
-        const { token, user } = response.data?.data || response.data;
+      if (data) {
+        const { accessToken, refreshToken, user } = data;
         
-        // Lưu phiên đăng nhập tự động
-        localStorage.setItem('tutorlinkToken', token);
+        localStorage.setItem('tutorlinkToken', accessToken);
+        localStorage.setItem('tutorlinkRefreshToken', refreshToken);
         localStorage.setItem('tutorlinkUser', JSON.stringify(user));
+        setSession({ accessToken, refreshToken, user });
 
         alert('🎉 Khởi tạo tài khoản TutorLink thành công!');
         
-        // 🛠️ ĐÃ FIX UX: Điều hướng mượt mà theo vai trò, bỏ reload trang gây giật lag
         if (user?.role === 'tutor' || role === 'tutor') {
-          navigate('/tao-cv');
+          navigate('/tutor/register');
         } else {
           navigate('/dashboard');
         }
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Đăng ký thất bại. Email này có thể đã được sử dụng trên hệ thống rồi sếp ạ!');
+      setError(err.response?.data?.error?.message || err.message || 'Đăng ký thất bại. Email này có thể đã được sử dụng.');
     } finally {
       setLoading(false);
     }
