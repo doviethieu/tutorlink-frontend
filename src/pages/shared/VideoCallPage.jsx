@@ -11,6 +11,9 @@ export default function VideoCall() {
     const userString = localStorage.getItem('tutorlinkUser') || localStorage.getItem('user');
     const user = userString ? JSON.parse(userString) : null;
     
+    const zegoAppId = Number(import.meta.env.VITE_ZEGO_APP_ID || 0);
+    const zegoServerSecret = import.meta.env.VITE_ZEGO_SERVER_SECRET || '';
+
     // Định danh người dùng bảo mật cao
     const userEmail = user?.email || user?.user?.email || 'guest_' + Math.floor(Math.random() * 1000);
     const userName = user?.name || user?.user?.name || 'Khách vãng lai';
@@ -26,14 +29,12 @@ export default function VideoCall() {
     const myMeeting = async (element) => {
         if (!element || !roomId) return;
 
-        // THÔNG SỐ ĐỊNH DANH API ZEGOCLOUD CỦA SẾP
-        const appID = 1514632629; 
-        const serverSecret = "6d02d5b6d007a51a65f014cda28176bc";
+        if (!zegoAppId || !zegoServerSecret) return;
         
         // Khởi tạo Token bảo mật cho lớp học trực tuyến
         const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
-            appID, 
-            serverSecret, 
+            zegoAppId, 
+            zegoServerSecret, 
             roomId, 
             userEmail, 
             userName   
@@ -79,7 +80,20 @@ export default function VideoCall() {
             </div>
 
             {/* Không gian render SDK lõi của ZegoCloud */}
-            <div ref={myMeeting} style={styles.sdkZone} />
+            {zegoAppId && zegoServerSecret ? (
+                <div ref={myMeeting} style={styles.sdkZone} />
+            ) : (
+                <div style={styles.missingConfig}>
+                    <h2 style={styles.missingTitle}>Chưa cấu hình ZegoCloud</h2>
+                    <p style={styles.missingText}>
+                        Thêm `VITE_ZEGO_APP_ID` và `VITE_ZEGO_SERVER_SECRET` vào file `.env` của frontend rồi restart Vite để bật video call.
+                    </p>
+                    <code style={styles.codeBlock}>
+                        VITE_ZEGO_APP_ID=your_app_id<br />
+                        VITE_ZEGO_SERVER_SECRET=your_server_secret
+                    </code>
+                </div>
+            )}
             
         </div>
     );
@@ -136,5 +150,34 @@ const styles = {
     width: '100%', 
     flex: 1,
     backgroundColor: '#0f172a'
+  },
+  missingConfig: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: '#cbd5e1',
+    padding: '24px',
+    textAlign: 'center'
+  },
+  missingTitle: {
+    margin: '0 0 10px',
+    color: '#fff',
+    fontSize: '24px'
+  },
+  missingText: {
+    margin: '0 0 18px',
+    color: '#94a3b8',
+    maxWidth: '560px',
+    lineHeight: 1.6
+  },
+  codeBlock: {
+    backgroundColor: '#1e293b',
+    border: '1px solid #334155',
+    color: '#38bdf8',
+    padding: '14px 18px',
+    borderRadius: '8px',
+    textAlign: 'left'
   }
 };

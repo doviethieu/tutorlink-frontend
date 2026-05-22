@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
 import { useParams } from 'react-router-dom'; 
 import io from 'socket.io-client';
+import { api, API_BASE_URL, unwrap } from '../../lib/api';
 
 // Đảm bảo chỉ khởi tạo một instance duy nhất của socket kết nối đến Server
-const socket = io.connect("http://localhost:8000");
+const SOCKET_URL = API_BASE_URL.replace(/\/api\/?$/, '');
+const socket = io.connect(SOCKET_URL);
 
 const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
   const { id } = useParams(); 
@@ -14,7 +15,7 @@ const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
   const scrollRef = useRef();
 
   // TẠO PHÒNG CHUNG ĐỂ 2 NGƯỜI LUÔN CHẠM MẶT NHAU
-  const emailCuaToi = currentUser?.email || "khach@gmail.com";
+  const emailCuaToi = currentUser?.email || '';
   const emailNguoiKia = nguoiDangChat?.email || nguoiDangChat?._id || "doitac_khong_xac_dinh";
   
   let roomID = id || idTuUrl; 
@@ -34,9 +35,10 @@ const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
       socket.emit("join_room", roomID);
 
       // Kéo lịch sử chat từ Database thật
-      axios.get(`http://localhost:8000/api/messages/${roomID}`)
+      api.get(`/messages/${roomID}`)
         .then((res) => {
-          setTinNhanHienThi(Array.isArray(res.data) ? res.data : []);
+          const rows = unwrap(res.data);
+          setTinNhanHienThi(Array.isArray(rows) ? rows : []);
         })
         .catch((err) => console.error("Lỗi tải tin nhắn từ DB:", err));
     }
@@ -90,32 +92,27 @@ const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
 
       try {
         // 🛠️ ĐÃ FIX CHÍ MẠNG: Đẩy dữ liệu qua API lên Backend để lưu giữ lại vào DB vĩnh viễn
-        const res = await axios.post('http://localhost:8000/api/messages', dataTinNhan);
+        const res = await api.post('/messages', dataTinNhan);
         
         // Sử dụng data trả về từ DB (có kèm theo định danh `_id` thật) để tránh lỗi key lặp
-        const savedMsg = res.data?.data || res.data || dataTinNhan;
+        const savedMsg = unwrap(res.data) || dataTinNhan;
 
-        // Bắn tín hiệu socket realtime cho đối phương bên kia đầu dây nhận ngay lập tức
-        socket.emit("send_message", savedMsg);
-        
-        // Cập nhật lên màn hình chat của chính mình
-        setTinNhanHienThi((prev) => [...prev, savedMsg]);
+        setTinNhanHienThi((prev) => (
+          prev.some((m) => m._id && savedMsg._id && m._id === savedMsg._id) ? prev : [...prev, savedMsg]
+        ));
         setTinNhanMoi('');
       } catch (err) {
         console.error("Lỗi lưu tin nhắn vào Database:", err.message);
-        // Fallback: Nếu API nghẽn tạm thời, vẫn cho hiển thị cục bộ để trải nghiệm không bị đứt quãng
-        socket.emit("send_message", dataTinNhan);
-        setTinNhanHienThi((prev) => [...prev, dataTinNhan]);
-        setTinNhanMoi('');
+        alert('Không thể gửi tin nhắn. Vui lòng thử lại.');
       }
     }
   };
 
   return (
-    <div style={{ flex: 1, backgroundColor: '#F9FAFB', borderRadius: '12px', border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column', height: '480px', overflow: 'hidden' }}>
+    <div style={{ flex: 1, backgroundColor: '#0f172a', borderRadius: '12px', border: '1px solid #334155', display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
       
       {/* THANH TIÊU ĐỀ + NÚT VÀO PHÒNG HỌC VIDEO TRỰC TUYẾN */}
-      <div style={{ backgroundColor: '#1E3A8A', color: 'white', padding: '15px', fontWeight: 'bold', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ backgroundColor: '#1e293b', color: 'white', padding: '14px 16px', fontWeight: 'bold', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #334155' }}>
         <div>
           {nguoiDangChat ? `💬 Đang chat với: ${nguoiDangChat.name}` : "💬 Kênh Chat"}
         </div>
@@ -126,8 +123,8 @@ const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
             onClick={() => window.open(`/room/${roomID}`, '_blank')}
             style={{
               padding: '6px 12px', 
-              backgroundColor: '#10B981', 
-              color: 'white', 
+              backgroundColor: '#10b981', 
+              color: '#052e16', 
               border: 'none', 
               borderRadius: '8px', 
               cursor: 'pointer', 
@@ -136,8 +133,6 @@ const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
               transition: '0.2s',
               boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
             }}
-            onMouseOver={(e) => e.target.style.backgroundColor = '#059669'}
-            onMouseOut={(e) => e.target.style.backgroundColor = '#10B981'}
           >
             📹 Vào lớp ngay
           </button>
@@ -145,11 +140,11 @@ const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
       </div>
       
       {/* KHU VỰC HIỂN THỊ NỘI DUNG CHAT */}
-      <div style={{ flex: 1, padding: '15px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', backgroundColor: 'white' }}>
+      <div style={{ flex: 1, minHeight: 0, padding: '15px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', backgroundColor: '#0f172a' }}>
         {!nguoiDangChat ? (
-          <p style={{ textAlign: 'center', color: '#9CA3AF', marginTop: '50px' }}>👈 Chọn một người để bắt đầu hội thoại</p>
+          <p style={{ textAlign: 'center', color: '#94a3b8', marginTop: '50px' }}>Chọn một người để bắt đầu hội thoại</p>
         ) : tinNhanHienThi.length === 0 ? (
-          <p style={{ textAlign: 'center', color: '#9CA3AF', marginTop: '50px' }}>Hãy gửi tin nhắn để bắt đầu câu chuyện...</p>
+          <p style={{ textAlign: 'center', color: '#94a3b8', marginTop: '50px' }}>Hãy gửi tin nhắn để bắt đầu trao đổi.</p>
         ) : (
           tinNhanHienThi.map((msg, index) => {
             const isMyMessage = currentUser && msg.emailGui === currentUser.email;
@@ -175,14 +170,14 @@ const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
 
       {/* THANH INPUT NHẬP LIỆU GỬI ĐI */}
       {nguoiDangChat && (
-        <div style={{ padding: '15px', borderTop: '1px solid #E5E7EB', display: 'flex' }}>
+        <div style={{ padding: '15px', borderTop: '1px solid #334155', display: 'flex', backgroundColor: '#1e293b' }}>
           <input 
             type="text" 
             placeholder="Nhập tin nhắn..." 
             value={tinNhanMoi}
             onChange={(e) => setTinNhanMoi(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-            style={{ flex: 1, padding: '10px 15px', borderRadius: '25px', border: '1px solid #D1D5DB', outline: 'none' }} 
+            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+            style={{ flex: 1, padding: '10px 15px', borderRadius: '25px', border: '1px solid #334155', outline: 'none', backgroundColor: '#0f172a', color: '#fff' }} 
           />
           <button onClick={handleSend} style={{ marginLeft: '10px', padding: '0 20px', borderRadius: '25px', backgroundColor: '#F97316', color: 'white', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}>
             Gửi

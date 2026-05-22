@@ -1,396 +1,338 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import ChatBox from '../../components/chat/ChatBox';
+import { bookingService } from '../../services/booking.service';
+import { useAuthStore } from '../../stores/auth-store';
+
+function readStoredUser() {
+  try {
+    return JSON.parse(localStorage.getItem('tutorlinkUser') || 'null');
+  } catch {
+    return null;
+  }
+}
+
+function getBookingId(booking) {
+  return booking?._id || booking?.id;
+}
+
+function getPartner(booking, currentRole) {
+  if (currentRole === 'tutor') {
+    return {
+      _id: booking?.student?.id || booking?.studentId,
+      name: booking?.student?.name || booking?.studentName || 'Học viên',
+      email: booking?.student?.email || booking?.studentEmail || '',
+      role: 'Học viên',
+    };
+  }
+
+  return {
+    _id: booking?.tutor?.id || booking?.tutorId,
+    name: booking?.tutor?.name || booking?.tutorName || 'Gia sư',
+    email: booking?.tutor?.email || '',
+    role: 'Gia sư',
+  };
+}
+
+function makeRoomFromBooking(booking, currentRole) {
+  const id = getBookingId(booking);
+  const partner = getPartner(booking, currentRole);
+
+  return {
+    id: `booking-${id}`,
+    bookingId: id,
+    partner,
+    name: partner.name,
+    role: `${partner.role} • ${booking.subject || 'Buổi học'}`,
+    lastMessage: booking.status === 'confirmed'
+      ? 'Lịch học đã xác nhận. Bạn có thể trao đổi thêm tại đây.'
+      : 'Trao đổi trước buổi học tại phòng chat này.',
+    time: booking.date || '',
+    status: booking.status,
+    meetingUrl: booking.meetingUrl || `/room/booking-${id}`,
+  };
+}
 
 export default function TrangChat() {
-  // 👥 Danh sách các đoạn hội thoại (Phòng chat) mẫu
-  const [rooms, setRooms] = useState([
-    { id: 'r1', name: 'Gia sư Nguyễn Văn A', lastMessage: 'Hẹn sếp tối nay 19h vào lớp nhé!', time: '12:30', unread: true, role: 'Toán học 12' },
-    { id: 'r2', name: 'Học viên Trần Minh Quân', lastMessage: 'Dạ phần này em hiểu rồi ạ.', time: 'Hôm qua', unread: false, role: 'Học viên' },
-    { id: 'r3', name: 'Gia sư Trần Thị B', lastMessage: 'Sếp gửi giúp em file bài tập hôm trước.', time: '15 thg 5', unread: false, role: 'Tiếng Anh' }
-  ]);
+  const storeUser = useAuthStore((state) => state.user);
+  const currentUser = storeUser || readStoredUser();
+  const role = currentUser?.role || 'student';
 
-  const [activeRoomId, setActiveRoomId] = useState('r1');
-  const [messages, setMessages] = useState({
-    r1: [
-      { id: 1, sender: 'tutor', text: 'Chào sếp, em đã xem qua mục tiêu học tập sếp gửi trong đơn đặt lịch.', time: '12:28' },
-      { id: 2, sender: 'user', text: 'Dạ vâng, tối nay mình tập trung sửa phần hình học không gian trước được không ạ?', time: '12:29' },
-      { id: 3, sender: 'tutor', text: 'Hẹn sếp tối nay 19h vào lớp nhé! Em đã chuẩn bị sẵn slide bài tập rồi.', time: '12:30' }
-    ],
-    r2: [
-      { id: 1, sender: 'user', text: 'Thầy ơi bài 4 đề thi thử làm thế nào ạ?', time: 'Hôm qua' },
-      { id: 2, sender: 'tutor', text: 'Sếp áp dụng công thức đạo hàm hàm hợp là ra ngay.', time: 'Hôm qua' },
-      { id: 3, sender: 'user', text: 'Dạ phần này em hiểu rồi ạ.', time: 'Hôm qua' }
-    ],
-    r3: []
-  });
+  const [rooms, setRooms] = useState([]);
+  const [activeRoomId, setActiveRoomId] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const [inputText, setInputText] = useState('');
-  const chatEndRef = useRef(null);
-
-  // Tự động cuộn xuống đáy khi có tin nhắn mới hoặc đổi phòng chat
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, activeRoomId]);
+    let ignore = false;
 
-  // 📥 Hàm xử lý gửi tin nhắn nội bộ
-  const handleSendMessage = (e) => {
-    e.preventDefault();
-    if (!inputText.trim()) return;
+    async function loadRooms() {
+      setLoading(true);
+      setError('');
+      try {
+        const bookings = role === 'tutor'
+          ? await bookingService.listForTutor()
+          : await bookingService.listForStudent({ limit: 100 });
 
-    const currentTime = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-    const newMessage = {
-      id: Date.now(),
-      sender: 'user', 
-      text: inputText,
-      time: currentTime
+        const nextRooms = (Array.isArray(bookings) ? bookings : [])
+          .filter((booking) => getBookingId(booking))
+          .map((booking) => makeRoomFromBooking(booking, role));
+
+        if (ignore) return;
+        setRooms(nextRooms);
+        setActiveRoomId((prev) => prev || nextRooms[0]?.id || '');
+      } catch (err) {
+        if (!ignore) {
+          setRooms([]);
+          setError(err?.response?.data?.error?.message || 'Không thể tải danh sách phòng chat.');
+        }
+      } finally {
+        if (!ignore) setLoading(false);
+      }
+    }
+
+    loadRooms();
+    return () => {
+      ignore = true;
     };
+  }, [role]);
 
-    // Cập nhật mảng tin nhắn của phòng hiện tại
-    setMessages(prev => ({
-      ...prev,
-      [activeRoomId]: [...(prev[activeRoomId] || []), newMessage]
-    }));
-
-    // Cập nhật nội dung tin nhắn cuối cùng ở danh sách bên trái
-    setRooms(prev => prev.map(room => 
-      room.id === activeRoomId 
-        ? { ...room, lastMessage: inputText, time: currentTime, unread: false } 
-        : room
-    ));
-
-    setInputText('');
-  };
-
-  const activeRoom = rooms.find(r => r.id === activeRoomId);
-  const activeChatMessages = messages[activeRoomId] || [];
+  const activeRoom = useMemo(
+    () => rooms.find((room) => room.id === activeRoomId) || null,
+    [rooms, activeRoomId],
+  );
 
   return (
     <div style={styles.container}>
-      <div style={styles.chatBox}>
-        
-        {/* BÊN TRÁI: DANH SÁCH BẠN CHAT */}
-        <div style={styles.sidebar}>
+      <div style={styles.chatShell}>
+        <aside style={styles.sidebar}>
           <div style={styles.sidebarHeader}>
-            <h3 style={styles.sidebarTitle}>Tin nhắn nội bộ</h3>
-            <span style={styles.onlineCount}>● Kết nối bảo mật</span>
+            <h3 style={styles.sidebarTitle}>Tin nhắn lớp học</h3>
+            <span style={styles.onlineCount}>Realtime chat + video room</span>
           </div>
-          
+
           <div style={styles.roomList}>
-            {rooms.map(room => (
-              <div 
-                key={room.id} 
-                onClick={() => {
-                  setActiveRoomId(room.id);
-                  // Cập nhật trạng thái unread trực tiếp trong danh sách hiển thị
-                  setRooms(prev => prev.map(r => r.id === room.id ? { ...r, unread: false } : r));
-                }}
+            {loading && <div style={styles.stateText}>Đang tải phòng chat...</div>}
+            {!loading && error && <div style={styles.errorText}>{error}</div>}
+            {!loading && !error && rooms.length === 0 && (
+              <div style={styles.stateText}>Chưa có booking nào để mở phòng chat.</div>
+            )}
+
+            {rooms.map((room) => (
+              <button
+                key={room.id}
+                type="button"
+                onClick={() => setActiveRoomId(room.id)}
                 style={{
                   ...styles.roomItem,
-                  backgroundColor: room.id === activeRoomId ? '#334155' : 'transparent'
+                  backgroundColor: room.id === activeRoomId ? '#334155' : 'transparent',
                 }}
               >
-                <div style={styles.avatarMini}>
-                  {room.name.charAt(0).toUpperCase()}
-                </div>
+                <div style={styles.avatarMini}>{room.name.charAt(0).toUpperCase()}</div>
                 <div style={styles.roomMeta}>
                   <div style={styles.roomTopRow}>
                     <span style={styles.roomName}>{room.name}</span>
                     <span style={styles.roomTime}>{room.time}</span>
                   </div>
-                  <div style={styles.roomBottomRow}>
-                    <p style={{
-                      ...styles.lastMessage,
-                      color: room.unread ? '#fff' : '#94a3b8',
-                      fontWeight: room.unread ? '700' : '400'
-                    }}>{room.lastMessage}</p>
-                    {room.unread && <span style={styles.unreadDot} />}
-                  </div>
+                  <p style={styles.roomRole}>{room.role}</p>
+                  <p style={styles.lastMessage}>{room.lastMessage}</p>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
-        </div>
+        </aside>
 
-        {/* BÊN PHẢI: KHÔNG GIAN CHAT CHI TIẾT */}
-        <div style={styles.chatArea}>
+        <main style={styles.chatArea}>
           {activeRoom ? (
             <>
-              {/* Thanh tiêu đề cuộc trò chuyện */}
               <div style={styles.chatHeader}>
                 <div>
                   <h4 style={styles.activeTitle}>{activeRoom.name}</h4>
-                  <p style={styles.activeSubtitle}>Chuyên mục giảng dạy: {activeRoom.role}</p>
+                  <p style={styles.activeSubtitle}>{activeRoom.role}</p>
                 </div>
+                <a href={activeRoom.meetingUrl} target="_blank" rel="noreferrer" style={styles.videoBtn}>
+                  Vào video
+                </a>
               </div>
 
-              {/* Khu vực nội dung các tin nhắn */}
-              <div style={styles.messageContent}>
-                {activeChatMessages.length === 0 ? (
-                  <div style={styles.emptyChat}>👋 Hãy gửi một lời chào để khởi động buổi trao đổi bài học sếp nhé!</div>
-                ) : (
-                  activeChatMessages.map(msg => {
-                    const isMe = msg.sender === 'user';
-                    return (
-                      <div 
-                        key={msg.id} 
-                        style={{
-                          ...styles.messageRow,
-                          justifyContent: isMe ? 'flex-end' : 'flex-start'
-                        }}
-                      >
-                        <div 
-                          style={{
-                            ...styles.messageBubble,
-                            backgroundColor: isMe ? '#38bdf8' : '#334155', // Chuyển sang Sky Blue cao cấp cho tin nhắn của mình
-                            color: isMe ? '#0f172a' : '#fff', // Màu chữ tương phản cao cho sếp dễ đọc
-                            borderRadius: isMe ? '12px 12px 0px 12px' : '12px 12px 12px 0px'
-                          }}
-                        >
-                          <p style={styles.msgText}>{msg.text}</p>
-                          <span style={{
-                            ...styles.msgTime,
-                            color: isMe ? 'rgba(15, 23, 42, 0.6)' : 'rgba(255, 255, 255, 0.5)'
-                          }}>{msg.time}</span>
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
-                <div ref={chatEndRef} />
-              </div>
-
-              {/* Thanh nhập liệu gõ tin nhắn dưới cùng */}
-              <form onSubmit={handleSendMessage} style={styles.inputArea}>
-                <input 
-                  type="text" 
-                  value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
-                  placeholder="Nhập nội dung trao đổi bài học với gia sư..."
-                  style={styles.inputField}
-                />
-                <button type="submit" style={styles.btnSend}>Gửi ⚡</button>
-              </form>
+              <ChatBox
+                key={activeRoom.id}
+                nguoiDangChat={activeRoom.partner}
+                currentUser={currentUser}
+                idTuUrl={activeRoom.id}
+              />
             </>
           ) : (
-            <div style={styles.noSelect}>Chọn một cuộc hội thoại bên trái để bắt đầu nhắn tin sếp ơi!</div>
+            <div style={styles.noSelect}>Chọn một phòng chat từ danh sách bên trái.</div>
           )}
-        </div>
-
+        </main>
       </div>
     </div>
   );
 }
 
-// --- 🛠️ BỘ HỆ THỐNG PRESET DESIGN SLATE PREMIUM ĐỒNG BỘ TUYỆT ĐỐI ---
 const styles = {
   container: {
     backgroundColor: '#0f172a',
-    height: 'calc(100vh - 70px)', 
+    height: 'calc(100vh - 70px)',
     padding: '24px',
     boxSizing: 'border-box',
-    fontFamily: "'Inter', sans-serif"
+    fontFamily: "'Inter', sans-serif",
   },
-  chatBox: {
+  chatShell: {
     maxWidth: '1200px',
     height: '100%',
     margin: '0 auto',
     backgroundColor: '#1e293b',
     border: '1px solid #334155',
-    borderRadius: '16px',
-    display: 'flex',
+    borderRadius: '14px',
+    display: 'grid',
+    gridTemplateColumns: '330px 1fr',
     overflow: 'hidden',
-    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.25)'
   },
   sidebar: {
-    width: '320px',
     borderRight: '1px solid #334155',
+    backgroundColor: '#0f172a',
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: '#0f172a' // Đưa sidebar về deep dark tăng chiều sâu thị giác
+    minWidth: 0,
   },
   sidebarHeader: {
-    padding: '24px 20px',
-    borderBottom: '1px solid #334155'
+    padding: '22px 18px',
+    borderBottom: '1px solid #334155',
   },
   sidebarTitle: {
     color: '#fff',
     margin: 0,
     fontSize: '17px',
-    fontWeight: '800',
-    letterSpacing: '-0.3px'
+    fontWeight: 800,
   },
   onlineCount: {
-    fontSize: '12px',
     color: '#10b981',
+    fontSize: '12px',
     display: 'block',
     marginTop: '6px',
-    fontWeight: '600'
   },
   roomList: {
     flex: 1,
     overflowY: 'auto',
-    padding: '12px 8px'
+    padding: '10px 8px',
   },
   roomItem: {
+    width: '100%',
     display: 'flex',
     gap: '12px',
     padding: '12px',
     borderRadius: '10px',
     cursor: 'pointer',
-    marginBottom: '4px',
-    transition: 'background 0.15s ease'
+    marginBottom: '6px',
+    border: 'none',
+    textAlign: 'left',
+    color: '#e2e8f0',
   },
   avatarMini: {
     width: '40px',
     height: '40px',
     borderRadius: '50%',
-    backgroundColor: '#334155',
+    backgroundColor: '#1e293b',
     color: '#38bdf8',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontWeight: '700',
-    fontSize: '15px',
-    border: '1px solid rgba(56, 189, 248, 0.2)'
+    fontWeight: 800,
+    border: '1px solid rgba(56, 189, 248, 0.24)',
+    flexShrink: 0,
   },
   roomMeta: {
+    minWidth: 0,
     flex: 1,
-    minWidth: 0
   },
   roomTopRow: {
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '4px'
+    gap: '8px',
   },
   roomName: {
     color: '#fff',
-    fontWeight: '700',
+    fontWeight: 700,
     fontSize: '14px',
-    whiteSpace: 'nowrap',
     overflow: 'hidden',
-    textOverflow: 'ellipsis'
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
   },
   roomTime: {
     color: '#64748b',
     fontSize: '11px',
-    fontWeight: '500'
+    flexShrink: 0,
   },
-  roomBottomRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  lastMessage: {
-    fontSize: '12.5px',
-    margin: 0,
-    whiteSpace: 'nowrap',
+  roomRole: {
+    margin: '4px 0 0',
+    color: '#38bdf8',
+    fontSize: '12px',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-    flex: 1
+    whiteSpace: 'nowrap',
   },
-  unreadDot: {
-    width: '8px',
-    height: '8px',
-    borderRadius: '50%',
-    backgroundColor: '#38bdf8', // Đồng bộ thành chấm thông báo màu Sky Blue rực rỡ
-    marginLeft: '8px',
-    flexShrink: 0
+  lastMessage: {
+    margin: '4px 0 0',
+    color: '#94a3b8',
+    fontSize: '12px',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
   },
   chatArea: {
-    flex: 1,
+    minWidth: 0,
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: '#1e293b'
+    padding: '18px',
+    gap: '12px',
   },
   chatHeader: {
-    padding: '18px 24px',
-    borderBottom: '1px solid #334155',
-    backgroundColor: '#1e293b'
+    backgroundColor: '#0f172a',
+    border: '1px solid #334155',
+    borderRadius: '10px',
+    padding: '14px 16px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: '12px',
   },
   activeTitle: {
-    color: '#fff',
     margin: 0,
+    color: '#fff',
     fontSize: '16px',
-    fontWeight: '700',
-    letterSpacing: '-0.2px'
+    fontWeight: 800,
   },
   activeSubtitle: {
+    margin: '5px 0 0',
     color: '#94a3b8',
-    margin: '4px 0 0 0',
-    fontSize: '12.5px'
+    fontSize: '13px',
   },
-  messageContent: {
-    flex: 1,
-    overflowY: 'auto',
-    padding: '24px',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '12px'
-  },
-  messageRow: {
-    display: 'flex',
-    width: '100%'
-  },
-  messageBubble: {
-    maxWidth: '65%',
-    padding: '10px 15px',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-  },
-  msgText: {
-    margin: 0,
-    fontSize: '14px',
-    lineHeight: '1.5',
-    wordBreak: 'break-word'
-  },
-  msgTime: {
-    fontSize: '10px',
-    display: 'block',
-    textAlign: 'right',
-    marginTop: '4px',
-    fontWeight: '500'
-  },
-  emptyChat: {
-    textAlign: 'center',
-    color: '#64748b',
-    paddingTop: '60px',
-    fontSize: '14.5px'
-  },
-  inputArea: {
-    padding: '16px 24px',
-    borderTop: '1px solid #334155',
-    backgroundColor: '#0f172a', // Đưa khu vực gõ văn bản về tone tối mượt mà
-    display: 'flex',
-    gap: '12px'
-  },
-  inputField: {
-    flex: 1,
-    backgroundColor: '#1e293b',
-    border: '1px solid #334155',
+  videoBtn: {
+    textDecoration: 'none',
+    backgroundColor: '#10b981',
+    color: '#052e16',
     borderRadius: '8px',
-    padding: '0 16px',
-    color: '#fff',
-    fontSize: '14px',
-    outline: 'none',
-    transition: 'border-color 0.2s'
-  },
-  btnSend: {
-    backgroundColor: '#38bdf8', // Đổi màu nút gửi đồng bộ với tone hệ thống
-    color: '#0f172a',
-    border: 'none',
-    padding: '0 22px',
-    borderRadius: '8px',
-    fontSize: '13.5px',
-    fontWeight: '700',
-    cursor: 'pointer',
-    transition: 'background-color 0.15s ease'
+    padding: '9px 14px',
+    fontWeight: 800,
+    fontSize: '13px',
+    whiteSpace: 'nowrap',
   },
   noSelect: {
+    color: '#94a3b8',
+    height: '100%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    height: '100%',
-    color: '#64748b',
-    fontSize: '15px',
-    fontWeight: '500'
-  }
+  },
+  stateText: {
+    color: '#94a3b8',
+    padding: '20px 14px',
+    fontSize: '13px',
+  },
+  errorText: {
+    color: '#fca5a5',
+    padding: '20px 14px',
+    fontSize: '13px',
+  },
 };
