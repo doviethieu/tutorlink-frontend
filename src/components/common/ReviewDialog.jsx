@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { Star, X } from 'lucide-react';
+import { reviewService } from '../../services/review.service';
 
 export function ReviewDialog({ open, onClose, tutorName, subject, bookingId, tutorId, onReviewSuccess }) {
   const [rating, setRating] = useState(0);
@@ -25,17 +25,11 @@ export function ReviewDialog({ open, onClose, tutorName, subject, bookingId, tut
 
     setIsPending(true);
     try {
-      const token = localStorage.getItem('tutorlinkToken');
-      
-      // Gửi request POST lên API Backend lưu review
-      // Đầu ra data bao gồm: mã buổi học, mã gia sư, số sao và nội dung bình luận
-      await axios.post('http://localhost:8000/api/reviews', {
+      const review = await reviewService.create({
         bookingId,
         tutorId,
         rating,
         body: comment
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
       });
 
       alert('🎉 Cảm ơn bạn đã gửi đánh giá cho gia sư!');
@@ -45,12 +39,12 @@ export function ReviewDialog({ open, onClose, tutorName, subject, bookingId, tut
       setComment('');
       
       // Kích hoạt callback nếu có (để trang cha tự động cập nhật lại danh sách)
-      if (onReviewSuccess) onReviewSuccess();
+      if (onReviewSuccess) onReviewSuccess(review);
       
       onClose(); // Đóng modal
     } catch (error) {
       console.error("Lỗi gửi đánh giá:", error);
-      alert(error.response?.data?.message || 'Không thể gửi đánh giá, sếp kiểm tra lại backend nhé!');
+      alert(error.response?.data?.error?.message || error.response?.data?.message || 'Không thể gửi đánh giá, sếp kiểm tra lại backend nhé!');
     } finally {
       setIsPending(false);
     }

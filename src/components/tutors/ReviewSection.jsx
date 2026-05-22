@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { FaStar } from 'react-icons/fa';
+import { reviewService } from '../../services/review.service';
 
 const ReviewSection = ({ tutorId, studentId }) => {
     const [reviews, setReviews] = useState([]);
@@ -11,10 +11,11 @@ const ReviewSection = ({ tutorId, studentId }) => {
     useEffect(() => {
         const fetchReviews = async () => {
             try {
-                const res = await axios.get(`http://localhost:8000/api/reviews/tutor/${tutorId}`);
-                setReviews(res.data);
+                const data = await reviewService.listByTutor(tutorId);
+                setReviews(Array.isArray(data) ? data : []);
             } catch (error) {
                 console.error("Lỗi khi tải đánh giá:", error);
+                setReviews([]);
             }
         };
         if (tutorId) fetchReviews();
@@ -25,18 +26,18 @@ const ReviewSection = ({ tutorId, studentId }) => {
         if (!studentId) return alert("Vui lòng đăng nhập!");
         
         try {
-            const res = await axios.post('http://localhost:8000/api/reviews', {
+            const review = await reviewService.create({
                 tutorId,
                 studentId,
                 rating,
                 comment
             });
-            setReviews([res.data.review, ...reviews]);
+            setReviews([review, ...reviews]);
             setComment('');
             setRating(5);
             alert("Gửi đánh giá thành công!");
         } catch (error) {
-            alert(error.response?.data?.message || "Bạn đã đánh giá gia sư này rồi!");
+            alert(error.response?.data?.error?.message || error.response?.data?.message || "Bạn chỉ có thể đánh giá sau buổi học đã hoàn thành.");
         }
     };
 
@@ -84,12 +85,17 @@ const ReviewSection = ({ tutorId, studentId }) => {
                 {reviews.map((rv) => (
                     <div key={rv._id} className="p-4 border rounded-lg shadow-sm bg-white">
                         <div className="flex justify-between items-center mb-2">
-                            <span className="font-bold">{rv.studentId?.name || "Học viên"}</span>
+                            <span className="font-bold">{rv.student || rv.studentId?.name || "Học viên"}</span>
                             <div className="flex text-yellow-400">
                                 {[...Array(rv.rating)].map((_, i) => <FaStar key={i} size={14} />)}
                             </div>
                         </div>
-                        <p className="text-gray-600">{rv.comment}</p>
+                        <p className="text-gray-600">{rv.body || rv.comment}</p>
+                        {rv.tutorReply?.body && (
+                            <div className="mt-3 rounded-lg bg-slate-100 p-3 text-sm text-slate-700">
+                                <strong>Phản hồi của gia sư:</strong> {rv.tutorReply.body}
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>

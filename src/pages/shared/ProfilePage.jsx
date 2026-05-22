@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuthStore } from "../../stores/auth-store.js"; // 🛠️ ĐÃ FIX ĐƯỜNG DẪN IMPORT CHUẨN 100%
 import { usersService } from "../../services/users.service";
 import { authService } from "../../services/auth.service";
+import { payoutService } from "../../services/payout.service";
 
 export default function Profile() {
   const { user, setUser } = useAuthStore();
@@ -25,6 +26,8 @@ export default function Profile() {
   // State Lịch sử ví & Nạp tiền
   const [wallet, setWallet] = useState({ balance: 0, transactions: [] });
   const [depositAmount, setDepositAmount] = useState("");
+  const [withdrawAmount, setWithdrawAmount] = useState("");
+  const [withdrawForm, setWithdrawForm] = useState({ bankName: "", bankAccount: "", bankAccountName: "" });
   
   // State Lịch sử học tập / giảng dạy
   const [history, setHistory] = useState([]);
@@ -49,23 +52,13 @@ export default function Profile() {
     try {
       // Gọi API lấy ví và lịch sử từ service thật
       const walletRes = await usersService.getWallet();
-      if (walletRes?.data) setWallet(walletRes.data);
+      if (walletRes) setWallet(walletRes);
       
       const historyRes = await usersService.getHistory();
-      if (historyRes?.data) setHistory(historyRes.data);
+      if (Array.isArray(historyRes)) setHistory(historyRes);
     } catch (err) {
-      // Mock data chuẩn hệ thống nếu API chưa có dữ liệu hoặc lỗi kết nối
-      setWallet({
-        balance: 750000,
-        transactions: [
-          { _id: "tx1", amount: 500000, type: "deposit", description: "Nạp tiền qua chuyển khoản", date: "2026-05-15" },
-          { _id: "tx2", amount: -250000, type: "payment", description: "Thanh toán lịch học Toán lớp 12", date: "2026-05-18" }
-        ]
-      });
-      setHistory([
-        { _id: "h1", partnerName: "Gia sư Nguyễn Văn A", subject: "Toán học lớp 12", date: "2026-05-18", status: "completed" },
-        { _id: "h2", partnerName: "Gia sư Trần Thị B", subject: "Tiếng Anh giao tiếp", date: "2026-05-20", status: "scheduled" }
-      ]);
+      setWallet({ balance: 0, transactions: [] });
+      setHistory([]);
     }
   };
 
@@ -115,26 +108,42 @@ export default function Profile() {
     if (!amount || amount <= 0) return alert("Vui lòng nhập số tiền hợp lệ sếp nhé!");
     
     try {
-      await usersService.depositWallet(amount);
-      setWallet(prev => ({
-        balance: prev.balance + amount,
-        transactions: [
-          { _id: Date.now().toString(), amount, type: "deposit", description: "Yêu cầu nạp tiền vào ví", date: new Date().toISOString().split('T')[0] },
-          ...prev.transactions
-        ]
-      }));
+      const walletRes = await usersService.depositWallet(amount);
+      if (walletRes?.balance !== undefined) {
+        setWallet(prev => ({
+          balance: walletRes.balance,
+          transactions: [
+            { _id: walletRes.transaction?._id || Date.now().toString(), amount, type: "deposit", description: "Nạp tiền vào ví TutorLink", date: new Date().toISOString().split('T')[0] },
+            ...prev.transactions
+          ]
+        }));
+      }
       alert(`🎉 Gửi yêu cầu nạp ${amount.toLocaleString('vi-VN')} đ thành công!`);
       setDepositAmount("");
     } catch (err) {
+      alert(err?.response?.data?.error?.message || 'Không thể nạp tiền vào ví.');
+    }
+  };
+
+  const handleWithdraw = async (e) => {
+    e.preventDefault();
+    const amount = Number(withdrawAmount);
+    if (!amount || amount <= 0) return alert("Vui lòng nhập số tiền rút hợp lệ.");
+    if (amount > Number(wallet.balance || 0)) return alert("Số dư ví không đủ để rút.");
+
+    try {
+      await payoutService.requestWalletWithdrawal({ amount, ...withdrawForm });
       setWallet(prev => ({
-        balance: prev.balance + amount,
+        balance: prev.balance - amount,
         transactions: [
-          { _id: Date.now().toString(), amount, type: "deposit", description: "Yêu cầu nạp tiền vào ví (Mock)", date: new Date().toISOString().split('T')[0] },
-          ...prev.transactions
-        ]
+          { _id: Date.now().toString(), amount: -amount, type: "withdrawal_hold", description: "Gửi yêu cầu rút tiền từ ví", date: new Date().toISOString().slice(0, 10) },
+          ...prev.transactions,
+        ],
       }));
-      alert(`[Mock] Tạo yêu cầu nạp tiền thành công!`);
-      setDepositAmount("");
+      setWithdrawAmount("");
+      alert("Đã gửi yêu cầu rút tiền từ ví. Admin sẽ xử lý chuyển khoản.");
+    } catch (err) {
+      alert(err?.response?.data?.error?.message || "Không thể gửi yêu cầu rút tiền.");
     }
   };
 
@@ -248,6 +257,19 @@ export default function Profile() {
                 <button type="submit" style={styles.btnDeposit}>⚡ Tạo yêu cầu nạp tiền</button>
               </form>
 
+              <form onSubmit={handleWithdraw} style={{ ...styles.depositForm, marginTop: "18px" }}>
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>Số tiền muốn rút từ ví (đ)</label>
+                  <input type="number" placeholder="Ví dụ: 100000" value={withdrawAmount} onChange={(e) => setWithdrawAmount(e.target.value)} style={styles.input} required />
+                </div>
+                <div style={styles.formGrid}>
+                  <input placeholder="Ngân hàng" value={withdrawForm.bankName} onChange={(e) => setWithdrawForm({...withdrawForm, bankName: e.target.value})} style={styles.input} />
+                  <input placeholder="Số tài khoản" value={withdrawForm.bankAccount} onChange={(e) => setWithdrawForm({...withdrawForm, bankAccount: e.target.value})} style={styles.input} />
+                </div>
+                <input placeholder="Tên chủ tài khoản" value={withdrawForm.bankAccountName} onChange={(e) => setWithdrawForm({...withdrawForm, bankAccountName: e.target.value})} style={styles.input} />
+                <button type="submit" style={{ ...styles.btnDeposit, backgroundColor: "#10b981" }}>🏦 Gửi yêu cầu rút tiền</button>
+              </form>
+
               <h4 style={{ ...styles.sectionTitle, fontSize: "14px", marginTop: "24px" }}>📜 Nhật ký giao dịch gần đây</h4>
               <div style={styles.tableResponsive}>
                 <table style={styles.table}>
@@ -263,8 +285,8 @@ export default function Profile() {
                       <tr key={tx._id} style={styles.tdRow}>
                         <td style={styles.td}>{tx.description}</td>
                         <td style={styles.td}>{tx.date}</td>
-                        <td style={{ ...styles.td, fontWeight: "700", color: tx.type === "deposit" ? "#10b981" : "#ef4444" }}>
-                          {tx.type === "deposit" ? "+" : ""}{tx.amount.toLocaleString('vi-VN')} đ
+                        <td style={{ ...styles.td, fontWeight: "700", color: Number(tx.amount) >= 0 ? "#10b981" : "#ef4444" }}>
+                          {Number(tx.amount) > 0 ? "+" : ""}{Number(tx.amount || 0).toLocaleString('vi-VN')} đ
                         </td>
                       </tr>
                     ))}
