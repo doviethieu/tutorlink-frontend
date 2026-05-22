@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { favoriteService } from '../../services/favorite.service';
 
 export default function GiaSuYeuThich() {
   const navigate = useNavigate();
@@ -14,24 +14,16 @@ export default function GiaSuYeuThich() {
     const fetchFavorites = async () => {
       setLoading(true);
       try {
-        const token = localStorage.getItem('tutorlinkToken');
-        if (!token) {
+        if (!localStorage.getItem('tutorlinkToken')) {
           navigate('/login');
           return;
         }
 
-        const headers = { Authorization: `Bearer ${token}` };
-        const res = await axios.get('http://localhost:8000/api/favorites', { headers });
-        if (res.data) setTutors(res.data);
+        const data = await favoriteService.list();
+        setTutors(Array.isArray(data) ? data : []);
       } catch (err) {
-        console.error("Lỗi đồng bộ API favorites, kích hoạt Mock Data để sếp test giao diện:");
-        
-        // MOCK DATA ĐỒNG BỘ MÀU SẮC ĐẲNG CẤP CHỜ SẾP CHECK LUỒNG
-        setTutors([
-          { id: 'gs1', name: 'Thầy Trần Hùng', title: 'Thạc sĩ Toán giải tích - Giảng viên Đại học Bách Khoa', price: 300000, rating: 4.9, subjects: ['Toán Cao Cấp', 'Đại Số'] },
-          { id: 'gs2', name: 'Cô Sarah Nguyễn', title: 'Cựu du học sinh Anh quốc - Chứng chỉ IELTS 8.5', price: 250000, rating: 5.0, subjects: ['IELTS', 'Tiếng Anh Giao Tiếp'] },
-          { id: 'gs3', name: 'Anh Minh Lê', title: 'Senior Fullstack Engineer - Chuyên gia đào tạo Frontend', price: 400000, rating: 4.8, subjects: ['ReactJS', 'NodeJS', 'Javascript'] }
-        ]);
+        console.error("Lỗi đồng bộ API favorites:", err);
+        setTutors([]);
       } finally {
         setLoading(false);
       }
@@ -43,16 +35,12 @@ export default function GiaSuYeuThich() {
   // --- HÀM BỎ YÊU THÍCH (REMOVE FAVORITE) ---
   const handleRemoveFavorite = async (tutorId) => {
     try {
-      const token = localStorage.getItem('tutorlinkToken');
-      await axios.delete(`http://localhost:8000/api/favorites/${tutorId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await favoriteService.remove(tutorId);
       
       setTutors(tutors.filter(tutor => tutor.id !== tutorId));
       alert('💔 Đã xóa gia sư khỏi danh sách yêu thích!');
     } catch (err) {
-      // Cơ chế Fallback chạy Frontend độc lập tối ưu cho sếp test
-      setTutors(tutors.filter(tutor => tutor.id !== tutorId));
+      alert('Không thể xóa gia sư khỏi danh sách yêu thích.');
     }
   };
 
@@ -95,7 +83,7 @@ export default function GiaSuYeuThich() {
               
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 {/* Avatar thiết kế hình vuông bo góc hiện đại đồng bộ tổng thể */}
-                <div style={styles.avatarFake}>{tutor.name.charAt(0)}</div>
+                <div style={styles.avatarFake}>{tutor.name?.charAt(0) || 'T'}</div>
                 <button 
                   onClick={() => handleRemoveFavorite(tutor.id)} 
                   style={styles.btnHeartActive}
@@ -109,7 +97,7 @@ export default function GiaSuYeuThich() {
                 <Link to={`/giasu/${tutor.id}`} style={styles.tutorNameLink}>
                   {tutor.name}
                 </Link>
-                <p style={styles.tutorTitle} title={tutor.title}>{tutor.title}</p>
+                <p style={styles.tutorTitle} title={tutor.title}>{tutor.title || tutor.headline || tutor.bio}</p>
               </div>
 
               {/* KHỐI HIỂN THỊ CÁC THẺ MÔN HỌC */}
@@ -121,7 +109,7 @@ export default function GiaSuYeuThich() {
 
               {/* PHẦN CHÂN CARD: GIÁ TIỀN & ĐÁNH GIÁ SẢN PHẨM */}
               <div style={styles.cardFooter}>
-                <span style={styles.priceTxt}>{tutor.price.toLocaleString('vi-VN')} đ/h</span>
+                <span style={styles.priceTxt}>{(tutor.price || 0).toLocaleString('vi-VN')} đ/h</span>
                 <span style={styles.ratingBox}>
                   <span style={{ color: '#fbbf24', marginRight: '3px' }}>⭐</span> {tutor.rating || 0}
                 </span>

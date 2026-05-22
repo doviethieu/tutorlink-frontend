@@ -1,59 +1,34 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { ReviewDialog } from '../../components/common/ReviewDialog'; // 🔥 ĐÃ TÍCH HỢP: Gọi hộp thoại đánh giá Premium mới
+import { authService } from '../../services/auth.service';
+import { bookingService } from '../../services/booking.service';
+import { ReviewDialog } from '../../components/common/ReviewDialog';
 
 export default function LichHocHocVien() {
   const navigate = useNavigate();
 
-  // --- STATES QUẢN LÝ DỮ LIỆU ---
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDate, setSelectedDate] = useState(() => toDateKey(new Date()));
-  
-  // 🔥 STATE ĐÓNG/MỞ MODAL REVIEW ĐỒNG BỘ THEO COMPONENT MỚI
+
   const [isReviewOpen, setIsReviewOpen] = useState(false);
   const [selectedReviewTarget, setSelectedReviewTarget] = useState(null);
 
-  // --- FETCH DỮ LIỆU LỊCH HỌC TỪ BACKEND ---
   const fetchBookings = async () => {
     try {
-      const token = localStorage.getItem('tutorlinkToken');
-      const headers = { Authorization: `Bearer ${token}` };
-
-      // Kiểm tra quyền: Nếu là gia sư hoặc admin thì chuyển hướng sang khu vực riêng
-      const userRes = await axios.get('http://localhost:8000/api/auth/me', { headers });
-      if (userRes.data?.role === 'tutor' || userRes.data?.role === 'admin') {
+      const me = await authService.getMe();
+      const currentUser = me?.user || me;
+      if (currentUser?.role === 'tutor' || currentUser?.role === 'admin') {
         navigate('/tutor/bookings');
         return;
       }
 
-      const res = await axios.get('http://localhost:8000/api/bookings', { headers });
-      
-      // 🛠️ ĐÃ SỬA: Bọc lớp vỏ bảo vệ, đảm bảo luôn gán một Array chuẩn chỉnh vào State
-      if (res.data && Array.isArray(res.data.data)) {
-        setBookings(res.data.data);
-      } else if (Array.isArray(res.data)) {
-        setBookings(res.data);
-      } else {
-        setBookings([]);
-      }
+      const data = await bookingService.list();
+      setBookings(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error("Lỗi đồng bộ API lịch học, hệ thống kích hoạt Mock Data để sếp test:");
-      
-      // MOCK DATA CHUẨN ĐỊNH DẠNG HỆ THỐNG NĂM 2026
-      const todayStr = toDateKey(new Date());
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      const tomorrowStr = toDateKey(tomorrow);
-
-      setBookings([
-        { id: 'BK-9921', subject: 'Toán Cao Cấp A1', date: todayStr, time: '08:00 - 10:00', status: 'confirmed', amount: 300000, tutorId: 'gs1', tutor: { name: 'Thầy Trần Hùng', avatarUrl: '' }, format: 'Online (Zoom)', meetingUrl: 'https://zoom.us' },
-        { id: 'BK-5512', subject: 'Tiếng Anh Giao Tiếp', date: todayStr, time: '14:30 - 16:30', status: 'pending', amount: 250000, tutorId: 'gs2', tutor: { name: 'Cô Sarah Nguyễn', avatarUrl: '' }, format: 'Online (Google Meet)', meetingUrl: '' },
-        { id: 'BK-1102', subject: 'Lập trình ReactJS', date: tomorrowStr, time: '19:00 - 21:00', status: 'completed', amount: 400000, tutorId: 'gs3', tutor: { name: 'Anh Minh Lê', avatarUrl: '' }, format: 'Online (Discord)', meetingUrl: 'https://discord.gg' },
-        { id: 'BK-3344', subject: 'Vật Lý Đại Cương', date: '2026-05-15', status: 'cancelled', amount: 200000, tutorId: 'gs1', tutor: { name: 'Thầy Trần Hùng', avatarUrl: '' }, format: 'Online', time: '10:00 - 12:00' }
-      ]);
+      console.error('Không tải được lịch học:', err);
+      setBookings([]);
     } finally {
       setLoading(false);
     }
@@ -63,10 +38,14 @@ export default function LichHocHocVien() {
     fetchBookings();
   }, [navigate]);
 
-  // --- HÀM MỞ HỘP THOẠI ĐÁNH GIÁ ĐÚNG CHUẨN ĐƯỜNG LINK ---
   const handleOpenReview = (booking) => {
+    if (booking.hasReview) {
+      alert('Buổi học này đã được đánh giá rồi.');
+      return;
+    }
+
     setSelectedReviewTarget({
-      id: booking.id,
+      id: booking._id || booking.id,
       tutorId: booking.tutorId,
       tutorName: booking.tutor?.name || 'Gia sư',
       subject: booking.subject
@@ -74,7 +53,16 @@ export default function LichHocHocVien() {
     setIsReviewOpen(true);
   };
 
-  // 🛠️ ĐÃ GIA CỐ BẪY CHẶN AN TOÀN: Ép bookings luôn là mảng để hàm filter bên dưới chạy mượt
+  const handleGoToPayment = (booking) => {
+    navigate('/payment', {
+      state: {
+        bookingInfo: booking,
+        totalAmount: booking.amount || 0,
+        tutorName: booking.tutor?.name || 'Gia sư hệ thống',
+      },
+    });
+  };
+
   const safeBookings = Array.isArray(bookings) ? bookings : [];
 
   // --- XOÁ VÀ LỌC DỮ LIỆU THEO TỪ KHÓA TÌM KIẾM ---
@@ -99,7 +87,7 @@ export default function LichHocHocVien() {
 
   const agendaDays = useMemo(() => {
     return Array.from(bookingsByDate, ([dateKey, items]) => ({ dateKey, items }))
-      .sort((a, b) => dateKey.localeCompare(b.dateKey));
+      .sort((a, b) => a.dateKey.localeCompare(b.dateKey));
   }, [bookingsByDate]);
 
   const selectedBookings = bookingsByDate.get(selectedDate) ?? [];
@@ -113,12 +101,13 @@ export default function LichHocHocVien() {
   const handleCancelBooking = async (id) => {
     if (!window.confirm("Sếp có chắc chắn muốn hủy lịch học này không?")) return;
     try {
-      const token = localStorage.getItem('tutorlinkToken');
-      await axios.post(`http://localhost:8000/api/bookings/${id}/cancel`, { reason: 'Hủy từ giao diện học viên' }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      alert('✔️ Đã hủy lịch thành công!');
-      setBookings(safeBookings.map(b => b.id === id ? { ...b, status: 'cancelled' } : b));
+      const cancelledBooking = await bookingService.cancel(id, 'Hủy từ giao diện học viên');
+      alert(
+        cancelledBooking?.paymentStatus === 'refunded' || cancelledBooking?.paymentStatus === 'partially_refunded'
+          ? '✔️ Đã hủy lịch thành công. Tiền hoàn đã được cộng vào ví TutorLink.'
+          : '✔️ Đã hủy lịch thành công!'
+      );
+      setBookings(safeBookings.map(b => (b._id || b.id) === id ? { ...b, ...cancelledBooking } : b));
     } catch (err) {
       alert('Không hủy được lịch học, sếp vui lòng kiểm tra lại backend!');
     }
@@ -127,12 +116,8 @@ export default function LichHocHocVien() {
   // --- HÀM XUẤT CSV ---
   const handleExportCsv = async () => {
     try {
-      const token = localStorage.getItem('tutorlinkToken');
-      const res = await axios.get('http://localhost:8000/api/bookings/export-csv', {
-        headers: { Authorization: `Bearer ${token}` },
-        responseType: 'blob'
-      });
-      const url = URL.createObjectURL(res.data);
+      const blob = await bookingService.exportCsv();
+      const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.download = 'bookings.csv';
@@ -258,8 +243,15 @@ export default function LichHocHocVien() {
                         {['pending', 'confirmed'].includes(booking.status) && (
                           <button onClick={() => handleCancelBooking(booking.id)} style={styles.btnDangerMini}>Hủy</button>
                         )}
+                        {booking.paymentStatus !== 'paid' && ['pending', 'confirmed'].includes(booking.status) && (
+                          <button onClick={() => handleGoToPayment(booking)} style={styles.btnPayMini}>Thanh toán</button>
+                        )}
                         {booking.status === 'completed' && (
-                          <button onClick={() => handleOpenReview(booking)} style={styles.btnReviewMini}>⭐ Đánh giá</button>
+                          booking.hasReview ? (
+                            <button type="button" disabled style={styles.btnReviewedMini}>Đã đánh giá</button>
+                          ) : (
+                            <button onClick={() => handleOpenReview(booking)} style={styles.btnReviewMini}>⭐ Đánh giá</button>
+                          )
                         )}
                       </div>
                     </div>
@@ -292,7 +284,16 @@ export default function LichHocHocVien() {
                     <div style={{ marginTop: '12px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                       {booking.meetingUrl && <a href={booking.meetingUrl} target="_blank" rel="noreferrer" style={{ ...styles.btnLinkAction, flex: 1, textAlign: 'center' }}>Vào lớp</a>}
                       {['pending', 'confirmed'].includes(booking.status) && <button onClick={() => handleCancelBooking(booking.id)} style={{ ...styles.btnDangerMini, flex: 1 }}>Hủy lịch</button>}
-                      {booking.status === 'completed' && <button onClick={() => handleOpenReview(booking)} style={{ ...styles.btnReviewMini, flex: 1 }}>⭐ Đánh giá</button>}
+                      {booking.paymentStatus !== 'paid' && ['pending', 'confirmed'].includes(booking.status) && (
+                        <button onClick={() => handleGoToPayment(booking)} style={{ ...styles.btnPayMini, flex: 1 }}>Thanh toán</button>
+                      )}
+                      {booking.status === 'completed' && (
+                        booking.hasReview ? (
+                          <button type="button" disabled style={{ ...styles.btnReviewedMini, flex: 1 }}>Đã đánh giá</button>
+                        ) : (
+                          <button onClick={() => handleOpenReview(booking)} style={{ ...styles.btnReviewMini, flex: 1 }}>⭐ Đánh giá</button>
+                        )
+                      )}
                     </div>
                   </div>
                 ))}
@@ -315,7 +316,12 @@ export default function LichHocHocVien() {
           subject={selectedReviewTarget.subject}
           bookingId={selectedReviewTarget.id}
           tutorId={selectedReviewTarget.tutorId}
-          onReviewSuccess={() => {
+          onReviewSuccess={(review) => {
+            setBookings((items) => items.map((booking) => (
+              (booking._id || booking.id) === selectedReviewTarget.id
+                ? { ...booking, hasReview: true, review }
+                : booking
+            )));
             fetchBookings();
           }}
         />
@@ -382,7 +388,9 @@ const styles = {
   timelineItem: { display: 'flex', alignItems: 'center', gap: '16px', padding: '14px', backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '10px' },
   btnLinkAction: { backgroundColor: '#a855f7', color: '#fff', padding: '7px 14px', borderRadius: '6px', fontSize: '12.5px', fontWeight: '700', textDecoration: 'none', display: 'inline-block', boxShadow: '0 4px 12px rgba(168, 85, 247, 0.2)' },
   btnDangerMini: { backgroundColor: 'transparent', border: '1px solid #f87171', color: '#f87171', padding: '6px 12px', borderRadius: '6px', fontSize: '12.5px', cursor: 'pointer', fontWeight: '600' },
+  btnPayMini: { backgroundColor: '#10b981', color: '#fff', border: 'none', padding: '7px 14px', borderRadius: '6px', fontSize: '12.5px', cursor: 'pointer', fontWeight: '700' },
   btnReviewMini: { backgroundColor: '#f59e0b', color: '#0f172a', border: 'none', padding: '7px 14px', borderRadius: '6px', fontSize: '12.5px', cursor: 'pointer', fontWeight: '700' },
+  btnReviewedMini: { backgroundColor: '#334155', color: '#94a3b8', border: '1px solid #475569', padding: '7px 14px', borderRadius: '6px', fontSize: '12.5px', cursor: 'not-allowed', fontWeight: '700' },
   statsRow: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' },
   miniStatCard: { backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '10px', padding: '14px', textAlign: 'center' },
   statNum: { fontSize: '20px', fontWeight: '800', color: '#fff', margin: 0 },

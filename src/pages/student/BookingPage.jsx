@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import axios from 'axios';
+import { tutorService } from '../../services/tutor.service';
+import { availabilityService } from '../../services/availability.service';
+import { bookingService } from '../../services/booking.service';
 
 const DURATIONS = [1, 1.5, 2];
 
@@ -30,35 +32,21 @@ export default function DatLichHoc() {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const token = localStorage.getItem('tutorlinkToken');
-        const headers = token ? { Authorization: `Bearer ${token}` } : {};
-
-        const [tutorRes, availRes] = await Promise.all([
-          axios.get(`http://localhost:8000/api/tutors/${tutorId}`, { headers }),
-          axios.get(`http://localhost:8000/api/tutors/${tutorId}/availability`, { headers }).catch(() => ({ data: [] }))
+        const [tutorData, availabilityData] = await Promise.all([
+          tutorService.get(tutorId),
+          availabilityService.getTutorAvailability(tutorId).catch(() => [])
         ]);
 
-        setTutor(tutorRes.data);
-        setAvailabilityDays(Array.isArray(availRes.data) ? availRes.data : []);
+        setTutor(tutorData);
+        setAvailabilityDays(Array.isArray(availabilityData) ? availabilityData : []);
 
-        if (tutorRes.data?.subjects?.length > 0) {
-          setSubject(tutorRes.data.subjects[0]);
+        if (tutorData?.subjects?.length > 0) {
+          setSubject(tutorData.subjects[0]);
         }
       } catch (error) {
         console.error("Lỗi lấy thông tin đặt lịch:", error);
-        // MOCK DỮ LIỆU đồng bộ dải màu cao cấp
-        setTutor({
-          name: 'Nguyễn Văn A',
-          title: 'Thủ khoa Sư Phạm Toán',
-          avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
-          price: 200000,
-          subjects: ['Toán 12', 'Luyện thi ĐH môn Toán'],
-          format: 'flex',
-          userId: tutorId
-        });
-        setAvailabilityDays([
-          { date: today, slots: [{ start: '14:00', status: 'open' }, { start: '16:00', status: 'booked' }, { start: '19:00', status: 'open' }, { start: '20:30', status: 'open' }] }
-        ]);
+        setTutor(null);
+        setAvailabilityDays([]);
       } finally {
         setIsLoading(false);
       }
@@ -113,10 +101,8 @@ export default function DatLichHoc() {
 
     try {
       setIsSubmitting(true);
-      const token = localStorage.getItem('tutorlinkToken');
-      
       const payload = {
-        tutorId: tutor?.userId || tutorId,
+        tutorId: tutor?._id || tutor?.id || tutorId,
         date,
         startTime: effectiveStartTime,
         duration,
@@ -125,22 +111,26 @@ export default function DatLichHoc() {
         goal: goal.trim(),
       };
 
+      const token = localStorage.getItem('tutorlinkToken');
       if (!token) {
-        console.log("Dữ liệu gửi đi (Gia lập):", payload);
-        alert('🎉 Đã gửi yêu cầu đặt lịch (Simulated)!');
-        navigate('/bookings');
+        alert('Bạn cần đăng nhập để đặt lịch học.');
+        navigate('/login');
         return;
       }
 
-      await axios.post('http://localhost:8000/api/bookings', payload, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const booking = await bookingService.create(payload);
 
-      alert('🎉 Đã gửi yêu cầu đặt lịch học thành công! Vui lòng chờ gia sư phản hồi.');
-      navigate('/bookings');
+      alert('🎉 Đã gửi yêu cầu đặt lịch học thành công! Tiếp theo hãy thanh toán để giữ tiền an toàn trong escrow.');
+      navigate('/payment', {
+        state: {
+          bookingInfo: booking,
+          totalAmount: booking.amount || totalAmount,
+          tutorName: tutor?.name || tutor?.fullName || 'Gia sư hệ thống',
+        },
+      });
     } catch (error) {
       console.error(error);
-      alert(error.response?.data?.message || 'Không tạo được yêu cầu đặt lịch rồi sếp ơi!');
+      alert(error.response?.data?.error?.message || 'Không tạo được yêu cầu đặt lịch.');
     } finally {
       setIsSubmitting(false);
     }
@@ -366,7 +356,7 @@ export default function DatLichHoc() {
               </div>
 
               <p style={styles.noteText}>
-                📌 Sau khi gửi yêu cầu, gia sư sẽ nhận được thông báo để duyệt slot. Trạng thái lịch học sẽ được cập nhật liên tục tại Tab "Lịch học".
+                📌 Sau khi gửi yêu cầu, bạn sẽ chuyển sang bước thanh toán. Học phí được giữ trong escrow và chỉ giải ngân sau khi buổi học hoàn thành.
               </p>
 
               <button
@@ -378,7 +368,7 @@ export default function DatLichHoc() {
                   ...((isSubmitting || !tutor || openSlots.length === 0) ? styles.submitBtnDisabled : {})
                 }}
               >
-                {isSubmitting ? '⏳ Đang gửi đơn...' : '🚀 Gửi yêu cầu đặt lịch'}
+                {isSubmitting ? '⏳ Đang gửi đơn...' : '🚀 Gửi yêu cầu & thanh toán'}
               </button>
             </div>
           </div>

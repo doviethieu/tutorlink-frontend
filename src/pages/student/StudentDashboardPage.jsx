@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { authService } from '../../services/auth.service';
+import { bookingService } from '../../services/booking.service';
+import { favoriteService } from '../../services/favorite.service';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -24,43 +26,37 @@ export default function Dashboard() {
           return;
         }
 
-        const headers = { Authorization: `Bearer ${token}` };
-
-        // Gọi đồng thời các API lấy thông tin cá nhân, lịch học và danh sách yêu thích thật từ DB
         const [userRes, bookingsRes, favoritesRes] = await Promise.all([
-          axios.get('http://localhost:8000/api/auth/me', { headers }),
-          axios.get('http://localhost:8000/api/bookings?limit=5', { headers }),
-          axios.get('http://localhost:8000/api/favorites', { headers })
+          authService.getMe(),
+          bookingService.listForStudent({ limit: 5 }),
+          favoriteService.list()
         ]);
 
         // 1. Đồng bộ thông tin cá nhân của sếp
-        if (userRes?.data) {
-          setMe(userRes.data.data || userRes.data);
-        }
+        setMe(userRes?.user || userRes);
         
         // 2. Đồng bộ lịch đặt chỗ thật (Xử lý map dữ liệu từ Mongo sang bảng hiển thị)
-        if (bookingsRes?.data) {
-          const rawBookings = bookingsRes.data.data || bookingsRes.data;
+        if (bookingsRes) {
+          const rawBookings = bookingsRes;
           const cleanBookings = (Array.isArray(rawBookings) ? rawBookings : []).map(bk => ({
             _id: bk._id,
             id: bk.bookingId || bk._id?.substring(0, 7).toUpperCase() || 'BK-N/A', 
             subject: bk.subject || bk.className || bk.classId?.subject || 'Môn học chưa phân loại',
             date: bk.date || (bk.startTime ? new Date(bk.startTime).toLocaleDateString('vi-VN') : 'Chưa xếp lịch'),
-            // Đồng bộ định dạng trạng thái
-            status: bk.status === 'Chấp nhận' || bk.status === 'Paid' ? 'confirmed' : bk.status === 'Từ chối' ? 'failed' : bk.status === 'Hoàn thành' ? 'completed' : 'pending',
+            status: bk.status === 'Chấp nhận' || bk.status === 'Paid' ? 'confirmed' : bk.status === 'Từ chối' ? 'failed' : bk.status === 'Hoàn thành' ? 'completed' : bk.status,
             amount: bk.amount || bk.totalPrice || 0
           }));
           setBookings(cleanBookings);
         }
         
         // 3. Đồng bộ danh sách gia sư yêu thích thật từ DB
-        if (favoritesRes?.data) {
-          const rawFavorites = favoritesRes.data.data || favoritesRes.data;
+        if (favoritesRes) {
+          const rawFavorites = favoritesRes;
           const cleanFavorites = (Array.isArray(rawFavorites) ? rawFavorites : []).map(fv => ({
             _id: fv._id || fv.tutorId?._id,
-            name: fv.name || fv.tutorId?.name || 'Gia sư hệ thống',
-            title: fv.title || fv.tutorId?.bio || fv.tutorId?.specialization || 'Gia sư TutorLink',
-            avatarUrl: fv.avatarUrl || fv.tutorId?.avatar || ''
+            name: fv.name || fv.tutor?.name || fv.tutorId?.name || 'Gia sư hệ thống',
+            title: fv.title || fv.tutor?.headline || fv.tutorId?.bio || fv.tutorId?.specialization || 'Gia sư TutorLink',
+            avatarUrl: fv.avatarUrl || fv.tutor?.avatarUrl || fv.tutorId?.avatar || ''
           }));
           setFavorites(cleanFavorites);
         }

@@ -1,43 +1,70 @@
-import React, { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { paymentService } from '../../services/payment.service';
+import { bookingService } from '../../services/booking.service';
 
 export default function CongThanhToan() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [loadedBooking, setLoadedBooking] = useState(null);
 
-  // 🛠️ ĐÃ CẬP NHẬT: Đón nhận dữ liệu hóa đơn động truyền sang từ trang Chi Tiết Gia Sư
   const { bookingInfo, totalAmount, tutorName } = location.state || {};
+  const displayBooking = bookingInfo || loadedBooking;
 
-  // Nếu chạy trực tiếp không qua luồng đặt lịch, cấu hình dữ liệu demo chuẩn để chống crash giao diện
-  const soTienThanhToan = totalAmount || 250000;
-  const tenGiaSuHienThi = tutorName || "Gia sư hệ thống";
-  const maDonHang = bookingInfo?._id || "DH_TEST_" + Math.random().toString(36).substr(2, 6).toUpperCase();
-  const cacCaHoc = bookingInfo?.selectedSchedule || ["Ca học thử nghiệm"];
+  const fallbackOrderCode = useMemo(() => `DH_TEST_${Math.random().toString(36).slice(2, 8).toUpperCase()}`, []);
+  const bookingIdFromQuery = searchParams.get('bookingId');
+  const activeBookingId = displayBooking?._id || displayBooking?.id || bookingIdFromQuery;
+  const soTienThanhToan = totalAmount || displayBooking?.amount || 250000;
+  const tenGiaSuHienThi = tutorName || displayBooking?.tutor?.name || "Gia sư hệ thống";
+  const maDonHang = activeBookingId || fallbackOrderCode;
+  const cacCaHoc = displayBooking?.selectedSchedule?.length
+    ? displayBooking.selectedSchedule
+    : [displayBooking?.date && displayBooking?.time ? `${displayBooking.date} ${displayBooking.time}` : "Ca học thử nghiệm"];
+
+  useEffect(() => {
+    const loadBooking = async () => {
+      if (bookingInfo || !bookingIdFromQuery) return;
+      try {
+        const booking = await bookingService.get(bookingIdFromQuery);
+        setLoadedBooking(booking);
+      } catch (error) {
+        console.error('Không tải được booking thanh toán:', error);
+      }
+    };
+
+    loadBooking();
+  }, [bookingIdFromQuery, bookingInfo]);
 
   // HÀM MÔ PHỎNG KIỂM TRA IPN / XÁC NHẬN THANH TOÁN THÀNH CÔNG LÊN MONGODB
   const handleXacNhanChuyenKhoan = async () => {
     setIsProcessing(true);
     try {
-      const token = localStorage.getItem('tutorlinkToken');
-      
-      // Nếu có _id đơn hàng thật, gọi API cập nhật trạng thái thanh toán lên Database
-      if (bookingInfo?._id) {
-        await axios.put(`http://localhost:8000/api/bookings/${bookingInfo._id}/payment-status`, {
-          paymentStatus: 'Paid',
-          status: 'Chấp nhận'
-        }, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+      let paymentId = null;
+      let bookingId = activeBookingId;
+
+      if (!bookingId) {
+        alert('Không tìm thấy mã booking để thanh toán.');
+        return;
       }
 
-      alert("🎉 Cổng thanh toán TutorLink xác nhận: Giao dịch thành công! Hệ thống đã mở khóa lớp học trực tuyến cho bạn.");
-      navigate('/bookings'); // Điều hướng học sinh về trang quản lý lịch học
+      const created = await paymentService.create(bookingId, 'bank_transfer');
+      paymentId = created?.payment?._id || created?.payment?.id;
+
+      if (created?.booking?.paymentStatus === 'paid') {
+        alert('Booking này đã được thanh toán trước đó.');
+        navigate('/bookings');
+        return;
+      }
+
+      await paymentService.confirm({ paymentId, bookingId });
+
+      alert("Cổng thanh toán TutorLink xác nhận: giao dịch thành công. Học phí đã được giữ trong escrow.");
+      navigate('/bookings');
     } catch (err) {
-      console.log("🚨 Chế độ Mock Sandbox: Đồng bộ trạng thái giao diện.");
-      alert("✔️ Hệ thống ghi nhận yêu cầu xác thực chuyển khoản thành công (Chế độ Sandbox)!");
-      navigate('/');
+      const message = err?.response?.data?.error?.message || 'Không thể xác nhận thanh toán. Vui lòng thử lại.';
+      alert(message);
     } finally {
       setIsProcessing(false);
     }
