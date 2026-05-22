@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { adminService } from '../../services/admin.service';
 import { SimpleBars } from '../../components/common/SimpleBars'; 
 import { SimpleLine } from '../../components/common/SimpleLine'; 
 import { StatusBadge } from '../../components/marketplace/StatusBadge';
@@ -29,29 +29,24 @@ export default function AdminTongQuan() {
     const fetchDashboardData = async () => {
       setLoading(true);
       try {
-        const token = localStorage.getItem('tutorlinkToken');
-        const headers = { Authorization: `Bearer ${token}` };
-
-        // 🛠️ ĐÃ FIX: Sửa đường dẫn API lấy danh sách gia sư đang chờ duyệt thật trên MongoDB (status=pending)
         const [overviewRes, queueRes, reportsRes] = await Promise.all([
-          axios.get('http://localhost:8000/api/admin/overview', { headers }).catch(() => null),
-          axios.get('http://localhost:8000/api/tutors', { headers }), // Kéo danh sách gia sư thực tế
-          axios.get('http://localhost:8000/api/admin/reports?status=open', { headers }).catch(() => null)
+          adminService.overview(),
+          adminService.tutorQueue({ status: 'pending_review', limit: 50 }),
+          adminService.reports({ status: 'open', limit: 50 })
         ]);
 
-        if (overviewRes?.data) setOverview(overviewRes.data);
+        if (overviewRes) setOverview(overviewRes);
         
-        // Lọc danh sách gia sư thật lấy những người có trạng thái 'pending' hoặc 'Chờ kiểm duyệt'
-        if (queueRes?.data) {
-          const allTutors = queueRes.data.data || queueRes.data || [];
-          const pendingList = allTutors.filter(t => t.status === 'pending' || t.status === 'Chờ kiểm duyệt');
+        if (queueRes) {
+          const allTutors = Array.isArray(queueRes) ? queueRes : [];
+          const pendingList = allTutors.filter(t => ['pending', 'pending_review', 'Chờ kiểm duyệt'].includes(t.status));
           setQueue(pendingList);
           
           // Cập nhật lại con số đếm trên badge thống kê cho chuẩn xác thực tế
           setOverview(prev => ({ ...prev, pendingTutors: pendingList.length }));
         }
         
-        if (reportsRes?.data) setReports(Array.isArray(reportsRes.data) ? reportsRes.data : []);
+        setReports(Array.isArray(reportsRes) ? reportsRes : []);
 
       } catch (err) {
         console.error("❌ Lỗi đồng bộ API Admin thật:", err.message);
@@ -70,23 +65,17 @@ export default function AdminTongQuan() {
   const handleTutorDecision = async (id, action) => {
     if (!window.confirm(`Sếp có chắc chắn muốn thực hiện hành động này nhanh không?`)) return;
     try {
-      const token = localStorage.getItem('tutorlinkToken');
-      
-      // 🛠️ ĐÃ FIX: Điều hướng chuẩn luồng endpoint xử lý trạng thái DB giống file chi tiết
-      let endpoint = `http://localhost:8000/api/tutors/${id}/approve`;
       let payload = { ghiChuInternal: 'Duyệt nhanh từ bảng điều khiển tổng quan' };
 
       if (action === 'request') {
-        endpoint = `http://localhost:8000/api/tutors/${id}/request-info`;
         payload.message = 'Vui lòng bổ sung thêm bằng cấp hoặc thông tin hồ sơ rõ ràng hơn.';
+        await adminService.requestTutorInfo(id, payload.message);
       } else if (action === 'reject') {
-        endpoint = `http://localhost:8000/api/tutors/${id}/reject`;
         payload.message = 'Hồ sơ không đạt yêu cầu xét duyệt của hệ thống.';
+        await adminService.rejectTutor(id, payload.message);
+      } else {
+        await adminService.approveTutor(id, payload.ghiChuInternal);
       }
-
-      await axios.post(endpoint, payload, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
 
       alert('🎉 Hệ thống đã ghi nhận và cập nhật trạng thái lên MongoDB thành công!');
       
@@ -102,14 +91,11 @@ export default function AdminTongQuan() {
   // --- HÀM PHÂN XỬ ĐƠN BÁO CÁO VI PHẠM ---
   const handleResolveReport = async (id, actionTaken) => {
     try {
-      const token = localStorage.getItem('tutorlinkToken');
       const textNote = resolutionDraft[id] || 'Đã xử lý từ dashboard';
 
-      await axios.post(`http://localhost:8000/api/admin/reports/${id}/resolve`, {
+      await adminService.resolveReport(id, {
         resolution: textNote,
         actionTaken
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
       });
 
       alert('✔️ Đã thực thi quyết định xử lý báo cáo!');
@@ -122,12 +108,8 @@ export default function AdminTongQuan() {
   // --- HÀM XUẤT CSV ---
   const handleExportCSV = async () => {
     try {
-      const token = localStorage.getItem('tutorlinkToken');
-      const res = await axios.get('http://localhost:8000/api/admin/reports/export-csv', {
-        headers: { Authorization: `Bearer ${token}` },
-        responseType: 'blob'
-      });
-      const url = URL.createObjectURL(res.data);
+      const blob = await adminService.exportReportsCsv();
+      const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.download = 'reports_overview.csv';
@@ -156,6 +138,9 @@ export default function AdminTongQuan() {
         <button onClick={() => navigate('/admin/users')} style={styles.btnNavigate}>
           👥 Quản lý người dùng →
         </button>
+        <button onClick={() => navigate('/admin/finance')} style={styles.btnNavigate}>
+          💳 Tài chính & Escrow →
+        </button>
       </div>
 
       {/* PHẦN 1: BỐN THẺ CHỈ SỐ THỐNG KÊ NHANH */}
@@ -179,6 +164,16 @@ export default function AdminTongQuan() {
           <div style={{ ...styles.iconBox, color: '#e74c3c' }}>💰</div>
           <p style={styles.statLabel}>Doanh thu tháng</p>
           <p style={styles.statValue}>{(overview?.monthlyRevenue ?? 0).toLocaleString('vi-VN')} đ</p>
+        </div>
+        <div style={styles.statCard}>
+          <div style={{ ...styles.iconBox, color: '#38bdf8' }}>🏦</div>
+          <p style={styles.statLabel}>Escrow đang giữ</p>
+          <p style={styles.statValue}>{(overview?.escrowHeld ?? 0).toLocaleString('vi-VN')} đ</p>
+        </div>
+        <div style={styles.statCard}>
+          <div style={{ ...styles.iconBox, color: '#f59e0b' }}>📤</div>
+          <p style={styles.statLabel}>Payout chờ duyệt</p>
+          <p style={styles.statValue}>{overview?.pendingPayouts ?? 0}</p>
         </div>
       </div>
 
@@ -239,7 +234,7 @@ export default function AdminTongQuan() {
                     <button onClick={() => handleTutorDecision(currentId, 'approve')} style={{ ...styles.btnMini, backgroundColor: '#2ecc71' }}>Duyệt nhanh</button>
                     <button onClick={() => handleTutorDecision(currentId, 'request')} style={{ ...styles.btnMini, backgroundColor: '#34495e', border: '1px solid #475569' }}>Yêu cầu sửa</button>
                     {/* 🛠️ ĐÃ FIX BIẾN CỐ ĐIỀU HƯỚNG: Chuyển chuẩn sang trang chi tiết xét duyệt CV */}
-                    <button onClick={() => navigate(`/admin/duyet-gia-su/${currentId}`)} style={{ ...styles.btnMini, backgroundColor: '#3498db' }}>👁️ Mở Chi Tiết</button>
+                    <button onClick={() => navigate(`/admin/tutors/${currentId}`)} style={{ ...styles.btnMini, backgroundColor: '#3498db' }}>👁️ Mở Chi Tiết</button>
                   </div>
                 </div>
               );
@@ -269,7 +264,7 @@ export default function AdminTongQuan() {
                     </div>
                     <StatusBadge status={report.status || 'open'} />
                   </div>
-                  <p style={styles.reportDescriptionText}>{report.description || 'Không có nội dung mô tả chi tiết kèm theo.'}</p>
+                  <p style={styles.reportDescriptionText}>{report.description || report.body || report.message || 'Không có nội dung mô tả chi tiết kèm theo.'}</p>
                   
                   <textarea
                     placeholder="Ghi chú phản hồi / Căn cứ đưa ra hình thức kỷ luật..."

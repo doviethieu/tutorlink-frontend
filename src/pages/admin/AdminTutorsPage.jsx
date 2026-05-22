@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { adminService } from '../../services/admin.service';
 
 export default function AdminDuyetGiaSu() {
   const { id } = useParams(); // Lấy ID gia sư từ URL
@@ -17,15 +17,7 @@ export default function AdminDuyetGiaSu() {
     const fetchTutorProfile = async () => {
       setLoading(true);
       try {
-        const token = localStorage.getItem('tutorlinkToken');
-        
-        // 🛠️ ĐÃ FIX: Sửa lại đường dẫn chuẩn khớp với API Backend của sếp
-        const response = await axios.get(`http://localhost:8000/api/tutors/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        
-        // Bóc tách dữ liệu chuẩn từ Backend trả về
-        const data = response?.data?.data || response?.data || null;
+        const data = await adminService.tutor(id);
         if (data) {
           setProfile(data);
           setGhiChu(data.ghiChuInternal || '');
@@ -46,23 +38,13 @@ export default function AdminDuyetGiaSu() {
   const handleAction = async (kind) => {
     setActionLoading(true);
     try {
-      const token = localStorage.getItem('tutorlinkToken');
-      
-      // Sếp lưu ý kiểm tra xem các đường dẫn POST này Backend của sếp đã viết chưa nhé
-      let endpoint = `http://localhost:8000/api/tutors/${id}/approve`;
-      let payload = { ghiChuInternal: ghiChu };
-
       if (kind === 'request') {
-        endpoint = `http://localhost:8000/api/tutors/${id}/request-info`;
-        payload.message = ghiChu || 'Vui lòng bổ sung thêm bằng cấp hoặc thông tin hồ sơ rõ ràng hơn.';
+        await adminService.requestTutorInfo(id, ghiChu || 'Vui lòng bổ sung thêm bằng cấp hoặc thông tin hồ sơ rõ ràng hơn.');
       } else if (kind === 'reject') {
-        endpoint = `http://localhost:8000/api/tutors/${id}/reject`;
-        payload.message = ghiChu || 'Hồ sơ không đạt yêu cầu xét duyệt của hệ thống TutorLink.';
+        await adminService.rejectTutor(id, ghiChu || 'Hồ sơ không đạt yêu cầu xét duyệt của hệ thống TutorLink.');
+      } else {
+        await adminService.approveTutor(id, ghiChu);
       }
-
-      await axios.post(endpoint, payload, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
 
       alert('🎉 Hệ thống đã cập nhật trạng thái hồ sơ lên MongoDB thành công!');
       navigate('/admin'); 

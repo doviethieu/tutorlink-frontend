@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { adminService } from '../../services/admin.service';
 
 export default function AdminNguoiDung() {
   const navigate = useNavigate();
@@ -22,26 +22,14 @@ export default function AdminNguoiDung() {
     const fetchUsers = async () => {
       setLoadingUsers(true);
       try {
-        const token = localStorage.getItem('tutorlinkToken');
-        
         if (vaiTroTab === 'waiting_tutor') {
-          // 🛠️ ĐÃ FIX: Gọi đúng API lấy danh sách Gia sư "pending" mà mình đã viết ở Backend
-          const res = await axios.get('http://localhost:8000/api/tutors', {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          
-          // Lấy đúng mảng dữ liệu từ { success: true, data: [...] }
-          setUsers(res.data.data || []);
-          
+          const tutors = await adminService.tutorQueue({ status: 'pending_review', limit: 50 });
+          setUsers(Array.isArray(tutors) ? tutors : []);
         } else {
-          // API lấy người dùng bình thường (Sếp giữ nguyên)
-          let url = `http://localhost:8000/api/admin/users?q=${tuKhoa}`;
-          if (vaiTroTab !== 'all') url += `&role=${vaiTroTab}`;
-          
-          const res = await axios.get(url, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          setUsers(Array.isArray(res?.data) ? res.data : (res?.data?.users || res?.data?.data || []));
+          const params = { q: tuKhoa };
+          if (vaiTroTab !== 'all') params.role = vaiTroTab;
+          const rows = await adminService.users(params);
+          setUsers(Array.isArray(rows) ? rows : []);
         }
       } catch (err) {
         console.error("❌ Lỗi kéo dữ liệu thật:", err.message);
@@ -61,11 +49,8 @@ export default function AdminNguoiDung() {
     const fetchReports = async () => {
       setLoadingReports(true);
       try {
-        const token = localStorage.getItem('tutorlinkToken');
-        const res = await axios.get('http://localhost:8000/api/admin/reports?status=open', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setReports(Array.isArray(res?.data) ? res.data : (res?.data?.reports || res?.data?.data || []));
+        const rows = await adminService.reports({ status: 'open', limit: 50 });
+        setReports(Array.isArray(rows) ? rows : []);
       } catch (err) {
         setReports([]); // Xóa sổ Mock data
       } finally {
@@ -79,13 +64,11 @@ export default function AdminNguoiDung() {
   const handleDuyetGiaSu = async (id, action) => {
     if (!window.confirm(`Sếp có chắc chắn muốn ${action === 'pass' ? 'DUYỆT' : 'TỪ CHỐI'} gia sư này không?`)) return;
     try {
-      const token = localStorage.getItem('tutorlinkToken');
-      // 🛠️ ĐÃ FIX: Cập nhật đường dẫn duyệt nhanh khớp với Backend mới
-      const endpoint = action === 'pass' 
-        ? `http://localhost:8000/api/tutors/${id}/approve`
-        : `http://localhost:8000/api/tutors/${id}/reject`;
-      
-      await axios.post(endpoint, {}, { headers: { Authorization: `Bearer ${token}` } });
+      if (action === 'pass') {
+        await adminService.approveTutor(id);
+      } else {
+        await adminService.rejectTutor(id, 'Admin từ chối hồ sơ từ màn hình người dùng');
+      }
       
       // Lọc người vừa duyệt ra khỏi danh sách đang chờ
       setUsers(users.filter(u => (u._id || u.id) !== id));
@@ -101,12 +84,11 @@ export default function AdminNguoiDung() {
     const currentId = user?._id || user?.id;
     const isLocked = user?.status === 'banned' || user?.status === 'locked';
     try {
-      const token = localStorage.getItem('tutorlinkToken');
-      const endpoint = isLocked 
-        ? `http://localhost:8000/api/admin/users/${currentId}/unlock` 
-        : `http://localhost:8000/api/admin/users/${currentId}/lock`;
-
-      await axios.post(endpoint, {}, { headers: { Authorization: `Bearer ${token}` } });
+      if (isLocked) {
+        await adminService.unlockUser(currentId);
+      } else {
+        await adminService.lockUser(currentId);
+      }
       setUsers(users.map(u => (u._id || u.id) === currentId ? { ...u, status: isLocked ? 'active' : 'banned' } : u));
       alert("🎉 Đã thay đổi trạng thái tài khoản thật!");
     } catch (err) {
@@ -187,8 +169,7 @@ export default function AdminNguoiDung() {
                       </div>
                     </div>
                     <div style={{ display: 'flex', gap: '8px' }}>
-                      {/* ⚠️ LƯU Ý: Sếp đổi chữ '/admin/duyet-gia-su/' bên dưới thành URL chuẩn của sếp trong App.js nhé */}
-                      <button onClick={() => navigate(`/admin/duyet-gia-su/${uid}`)} style={{ ...styles.btnMini, backgroundColor: '#2980b9' }}>👁️ Xem CV</button>
+                      <button onClick={() => navigate(`/admin/tutors/${uid}`)} style={{ ...styles.btnMini, backgroundColor: '#2980b9' }}>👁️ Xem CV</button>
                       <button onClick={() => handleDuyetGiaSu(uid, 'pass')} style={{ ...styles.btnMini, backgroundColor: '#27ae60' }}>✅ Duyệt</button>
                       <button onClick={() => handleDuyetGiaSu(uid, 'fail')} style={{ ...styles.btnMini, backgroundColor: '#c0392b' }}>❌ Từ chối</button>
                     </div>
@@ -267,7 +248,7 @@ export default function AdminNguoiDung() {
                       <span style={styles.severityBadge}>{report?.severity || 'High'}</span>
                     </div>
                     <p style={{ margin: '5px 0', fontSize: '13px', color: '#94a3b8' }}>🎯 Đối tượng: {report?.target}</p>
-                    <p style={{ margin: '0 0 10px 0', fontSize: '13px', color: '#cbd5e1' }}>{report?.description}</p>
+                    <p style={{ margin: '0 0 10px 0', fontSize: '13px', color: '#cbd5e1' }}>{report?.description || report?.body || report?.message || 'Không có nội dung mô tả.'}</p>
                   </div>
                 );
               })}
