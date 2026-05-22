@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-
-// 🛠️ ĐÃ FIX CHÍNH XÁC: Import axios từ thư viện 'axios' chuẩn của Node Modules
-import axios from 'axios'; 
+import { tutorService } from '../../services/tutor.service';
 
 export default function HoSoGiaSu() {
   const navigate = useNavigate();
@@ -40,24 +38,22 @@ export default function HoSoGiaSu() {
           return;
         }
 
-        const res = await axios.get('http://localhost:8000/api/tutors/profile/me', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const data = await tutorService.getMyProfile();
         
-        if (res.data) {
-          const data = res.data;
+        if (data) {
           setProfile(data);
           
+          const firstEducation = Array.isArray(data.education) ? data.education[0] : data.education;
           setFormData({
             headline: data.headline || '',
             bio: data.bio || '',
             location: data.location || '',
             responseTime: data.responseTime || '',
             format: data.format || 'flex',
-            school: data.education?.school || '',
-            degree: data.education?.degree || '',
-            years: data.education?.years || 0,
-            cert: data.education?.cert || '',
+            school: firstEducation?.school || '',
+            degree: firstEducation?.degree || '',
+            years: firstEducation?.years || 0,
+            cert: firstEducation?.cert || '',
             subjects: data.subjects?.join(', ') || '',
             levels: data.levels?.join(', ') || '',
             price: data.price || 0
@@ -65,22 +61,7 @@ export default function HoSoGiaSu() {
         }
       } catch (error) {
         console.error("Lỗi lấy thông tin hồ sơ gia sư:", error);
-        // Fallback Mock dữ liệu đồng bộ giao diện cao cấp cho sếp test
-        setProfile({ status: 'approved' }); 
-        setFormData({
-          headline: 'Gia sư chuyên Toán THPT, luyện thi đại học điểm cao',
-          bio: 'Kinh nghiệm giảng dạy lâu năm với giáo trình được tối ưu hóa cho từng đối tượng học sinh chuyên nghiệp.',
-          location: 'Hà Nội · Cầu Giấy',
-          responseTime: 'Trong vòng 15 phút',
-          format: 'flex',
-          school: 'Đại học Sư phạm Hà Nội',
-          degree: 'Cử nhân Sư phạm Toán',
-          years: 5,
-          cert: 'Chứng chỉ Nghiệp vụ Sư phạm Cao cấp',
-          subjects: 'Toán, Hình học, Đại số',
-          levels: 'Lớp 10, Lớp 11, Lớp 12',
-          price: 250000
-        });
+        setProfile(null); 
       } finally {
         setIsLoading(false);
       }
@@ -125,31 +106,30 @@ export default function HoSoGiaSu() {
         location: formData.location,
         format: formData.format,
         responseTime: formData.responseTime || undefined,
-        education: {
+        education: [{
           school: formData.school,
           degree: formData.degree,
           years: Number(formData.years),
           cert: formData.cert || undefined,
-        },
+        }],
         subjects: cleanSplit(formData.subjects),
         levels: cleanSplit(formData.levels),
         price: Number(formData.price),
       };
 
       if (!token) {
-        console.log("Gửi dữ liệu cập nhật (Gia lập):", payload);
-        alert('🎉 Đã cập nhật cấu hình hồ sơ (Simulated)!');
+        alert('Bạn cần đăng nhập để cập nhật hồ sơ.');
+        navigate('/login');
         return;
       }
 
-      await axios.put('http://localhost:8000/api/tutors/profile', payload, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const updated = await tutorService.updateProfile(payload);
+      setProfile(updated);
 
       alert('🎉 Chúc mừng sếp, hồ sơ gia sư toàn năng đã được cập nhật thành công!');
     } catch (error) {
       console.error(error);
-      alert('Gặp lỗi hệ thống khi đồng bộ hồ sơ rồi sếp ơi!');
+      alert(error.response?.data?.error?.message || 'Gặp lỗi hệ thống khi đồng bộ hồ sơ.');
     } finally {
       setIsSaving(false);
     }
@@ -172,7 +152,7 @@ export default function HoSoGiaSu() {
         <div style={{ fontSize: '40px', marginBottom: '12px' }}>📝</div>
         <h3 style={{ fontSize: '18px', margin: '0 0 10px 0', color: '#fff', fontWeight: '700' }}>Sếp chưa khởi tạo hồ sơ gia sư</h3>
         <p style={{ color: '#94a3b8', fontSize: '14px', margin: '0 0 20px 0', lineHeight: '1.5' }}>Bật cấu hình profile để mở khoá luồng nhận học viên và quản lý lịch trình giảng dạy.</p>
-        <Link to="/tao-cv" style={styles.btnActionLink}>Khởi tạo ngay</Link>
+        <Link to="/tutor/register" style={styles.btnActionLink}>Khởi tạo ngay</Link>
       </div>
     );
   }

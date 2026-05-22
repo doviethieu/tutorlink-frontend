@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom'; // 🟢 GIỮ NGUYÊN: Import Link chuẩn để chuyển trang không bị reload
-import axios from 'axios'; // 🛠️ ĐÃ SỬA: Trả axios về đúng vị trí thư viện gốc của nó, chặn đứng lỗi "export named default"
+import { payoutService } from '../../services/payout.service';
 
 // 🛠️ ĐÃ SỬA: Import linh hoạt Component biểu đồ (Hỗ trợ cả export thường lẫn export default)
 import { SimpleBars } from '../../components/common/SimpleBars';
@@ -8,39 +8,57 @@ import { SimpleBars } from '../../components/common/SimpleBars';
 export default function ThuNhapGiaSu() {
   // --- STATE QUẢN LÝ DỮ LIỆU THỐNG KÊ DOANH THU ---
   const [dataThongKe, setDataThongKe] = useState([]);
+  const [summary, setSummary] = useState({ availableAmount: 0, lockedAmount: 0, paidAmount: 0, availableSessionCount: 0 });
+  const [payouts, setPayouts] = useState([]);
+  const [isRequesting, setIsRequesting] = useState(false);
 
   useEffect(() => {
     const fetchDoanhThu = async () => {
       try {
-        const token = localStorage.getItem('tutorlinkToken');
-        
-        // Gọi trực tiếp biến axios chuẩn vừa import sạch ở trên đầu file
-        const res = await axios.get('http://localhost:8000/api/tutor/earnings-stats', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        
-        // 🛡️ ĐÃ GIA CỐ: Kiểm tra đa tầng cấu trúc dữ liệu trả về từ Backend
-        if (res.data && res.data.success && Array.isArray(res.data.data)) {
-          setDataThongKe(res.data.data);
-        } else if (res.data && Array.isArray(res.data)) {
-          setDataThongKe(res.data);
-        } else {
-          throw new Error("Dữ liệu trả về không đúng cấu trúc bọc giáp mảng");
-        }
-      } catch (err) {
-        console.log("🚀 Kích hoạt dữ liệu mô phỏng thu nhập (Mock Data) để sếp nghiệm thu đồ thị:");
-        // DỮ LIỆU GIẢ LẬP DOANH THU NĂM 2026 MỚI NHẤT
-        setDataThongKe([
-          { label: 'Tháng 1', value: 1200000 },
-          { label: 'Tháng 2', value: 3500000 },
-          { label: 'Tháng 3', value: 2400000 },
-          { label: 'Tháng 4', value: 5800000 },
-          { label: 'Tháng 5', value: 4200000 }
+        const [summaryRes, payoutRes] = await Promise.all([
+          payoutService.summary(),
+          payoutService.list(),
         ]);
+        const nextSummary = summaryRes || {};
+        setSummary({
+          availableAmount: nextSummary.availableAmount || 0,
+          lockedAmount: nextSummary.lockedAmount || 0,
+          paidAmount: nextSummary.paidAmount || 0,
+          availableSessionCount: nextSummary.availableSessionCount || 0,
+        });
+        setPayouts(Array.isArray(payoutRes) ? payoutRes : []);
+        setDataThongKe([
+          { label: 'Có thể rút', value: nextSummary.availableAmount || 0 },
+          { label: 'Đang chờ', value: nextSummary.lockedAmount || 0 },
+          { label: 'Đã nhận', value: nextSummary.paidAmount || 0 },
+        ]);
+      } catch (err) {
+        console.log('Không thể tải dữ liệu payout:', err);
+        setDataThongKe([]);
       }
     };
     fetchDoanhThu();
   }, []);
+
+  const handleRequestPayout = async () => {
+    if (!summary.availableAmount) {
+      alert('Hiện chưa có số dư khả dụng để rút.');
+      return;
+    }
+
+    setIsRequesting(true);
+    try {
+      const res = await payoutService.request({ amount: summary.availableAmount });
+      setPayouts(prev => [res, ...prev]);
+      setSummary(prev => ({ ...prev, availableAmount: 0, lockedAmount: prev.lockedAmount + summary.availableAmount }));
+      alert('Đã gửi yêu cầu rút tiền tới admin.');
+    } catch (err) {
+      const message = err?.response?.data?.error?.message || 'Không thể gửi yêu cầu rút tiền.';
+      alert(message);
+    } finally {
+      setIsRequesting(false);
+    }
+  };
 
   // 🛡️ ĐÃ GIA CỐ: Tạo biến mảng an toàn để không bao giờ lỗi crash logic bên dưới
   const safeDataThongKe = Array.isArray(dataThongKe) ? dataThongKe : [];
@@ -61,8 +79,22 @@ export default function ThuNhapGiaSu() {
         {/* 🔥 KHỐI 1: HIỂN THỊ ĐỒ THỊ XU HƯỚNG DOANH THU TÍCH LŨY */}
         <div style={styles.chartCard}>
           <h3 style={styles.chartTitle}>
-            📊 Biểu đồ xu hướng thu nhập năm 2026
+            Dòng tiền escrow và rút tiền
           </h3>
+          <div style={styles.summaryGrid}>
+            <div style={styles.metricBox}>
+              <span style={styles.metricLabel}>Có thể rút</span>
+              <strong style={styles.metricValue}>{summary.availableAmount.toLocaleString('vi-VN')} đ</strong>
+            </div>
+            <div style={styles.metricBox}>
+              <span style={styles.metricLabel}>Đang chờ duyệt</span>
+              <strong style={styles.metricValue}>{summary.lockedAmount.toLocaleString('vi-VN')} đ</strong>
+            </div>
+            <div style={styles.metricBox}>
+              <span style={styles.metricLabel}>Đã nhận</span>
+              <strong style={styles.metricValue}>{summary.paidAmount.toLocaleString('vi-VN')} đ</strong>
+            </div>
+          </div>
           <div style={{ marginTop: '20px' }}>
             {/* 🛠️ ĐÃ SỬA: Đảm bảo dữ liệu chắc chắn là mảng có phần tử mới cho vẽ biểu đồ */}
             {safeDataThongKe.length > 0 ? (
@@ -84,17 +116,20 @@ export default function ThuNhapGiaSu() {
             
             {/* NỘI DUNG THÔNG TIN VÍ */}
             <div style={styles.infoContent}>
-              <h2 style={styles.cardTitle}>Dữ liệu số dư đang chạy ở chế độ Testnet</h2>
+              <h2 style={styles.cardTitle}>Rút tiền doanh thu buổi học</h2>
               <p style={styles.cardText}>
-                Trong phiên bản này, sếp hoàn toàn có thể chủ động cấu hình lịch trống, duyệt các lớp học do học viên gửi tới, tiến hành giảng dạy và bấm nghiệm thu hoàn thành trực tiếp trên hệ thống.
+                Doanh thu từ booking đã thanh toán chỉ được rút khi buổi học hoàn thành và khoản tiền vẫn đang nằm trong escrow.
               </p>
               
               <div style={styles.cardTextHighlight}>
-                💡 <span style={{ color: '#fff', fontWeight: '700' }}>Ghi chú vận hành:</span> Toàn bộ doanh thu từ các buổi dạy thành công sẽ được ghi nhận tự động vào cơ sở dữ liệu và hiển thị trực quan ngay khi endpoint <code style={styles.codeStyle}>/payouts</code> được backend mở cổng kết nối chính thức.
+                <span style={{ color: '#fff', fontWeight: '700' }}>Buổi đủ điều kiện:</span> {summary.availableSessionCount} buổi. Yêu cầu rút tiền sẽ chuyển sang trạng thái chờ admin duyệt.
               </div>
               
               {/* CỤM NÚT ĐIỀU HƯỚNG LINK CHÉO HỆ THỐNG */}
               <div style={styles.btnGroup}>
+                <button onClick={handleRequestPayout} disabled={isRequesting || !summary.availableAmount} style={styles.btnPrimary}>
+                  {isRequesting ? 'Đang gửi...' : 'Gửi yêu cầu rút tiền'}
+                </button>
                 <Link to="/tutor/availability" style={styles.btnPrimary}>
                   📅 Thiết lập lịch trống ngay
                 </Link>
@@ -105,6 +140,22 @@ export default function ThuNhapGiaSu() {
             </div>
 
           </div>
+        </div>
+
+        <div style={styles.card}>
+          <h2 style={styles.cardTitle}>Lịch sử yêu cầu rút tiền</h2>
+          {payouts.length === 0 ? (
+            <p style={styles.cardText}>Chưa có yêu cầu rút tiền.</p>
+          ) : (
+            <div style={styles.payoutList}>
+              {payouts.slice(0, 6).map((payout) => (
+                <div key={payout._id} style={styles.payoutRow}>
+                  <span>{Number(payout.amount || 0).toLocaleString('vi-VN')} đ</span>
+                  <strong>{payout.status}</strong>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
       </div>
@@ -171,6 +222,28 @@ const styles = {
     fontSize: '15.5px',
     fontWeight: '700',
     letterSpacing: '-0.2px'
+  },
+  summaryGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+    gap: '12px',
+    marginTop: '18px'
+  },
+  metricBox: {
+    backgroundColor: '#0f172a',
+    border: '1px solid #334155',
+    borderRadius: '8px',
+    padding: '14px'
+  },
+  metricLabel: {
+    display: 'block',
+    color: '#94a3b8',
+    fontSize: '12px',
+    marginBottom: '6px'
+  },
+  metricValue: {
+    color: '#fff',
+    fontSize: '18px'
   },
   card: {
     backgroundColor: '#1e293b',
@@ -252,6 +325,22 @@ const styles = {
     textAlign: 'center',
     boxShadow: '0 4px 14px rgba(56, 189, 248, 0.2)',
     transition: 'all 0.15s ease'
+  },
+  payoutList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '10px',
+    marginTop: '16px'
+  },
+  payoutRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    gap: '12px',
+    padding: '12px 14px',
+    backgroundColor: '#0f172a',
+    border: '1px solid #334155',
+    borderRadius: '8px',
+    color: '#cbd5e1'
   },
   btnOutline: {
     backgroundColor: 'transparent',

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { tutorService } from '../../services/tutor.service';
 
 function TaoHoSoCV() {
   const navigate = useNavigate();
@@ -8,7 +8,6 @@ function TaoHoSoCV() {
 
   // 🔐 1. XÁC THỰC NGƯỜI DÙNG & TOKEN HỆ THỐNG
   const userString = localStorage.getItem('tutorlinkUser');
-  const token = localStorage.getItem('tutorlinkToken');
   const user = userString ? JSON.parse(userString) : null;
 
   // 📝 2. CẤU TRÚC FORM DỮ LIỆU CHUẨN
@@ -91,18 +90,30 @@ function TaoHoSoCV() {
     
     try {
       const payload = { 
-          ...formData, 
-          full_name: formData.name, 
-          status: 'pending',        
-          email: user.email,
-          price: Number(formData.price) 
+          fullName: formData.name,
+          email: formData.contactEmail || user.email,
+          phone: formData.phone,
+          headline: formData.headline,
+          location: formData.location,
+          format: formData.format,
+          subjects: [formData.subject],
+          price: Number(formData.price),
+          avatarUrl: formData.image,
+          bio: formData.description,
+          description: formData.description,
+          education: formData.education.map((edu) => ({
+            school: edu.truong,
+            major: edu.chuyenNganh,
+            year: edu.nam,
+          })),
+          experience: formData.experience.map((exp) => ({
+            company: exp.noiLamViec,
+            description: exp.moTa,
+          })),
+          skills: formData.skills,
       };
       
-      await axios.post('http://localhost:8000/api/tutors', payload, {
-         headers: { 
-           Authorization: `Bearer ${token}` 
-         }
-      });
+      await tutorService.createProfile(payload);
 
       alert("🎉 Tạo CV thành công! Đội ngũ Admin TutorLink sẽ thẩm định hồ sơ của sếp và phản hồi trong 24 giờ tới.");
       navigate('/dashboard'); 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { availabilityService } from '../../services/availability.service';
 
 const DAYS = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ Nhật'];
 const HOURS = Array.from({ length: 14 }, (_, i) => 8 + i); // Từ 8:00 đến 21:00
@@ -17,39 +17,19 @@ export default function LichRanhGiaSu() {
     const fetchAvailability = async () => {
       try {
         setIsLoading(true);
-        const token = localStorage.getItem('tutorlinkToken');
-        if (!token) {
-          // Cơ chế Fallback nạp mock-data mẫu hỗ trợ sếp kiểm thử luồng độc lập cực mượt
-          loadMockSlots();
-          return;
-        }
-        
-        const res = await axios.get('http://localhost:8000/api/availability/me', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        
-        const normalized = normalizeSlots(res.data);
+        const data = await availabilityService.getMine();
+        const normalized = normalizeSlots(data);
         const slotSet = new Set(normalized.map(s => `${s.dayIdx}-${s.hour}`));
         setActiveSlots(slotSet);
       } catch (error) {
-        console.error("Lỗi fetch lịch rảnh, nạp dữ liệu Mock dự phòng:");
-        loadMockSlots();
+        console.error("Lỗi fetch lịch rảnh:", error);
+        setActiveSlots(new Set());
       } finally {
         setIsLoading(false);
       }
     };
     fetchAvailability();
   }, []);
-
-  // Bộ dữ liệu giả định chuẩn cấu trúc dữ liệu thực tế năm 2026
-  const loadMockSlots = () => {
-    const mockData = [
-      { dayIdx: 0, hour: 9 },  { dayIdx: 0, hour: 10 }, 
-      { dayIdx: 2, hour: 14 }, { dayIdx: 2, hour: 15 }, 
-      { dayIdx: 5, hour: 19 }, { dayIdx: 5, hour: 20 }  
-    ];
-    setActiveSlots(new Set(mockData.map(s => `${s.dayIdx}-${s.hour}`)));
-  };
 
   // --- CHUYỂN ĐỔI CHUẨN HÓA DỮ LIỆU ---
   const normalizeSlots = (payload) => {
@@ -77,21 +57,15 @@ export default function LichRanhGiaSu() {
   const handleSave = async () => {
     try {
       setIsSaving(true);
-      const token = localStorage.getItem('tutorlinkToken');
-      
       const slotsPayload = Array.from(activeSlots).map((key) => {
         const [dayIdx, hour] = key.split('-').map(Number);
         return { dayIdx, hour };
       });
 
-      if (token) {
-        await axios.put('http://localhost:8000/api/availability/me', {
-          recurring,
-          slots: slotsPayload
-        }, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-      }
+      await availabilityService.replaceMine({
+        recurring,
+        slots: slotsPayload
+      });
       
       alert(`🎉 Đã lưu thành công ${activeSlots.size} khung giờ rảnh lên hệ thống!`);
     } catch (error) {

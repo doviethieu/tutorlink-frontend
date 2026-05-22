@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { bookingService } from '../../services/booking.service';
 
 export default function LichDayGiaSu() {
   const [bookings, setBookings] = useState([]);
@@ -13,18 +13,15 @@ export default function LichDayGiaSu() {
       const token = localStorage.getItem('tutorlinkToken');
       
       if (!token) {
-        loadMockBookings();
+        setBookings([]);
         return;
       }
 
-      // Gọi API lấy danh sách đặt lịch với vai trò gia sư
-      const res = await axios.get('http://localhost:8000/api/bookings?role=tutor', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setBookings(Array.isArray(res.data) ? res.data : []);
+      const rows = await bookingService.listForTutor();
+      setBookings(Array.isArray(rows) ? rows : []);
     } catch (error) {
-      console.error("Lỗi tải danh sách lớp học, dùng tạm mock data vận hành:");
-      loadMockBookings();
+      console.error("Lỗi tải danh sách lớp học:", error);
+      setBookings([]);
     } finally {
       setIsLoading(false);
     }
@@ -34,61 +31,13 @@ export default function LichDayGiaSu() {
     fetchBookings();
   }, []);
 
-  // Bộ dữ liệu giả định chuẩn cấu trúc dữ liệu thực tế năm 2026
-  const loadMockBookings = () => {
-    setBookings([
-      {
-        id: 'BK-88291',
-        subject: 'Toán học nâng cao đại số lớp 12',
-        studentName: 'Trần Minh Quân',
-        format: 'Online (Video Call)',
-        date: '2026-05-25',
-        time: '19:00 - 21:00',
-        amount: 350000,
-        goal: 'Em muốn ôn tập kỹ phần khảo sát hàm số để chuẩn bị thi THPT Quốc Gia.',
-        status: 'pending',
-        meetingUrl: null
-      },
-      {
-        id: 'BK-77412',
-        subject: 'Tiếng Anh Giao Tiếp Chuẩn Bản Xứ',
-        studentName: 'Lê Thùy Dương',
-        format: 'Online (Video Call)',
-        date: '2026-05-23',
-        time: '14:00 - 15:30',
-        amount: 400000,
-        goal: 'Luyện phản xạ nghe nói cấp tốc phục vụ phỏng vấn doanh nghiệp nước ngoài.',
-        status: 'confirmed',
-        meetingUrl: '/room/room-tutorlink-xyz-999'
-      },
-      {
-        id: 'BK-61209',
-        subject: 'Lập trình JavaScript từ số 0',
-        studentName: 'Nguyễn Hoàng Long',
-        format: 'Online (Video Call)',
-        date: '2026-05-18',
-        time: '09:00 - 11:00',
-        amount: 500000,
-        goal: 'Học cơ bản về DOM và mảng để chuẩn bị làm dự án ReactJS.',
-        status: 'completed',
-        meetingUrl: null
-      }
-    ]);
-  };
-
   // --- HÀM 1: CHẤP NHẬN ĐẶT LỊCH ---
   const handleAccept = async (id) => {
     try {
       setActionLoadingId(id);
-      const token = localStorage.getItem('tutorlinkToken');
+      const updated = await bookingService.accept(id);
       
-      if (token) {
-        await axios.post(`http://localhost:8000/api/bookings/${id}/accept`, {}, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-      }
-      
-      setBookings(prev => prev.map(b => b.id === id ? { ...b, status: 'confirmed', meetingUrl: `/room/${id}` } : b));
+      setBookings(prev => prev.map(b => (b.id || b._id) === id ? { ...b, ...updated, status: 'confirmed', meetingUrl: updated.meetingUrl || `/room/${id}` } : b));
       alert("🎉 Đã tiếp nhận lớp học thành công! Hệ thống đã tự động cấp phòng học trực tuyến.");
     } catch (error) {
       alert("Không thể chấp nhận booking này, sếp vui lòng thử lại!");
@@ -102,13 +51,7 @@ export default function LichDayGiaSu() {
     if (!window.confirm("Sếp có chắc chắn muốn từ chối yêu cầu dạy buổi học này không?")) return;
     try {
       setActionLoadingId(id);
-      const token = localStorage.getItem('tutorlinkToken');
-      
-      if (token) {
-        await axios.post(`http://localhost:8000/api/bookings/${id}/reject`, { reason: 'Gia sư bận lịch đột xuất' }, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-      }
+      await bookingService.reject(id, 'Gia sư bận lịch đột xuất');
       
       setBookings(prev => prev.map(b => b.id === id ? { ...b, status: 'rejected' } : b));
       alert("❌ Đã hủy bỏ và từ chối yêu cầu đặt lịch học.");
@@ -123,13 +66,7 @@ export default function LichDayGiaSu() {
   const handleComplete = async (id) => {
     try {
       setActionLoadingId(id);
-      const token = localStorage.getItem('tutorlinkToken');
-      
-      if (token) {
-        await axios.post(`http://localhost:8000/api/bookings/${id}/complete`, {}, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-      }
+      await bookingService.complete(id);
       
       setBookings(prev => prev.map(b => b.id === id ? { ...b, status: 'completed' } : b));
       alert("🏆 Chúc mừng sếp đã hoàn thành xuất sắc buổi dạy! Doanh thu đã được cộng vào ví.");
