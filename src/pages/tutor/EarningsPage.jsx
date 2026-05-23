@@ -11,10 +11,12 @@ export default function ThuNhapGiaSu() {
   const [summary, setSummary] = useState({ availableAmount: 0, lockedAmount: 0, paidAmount: 0, availableSessionCount: 0 });
   const [payouts, setPayouts] = useState([]);
   const [isRequesting, setIsRequesting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     const fetchDoanhThu = async () => {
       try {
+        setErrorMessage('');
         const [summaryRes, payoutRes] = await Promise.all([
           payoutService.summary(),
           payoutService.list(),
@@ -34,6 +36,7 @@ export default function ThuNhapGiaSu() {
         ]);
       } catch (err) {
         console.log('Không thể tải dữ liệu payout:', err);
+        setErrorMessage(err.response?.data?.error?.message || 'Không tải được dữ liệu thu nhập. Vui lòng kiểm tra hồ sơ gia sư hoặc đăng nhập lại.');
         setDataThongKe([]);
       }
     };
@@ -75,6 +78,10 @@ export default function ThuNhapGiaSu() {
             Cổng quản lý hiệu suất tài chính, theo dõi dòng tiền và số dư tích lũy của sếp. Tính năng rút tiền đang được tối ưu bảo mật đầu cuối.
           </p>
         </div>
+
+        {errorMessage && (
+          <div style={styles.errorCard}>{errorMessage}</div>
+        )}
 
         {/* 🔥 KHỐI 1: HIỂN THỊ ĐỒ THỊ XU HƯỚNG DOANH THU TÍCH LŨY */}
         <div style={styles.chartCard}>
@@ -208,6 +215,15 @@ const styles = {
     fontSize: '14px',
     margin: 0,
     lineHeight: '1.6'
+  },
+  errorCard: {
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    border: '1px solid rgba(239, 68, 68, 0.25)',
+    color: '#fca5a5',
+    borderRadius: '12px',
+    padding: '14px 18px',
+    fontSize: '13.5px',
+    fontWeight: '700'
   },
   chartCard: {
     backgroundColor: '#1e293b',

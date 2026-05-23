@@ -8,6 +8,7 @@ export default function LichRanhGiaSu() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [recurring, setRecurring] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
   
   // State quản lý danh sách các slot đã chọn dưới dạng chuỗi "dayIdx-hour" để tối ưu hóa hiệu năng
   const [activeSlots, setActiveSlots] = useState(new Set());
@@ -17,12 +18,14 @@ export default function LichRanhGiaSu() {
     const fetchAvailability = async () => {
       try {
         setIsLoading(true);
+        setErrorMessage('');
         const data = await availabilityService.getMine();
         const normalized = normalizeSlots(data);
         const slotSet = new Set(normalized.map(s => `${s.dayIdx}-${s.hour}`));
         setActiveSlots(slotSet);
       } catch (error) {
         console.error("Lỗi fetch lịch rảnh:", error);
+        setErrorMessage(error.response?.data?.error?.message || 'Không tải được lịch rảnh. Vui lòng kiểm tra hồ sơ gia sư hoặc đăng nhập lại.');
         setActiveSlots(new Set());
       } finally {
         setIsLoading(false);
@@ -69,7 +72,7 @@ export default function LichRanhGiaSu() {
       
       alert(`🎉 Đã lưu thành công ${activeSlots.size} khung giờ rảnh lên hệ thống!`);
     } catch (error) {
-      alert("Lỗi lưu lịch rảnh rồi sếp ơi!");
+      alert(error.response?.data?.error?.message || "Lỗi lưu lịch rảnh rồi sếp ơi!");
     } finally {
       setIsSaving(false);
     }
@@ -103,6 +106,10 @@ export default function LichRanhGiaSu() {
           </button>
         </div>
       </div>
+
+      {errorMessage && (
+        <div style={styles.errorCard}>{errorMessage}</div>
+      )}
 
       {/* KHỐI MA TRẬN LỊCH CHI TIẾT */}
       <div style={styles.card}>
@@ -260,6 +267,17 @@ const styles = {
     border: '1px solid #334155',
     borderRadius: '16px',
     padding: '28px'
+  },
+  errorCard: {
+    maxWidth: '1200px',
+    margin: '0 auto 18px auto',
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    border: '1px solid rgba(239, 68, 68, 0.25)',
+    color: '#fca5a5',
+    borderRadius: '12px',
+    padding: '14px 18px',
+    fontSize: '13.5px',
+    fontWeight: '700'
   },
   cardHeader: {
     display: 'flex',

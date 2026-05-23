@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../../services/auth.service';
 import { useAuthStore } from '../../stores/auth-store';
 // TÍCH HỢP HOOK ĐĂNG NHẬP GOOGLE CUSTOM CHO VITE
-import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
+import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 
 // 🔥 Hệ thống tự động nạp chuỗi chuẩn từ file .env của sếp qua Vite!
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -55,23 +55,21 @@ export default function DangNhap() {
   // =========================================================
   // XỬ LÝ LUỒNG GOOGLE: GỬI ACCESS_TOKEN ĐẾN ENDPOINT /google
   // =========================================================
-  const loginWithGoogle = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
-      setError('');
-      setLoading(true);
-      try {
-        const data = await authService.loginWithGoogle(tokenResponse.access_token);
-        saveLoginSession(data);
-      } catch (err) {
-        setError(err.response?.data?.error?.message || 'Backend từ chối xác thực Token Google này.');
-      } finally {
-        setLoading(false);
+  const handleGoogleCredential = async (credentialResponse) => {
+    setError('');
+    setLoading(true);
+    try {
+      if (!credentialResponse?.credential) {
+        throw new Error('Google không trả về credential hợp lệ');
       }
-    },
-    onError: () => {
-      setError('Xác thực tài khoản Google qua cửa sổ Popup thất bại!');
+      const data = await authService.loginWithGoogle(credentialResponse.credential);
+      saveLoginSession(data);
+    } catch (err) {
+      setError(err.response?.data?.error?.message || 'Backend từ chối xác thực Token Google này.');
+    } finally {
+      setLoading(false);
     }
-  });
+  };
 
   // =========================================================
   // XỬ LÝ BƯỚC 1: GỬI EMAIL & MẬT KHẨU ĐỂ LẤY OTP
@@ -192,14 +190,16 @@ export default function DangNhap() {
 
               {/* NÚT GOOGLE & FACEBOOK ĐỒNG BỘ */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
-                <button 
-                  type="button" 
-                  onClick={() => loginWithGoogle()} 
-                  style={styles.buttonOAuth}
-                >
-                  <span style={{ marginRight: '10px', fontSize: '16px' }}>🌐</span>
-                  {loading ? '⏳ Đang xử lý OAuth...' : 'Đăng nhập nhanh với Google'}
-                </button>
+                <div style={styles.googleButtonWrap}>
+                  <GoogleLogin
+                    onSuccess={handleGoogleCredential}
+                    onError={() => setError('Xác thực tài khoản Google thất bại!')}
+                    theme="filled_blue"
+                    size="large"
+                    shape="rectangular"
+                    width="100%"
+                  />
+                </div>
                 
                 <button 
                   type="button" 
@@ -311,5 +311,11 @@ const styles = {
     display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px', 
     backgroundColor: '#0f172a', color: 'white', border: '1px solid #334155', borderRadius: '8px', 
     fontSize: '14px', fontWeight: '700', cursor: 'pointer', transition: '0.2s' 
+  },
+  googleButtonWrap: {
+    display: 'flex',
+    justifyContent: 'center',
+    width: '100%',
+    minHeight: '44px',
   }
 };

@@ -28,7 +28,7 @@ export default function Dashboard() {
 
         const [userRes, bookingsRes, favoritesRes] = await Promise.all([
           authService.getMe(),
-          bookingService.listForStudent({ limit: 5 }),
+          bookingService.listForStudent({ role: 'student', limit: 5 }),
           favoriteService.list()
         ]);
 

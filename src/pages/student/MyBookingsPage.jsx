@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authService } from '../../services/auth.service';
 import { bookingService } from '../../services/booking.service';
 import { ReviewDialog } from '../../components/common/ReviewDialog';
 
@@ -17,14 +16,7 @@ export default function LichHocHocVien() {
 
   const fetchBookings = async () => {
     try {
-      const me = await authService.getMe();
-      const currentUser = me?.user || me;
-      if (currentUser?.role === 'tutor' || currentUser?.role === 'admin') {
-        navigate('/tutor/bookings');
-        return;
-      }
-
-      const data = await bookingService.list();
+      const data = await bookingService.listForStudent({ role: 'student' });
       setBookings(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Không tải được lịch học:', err);

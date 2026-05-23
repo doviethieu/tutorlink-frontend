@@ -1,14 +1,24 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { tutorService } from '../../services/tutor.service';
+import { useAuthStore } from '../../stores/auth-store';
+
+function getStoredUser() {
+  try {
+    return JSON.parse(localStorage.getItem('tutorlinkUser') || 'null');
+  } catch {
+    localStorage.removeItem('tutorlinkUser');
+    return null;
+  }
+}
 
 function TaoHoSoCV() {
   const navigate = useNavigate();
+  const setUser = useAuthStore((state) => state.setUser);
   const [loading, setLoading] = useState(false);
 
   // 🔐 1. XÁC THỰC NGƯỜI DÙNG & TOKEN HỆ THỐNG
-  const userString = localStorage.getItem('tutorlinkUser');
-  const user = userString ? JSON.parse(userString) : null;
+  const user = getStoredUser();
 
   // 📝 2. CẤU TRÚC FORM DỮ LIỆU CHUẨN
   const [formData, setFormData] = useState({
@@ -115,11 +125,15 @@ function TaoHoSoCV() {
       
       await tutorService.createProfile(payload);
 
+      const nextUser = { ...user, role: 'tutor' };
+      localStorage.setItem('tutorlinkUser', JSON.stringify(nextUser));
+      setUser(nextUser);
+
       alert("🎉 Tạo CV thành công! Đội ngũ Admin TutorLink sẽ thẩm định hồ sơ của sếp và phản hồi trong 24 giờ tới.");
-      navigate('/dashboard'); 
+      navigate('/tutor/availability'); 
     } catch (error) {
       console.error("Lỗi đồng bộ API:", error.response?.data || error.message);
-      alert("❌ Lỗi hệ thống: " + (error.response?.data?.message || error.message));
+      alert("❌ Lỗi hệ thống: " + (error.response?.data?.error?.message || error.response?.data?.message || error.message));
     } finally {
       setLoading(false);
     }

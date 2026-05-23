@@ -118,6 +118,7 @@ function AppDashboardLayout() {
         <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <li><Link to="/tutor/panel" style={styles.sidebarLink}>💼 Trung tâm gia sư</Link></li>
           <li><Link to="/tutor/availability" style={styles.sidebarLink}>📆 Cài đặt lịch rảnh</Link></li>
+          <li><Link to="/tutor/bookings" style={styles.sidebarLink}>⏰ Lịch dạy của bạn</Link></li>
           <li><Link to="/tutor/earnings" style={styles.sidebarLink}>💳 Quản lý thu nhập</Link></li>
         </ul>
       </div>
@@ -181,6 +182,10 @@ function App() {
     }
   };
 
+  const handleAnGiaSuKhoiHocVien = (idGiaSu) => {
+    setAllTutors((items) => items.filter((gs) => (gs._id || gs.id) !== idGiaSu));
+  };
+
   const handleDatLich = (giaSu) => {
     const daCo = gioHang.find(item => item._id === giaSu._id);
     if(daCo) {
@@ -215,11 +220,11 @@ function App() {
         <Route path="/verify-email" element={<AuthLayout><XacMinhEmail /></AuthLayout>} /> 
 
         <Route element={<ProtectedRoute><AppDashboardLayout /></ProtectedRoute>}>
-          <Route path="/dashboard" element={<RequireRole roles={['student', 'admin']}><Dashboard /></RequireRole>} />
+          <Route path="/dashboard" element={<RequireRole roles={['student', 'tutor', 'admin']}><Dashboard /></RequireRole>} />
           <Route path="/tutor/register" element={<RequireRole roles={['student', 'tutor', 'admin']}><TaoHoSoCV /></RequireRole>} /> 
-          <Route path="/student/panel" element={<RequireRole roles={['student', 'admin']}><StudentPanel lichSuHoc={allTutors} allTutors={allTutors} handleXoaDonLichSu={handleXoa} /></RequireRole>} /> 
-          <Route path="/bookings" element={<RequireRole roles={['student', 'admin']}><LichHocHocVien /></RequireRole>} /> 
-          <Route path="/favorites" element={<RequireRole roles={['student', 'admin']}><GiaSuYeuThich /></RequireRole>} /> 
+          <Route path="/student/panel" element={<RequireRole roles={['student', 'tutor', 'admin']}><StudentPanel lichSuHoc={allTutors} allTutors={allTutors} handleXoaDonLichSu={handleAnGiaSuKhoiHocVien} /></RequireRole>} /> 
+          <Route path="/bookings" element={<RequireRole roles={['student', 'tutor', 'admin']}><LichHocHocVien /></RequireRole>} /> 
+          <Route path="/favorites" element={<RequireRole roles={['student', 'tutor', 'admin']}><GiaSuYeuThich /></RequireRole>} /> 
           <Route path="/chat" element={<TrangChat />} /> 
           <Route path="/profile" element={<Profile />} /> 
           
@@ -232,10 +237,10 @@ function App() {
 
         <Route path="/tutors" element={<DanhSachGiaSu />} /> 
         <Route path="/giasu/:id" element={<ChiTietGiaSu />} /> 
-        <Route path="/giasu/:id/book" element={<RequireRole roles={['student', 'admin']}><DatLichHoc /></RequireRole>} /> 
+        <Route path="/giasu/:id/book" element={<RequireRole roles={['student', 'tutor', 'admin']}><DatLichHoc /></RequireRole>} /> 
         <Route path="/payment/result" element={<KetQuaThanhToan />} /> 
-        <Route path="/payment" element={<RequireRole roles={['student', 'admin']}><CongThanhToan /></RequireRole>} /> 
-        <Route path="/cong-thanh-toan" element={<RequireRole roles={['student', 'admin']}><CongThanhToan /></RequireRole>} /> 
+        <Route path="/payment" element={<RequireRole roles={['student', 'tutor', 'admin']}><CongThanhToan /></RequireRole>} /> 
+        <Route path="/cong-thanh-toan" element={<RequireRole roles={['student', 'tutor', 'admin']}><CongThanhToan /></RequireRole>} /> 
         <Route path="/room/:roomId" element={<VideoCall />} /> 
         <Route path="/support" element={<ProtectedRoute><TroGiup /></ProtectedRoute>} /> 
 
