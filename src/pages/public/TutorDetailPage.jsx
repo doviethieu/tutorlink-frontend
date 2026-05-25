@@ -406,6 +406,6 @@ const styles = {
   slotButton: { textAlign: 'left', background: '#0f172a', color: '#e2e8f0', border: '1px solid #334155', borderRadius: 10, padding: 12, cursor: 'pointer' },
   iconLine: { display: 'flex', alignItems: 'center', gap: 8, color: '#e2e8f0', fontWeight: 700 },
   videoLink: { color: '#38bdf8', display: 'inline-flex', alignItems: 'center', gap: 8, textDecoration: 'none', fontWeight: 800 },
-  reviewPanel: { marginTop: 18, background: '#f8fafc', color: '#0f172a', borderRadius: 10, padding: 22 },
+  reviewPanel: { marginTop: 18, background: '#111827', color: '#e2e8f0', border: '1px solid #334155', borderRadius: 10, padding: 22 },
   stateBox: { maxWidth: 720, margin: '80px auto', background: '#111827', border: '1px solid #334155', borderRadius: 12, padding: 28, textAlign: 'center' },
 };
