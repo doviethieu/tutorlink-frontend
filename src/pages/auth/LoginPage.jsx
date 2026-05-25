@@ -41,7 +41,7 @@ export default function DangNhap() {
     localStorage.setItem('tutorlinkUser', JSON.stringify(normalizedUser));
     setSession({ accessToken, refreshToken, user: normalizedUser });
 
-    alert(`🎉 Chào mừng sếp trở lại với TutorLink, ${normalizedUser.name}!`);
+    alert(`🎉 Chào mừng bạn trở lại với TutorLink, ${normalizedUser.name}!`);
     
     if (normalizedUser.role === 'admin') {
       navigate('/admin'); 
@@ -123,7 +123,7 @@ export default function DangNhap() {
             <p style={styles.subtitle}>
               {step === 1 
                 ? 'Đăng nhập để tiếp tục đặt lịch và quản lý buổi học tại TutorLink.' 
-                : `Hệ thống bảo mật cao cấp. Sếp điền mã xác thực đã gửi đến ${email}.`}
+                : `Hệ thống bảo mật cao cấp. Bạn điền mã xác thực đã gửi đến ${email}.`}
             </p>
           </div>
 
@@ -252,7 +252,7 @@ export default function DangNhap() {
           )}
 
           <p style={{ textAlign: 'center', marginTop: '30px', fontSize: '14px', color: '#94a3b8' }}>
-            Sếp chưa có tài khoản đối tác?{' '}
+            Bạn chưa có tài khoản đối tác?{' '}
             <Link to="/register" style={{ color: '#f97316', textDecoration: 'none', fontWeight: 'bold' }}>
               Tạo tài khoản miễn phí
             </Link>
