@@ -35,11 +35,6 @@ export const usersService = {
     return unwrap(data);
   },
 
-  async depositWallet(amount) {
-    const { data } = await api.post('/users/me/wallet/deposit', { amount });
-    return unwrap(data);
-  },
-
   async getHistory() {
     return [];
   },
