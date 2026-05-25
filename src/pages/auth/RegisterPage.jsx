@@ -38,7 +38,7 @@ export default function DangKy() {
 
     // Kiểm tra nhanh điều kiện mật khẩu ở Client trước khi gửi đi
     if (password.length < 8 || !/[A-Z]/.test(password) || !/\d/.test(password)) {
-      setError('Mật khẩu chưa đủ điều kiện (Cần ít nhất 8 ký tự, 1 chữ in hoa và 1 số) sếp ơi!');
+      setError('Mật khẩu chưa đủ điều kiện (Cần ít nhất 8 ký tự, 1 chữ in hoa và 1 số) bạn ơi!');
       return;
     }
 
@@ -166,7 +166,7 @@ export default function DangKy() {
           </button>
 
           <p style={{ textAlign: 'center', fontSize: '12px', color: '#94a3b8', margin: '5px 0 0 0', lineHeight: '1.5' }}>
-            Bằng việc đăng ký, sếp đồng ý với <span style={styles.linkFake}>Điều khoản dịch vụ</span> và <span style={styles.linkFake}>Chính sách bảo mật</span> của TutorLink.
+            Bằng việc đăng ký, bạn đồng ý với <span style={styles.linkFake}>Điều khoản dịch vụ</span> và <span style={styles.linkFake}>Chính sách bảo mật</span> của TutorLink.
           </p>
         </form>
 
