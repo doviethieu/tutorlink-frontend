@@ -23,9 +23,8 @@ export default function Profile() {
     confirmPassword: ""
   });
 
-  // State Lịch sử ví & Nạp tiền
+  // State Lịch sử ví & rút tiền
   const [wallet, setWallet] = useState({ balance: 0, transactions: [] });
-  const [depositAmount, setDepositAmount] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [withdrawForm, setWithdrawForm] = useState({ bankName: "", bankAccount: "", bankAccountName: "" });
   
@@ -101,30 +100,6 @@ export default function Profile() {
     }
   };
 
-  // Xử lý Nạp tiền vào ví
-  const handleDeposit = async (e) => {
-    e.preventDefault();
-    const amount = parseFloat(depositAmount);
-    if (!amount || amount <= 0) return alert("Vui lòng nhập số tiền hợp lệ sếp nhé!");
-    
-    try {
-      const walletRes = await usersService.depositWallet(amount);
-      if (walletRes?.balance !== undefined) {
-        setWallet(prev => ({
-          balance: walletRes.balance,
-          transactions: [
-            { _id: walletRes.transaction?._id || Date.now().toString(), amount, type: "deposit", description: "Nạp tiền vào ví TutorLink", date: new Date().toISOString().split('T')[0] },
-            ...prev.transactions
-          ]
-        }));
-      }
-      alert(`🎉 Gửi yêu cầu nạp ${amount.toLocaleString('vi-VN')} đ thành công!`);
-      setDepositAmount("");
-    } catch (err) {
-      alert(err?.response?.data?.error?.message || 'Không thể nạp tiền vào ví.');
-    }
-  };
-
   const handleWithdraw = async (e) => {
     e.preventDefault();
     const amount = Number(withdrawAmount);
@@ -163,7 +138,7 @@ export default function Profile() {
     <div style={styles.container}>
       <div style={styles.header}>
         <h1 style={styles.title}>👤 Quản lý tài khoản cá nhân</h1>
-        <p style={styles.subtitle}>Cập nhật thông tin, thay đổi mật khẩu và kiểm tra số dư ví TutorLink của sếp.</p>
+        <p style={styles.subtitle}>Cập nhật thông tin, thay đổi mật khẩu và quản lý số dư hoàn tiền trong ví TutorLink.</p>
       </div>
 
       {msg.text && (
@@ -179,7 +154,7 @@ export default function Profile() {
       <div style={styles.tabNav}>
         <button onClick={() => { setActiveTab("info"); setMsg({type:"",text:""}); }} style={activeTab === "info" ? styles.tabBtnActive : styles.tabBtn}>ℹ️ Thông tin cá nhân</button>
         <button onClick={() => { setActiveTab("password"); setMsg({type:"",text:""}); }} style={activeTab === "password" ? styles.tabBtnActive : styles.tabBtn}>🔒 Đổi mật khẩu</button>
-        <button onClick={() => { setActiveTab("wallet"); setMsg({type:"",text:""}); }} style={activeTab === "wallet" ? styles.tabBtnActive : styles.tabBtn}>💳 Ví & Nạp tiền</button>
+        <button onClick={() => { setActiveTab("wallet"); setMsg({type:"",text:""}); }} style={activeTab === "wallet" ? styles.tabBtnActive : styles.tabBtn}>💳 Ví & Rút tiền</button>
         <button onClick={() => { setActiveTab("history"); setMsg({type:"",text:""}); }} style={activeTab === "history" ? styles.tabBtnActive : styles.tabBtn}>📜 Lịch sử hoạt động</button>
       </div>
 
@@ -248,16 +223,12 @@ export default function Profile() {
 
           {activeTab === "wallet" && (
             <div>
-              <h3 style={styles.sectionTitle}>Quản lý ví điện tử</h3>
-              <form onSubmit={handleDeposit} style={styles.depositForm}>
-                <div style={styles.formGroup}>
-                  <label style={styles.label}>Nhập số tiền muốn nạp (đ)</label>
-                  <input type="number" placeholder="Ví dụ: 200000" value={depositAmount} onChange={(e) => setDepositAmount(e.target.value)} style={styles.input} required />
-                </div>
-                <button type="submit" style={styles.btnDeposit}>⚡ Tạo yêu cầu nạp tiền</button>
-              </form>
+              <h3 style={styles.sectionTitle}>Quản lý ví và rút tiền</h3>
+              <div style={styles.walletNotice}>
+                Ví TutorLink chỉ dùng để nhận tiền hoàn từ lịch học đã hủy hoặc khoản tiền đủ điều kiện rút. Hệ thống không hỗ trợ nạp tiền thủ công.
+              </div>
 
-              <form onSubmit={handleWithdraw} style={{ ...styles.depositForm, marginTop: "18px" }}>
+              <form onSubmit={handleWithdraw} style={styles.depositForm}>
                 <div style={styles.formGroup}>
                   <label style={styles.label}>Số tiền muốn rút từ ví (đ)</label>
                   <input type="number" placeholder="Ví dụ: 100000" value={withdrawAmount} onChange={(e) => setWithdrawAmount(e.target.value)} style={styles.input} required />
@@ -365,6 +336,7 @@ const styles = {
   balanceValue: { fontSize: "16px", fontWeight: "800", color: "#10b981" },
   mainContentCard: { backgroundColor: "#1e293b", border: "1px solid #334155", borderRadius: "12px", padding: "24px" },
   sectionTitle: { fontSize: "16px", fontWeight: "700", color: "#fff", margin: "0 0 16px 0" },
+  walletNotice: { backgroundColor: "rgba(56, 189, 248, 0.08)", border: "1px solid rgba(56, 189, 248, 0.18)", color: "#bae6fd", padding: "12px 14px", borderRadius: "8px", fontSize: "13px", lineHeight: "1.6", marginBottom: "16px" },
   form: { display: "flex", flexDirection: "column", gap: "12px" },
   formGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" },
   formGroup: { display: "flex", flexDirection: "column", gap: "6px" },
