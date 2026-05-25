@@ -19,7 +19,7 @@ export default function QuenMatKhau() {
     setError('');
 
     if (!validateEmail(email)) {
-      setError('Email không đúng định dạng rồi sếp ơi!');
+      setError('Email không đúng định dạng rồi bạn ơi!');
       return;
     }
 
@@ -79,7 +79,7 @@ export default function QuenMatKhau() {
       <div style={styles.card}>
         <div style={{ marginBottom: '28px' }}>
           <h1 style={styles.title}>Quên mật khẩu?</h1>
-          <p style={styles.subtitle}>Nhập email tài khoản của sếp, hệ thống sẽ gửi một liên kết đặt lại mật khẩu bảo mật trong giây lát.</p>
+          <p style={styles.subtitle}>Nhập email tài khoản của bạn, hệ thống sẽ gửi một liên kết đặt lại mật khẩu bảo mật trong giây lát.</p>
         </div>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
