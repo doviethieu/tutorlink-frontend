@@ -42,12 +42,12 @@ const ReviewSection = ({ tutorId, studentId }) => {
     };
 
     return (
-        <div className="w-full">
-            <h3 className="text-xl font-bold mb-6">Đánh giá từ Học viên ({reviews.length})</h3>
+        <div className="w-full text-slate-100">
+            <h3 className="mb-6 text-xl font-bold text-white">Đánh giá từ Học viên ({reviews.length})</h3>
 
             {studentId ? (
-                <form onSubmit={handleSubmit} className="mb-8 p-5 border rounded-xl bg-gray-50">
-                    <p className="font-medium mb-2">Để lại cảm nghĩ của bạn:</p>
+                <form onSubmit={handleSubmit} className="mb-8 rounded-xl border border-slate-700 bg-slate-900/70 p-5">
+                    <p className="mb-2 font-semibold text-slate-200">Để lại cảm nghĩ của bạn:</p>
                     <div className="flex mb-3">
                         {[...Array(5)].map((_, i) => {
                             const starValue = i + 1;
@@ -56,7 +56,7 @@ const ReviewSection = ({ tutorId, studentId }) => {
                                     key={i}
                                     className="cursor-pointer transition-colors"
                                     size={24}
-                                    color={starValue <= (hover || rating) ? "#ffc107" : "#e4e5e9"}
+                                    color={starValue <= (hover || rating) ? "#f97316" : "#475569"}
                                     onClick={() => setRating(starValue)}
                                     onMouseEnter={() => setHover(starValue)}
                                     onMouseLeave={() => setHover(null)}
@@ -65,34 +65,34 @@ const ReviewSection = ({ tutorId, studentId }) => {
                         })}
                     </div>
                     <textarea
-                        className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                        className="w-full rounded-lg border border-slate-700 bg-slate-950 p-3 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/30"
                         placeholder="Bạn thấy gia sư này dạy thế nào?..."
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
                         required
                     />
-                    <button type="submit" className="mt-3 bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700">
+                    <button type="submit" className="mt-3 rounded-lg bg-orange-600 px-6 py-2 font-bold text-white transition hover:bg-orange-500">
                         Gửi đánh giá
                     </button>
                 </form>
             ) : (
-                <div className="p-4 bg-yellow-50 text-yellow-700 border border-yellow-200 rounded-lg mb-8">
-                    🔑 Đăng nhập để viết đánh giá cho gia sư này.
+                <div className="mb-8 rounded-lg border border-orange-500/30 bg-orange-500/10 p-4 text-orange-100">
+                    Đăng nhập để viết đánh giá cho gia sư này.
                 </div>
             )}
 
             <div className="space-y-4">
                 {reviews.map((rv) => (
-                    <div key={rv._id} className="p-4 border rounded-lg shadow-sm bg-white">
-                        <div className="flex justify-between items-center mb-2">
-                            <span className="font-bold">{rv.student || rv.studentId?.name || "Học viên"}</span>
-                            <div className="flex text-yellow-400">
+                    <div key={rv._id} className="rounded-lg border border-slate-700 bg-slate-900/70 p-4 shadow-sm">
+                        <div className="mb-2 flex items-center justify-between gap-3">
+                            <span className="font-bold text-white">{rv.student || rv.studentId?.name || "Học viên"}</span>
+                            <div className="flex text-orange-500">
                                 {[...Array(rv.rating)].map((_, i) => <FaStar key={i} size={14} />)}
                             </div>
                         </div>
-                        <p className="text-gray-600">{rv.body || rv.comment}</p>
+                        <p className="text-slate-300">{rv.body || rv.comment}</p>
                         {rv.tutorReply?.body && (
-                            <div className="mt-3 rounded-lg bg-slate-100 p-3 text-sm text-slate-700">
+                            <div className="mt-3 rounded-lg border border-slate-700 bg-slate-950 p-3 text-sm text-slate-300">
                                 <strong>Phản hồi của gia sư:</strong> {rv.tutorReply.body}
                             </div>
                         )}

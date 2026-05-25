@@ -56,7 +56,7 @@ export function ReviewDialog({ open, onClose, tutorName, subject, bookingId, tut
       onClick={onClose}
     >
       <div
-        className="w-full max-w-lg overflow-hidden rounded-2xl border border-slate-800 bg-[#1e293b] shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+        className="w-full max-w-lg overflow-hidden rounded-2xl border border-slate-700 bg-[#111827] shadow-2xl animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* HEADER MODAL */}
@@ -66,7 +66,7 @@ export function ReviewDialog({ open, onClose, tutorName, subject, bookingId, tut
               Đánh giá buổi học
             </h2>
             <p className="mt-1 text-sm text-slate-400">
-              Gia sư: <span className="text-sky-400 font-semibold">{tutorName}</span> · Lớp: {subject}
+              Gia sư: <span className="text-orange-400 font-semibold">{tutorName}</span> · Lớp: {subject}
             </p>
           </div>
           <button
@@ -96,7 +96,7 @@ export function ReviewDialog({ open, onClose, tutorName, subject, bookingId, tut
                   <Star
                     className={`h-8 w-8 transition-colors duration-150 ${
                       (hover || rating) >= star
-                        ? 'fill-amber-400 text-amber-400'
+                        ? 'fill-orange-500 text-orange-500'
                         : 'text-slate-600'
                     }`}
                   />
@@ -104,7 +104,7 @@ export function ReviewDialog({ open, onClose, tutorName, subject, bookingId, tut
               ))}
             </div>
             {rating > 0 && (
-              <p className="mt-2 text-xs font-semibold text-amber-400">
+              <p className="mt-2 text-xs font-semibold text-orange-400">
                 👉 {['Cần cải thiện 🌟', 'Tạm được ⭐⭐', 'Khá tốt ⭐⭐⭐', 'Rất tốt ⭐⭐⭐⭐', 'Tuyệt vời dịch vụ 5 sao! 🔥'][rating - 1]}
               </p>
             )}
@@ -121,7 +121,7 @@ export function ReviewDialog({ open, onClose, tutorName, subject, bookingId, tut
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder="Chia sẻ trải nghiệm thực tế của bạn để giúp gia sư và cộng đồng học viên khác nhé..."
-              className="mt-2 w-full h-28 px-3 py-2 text-sm rounded-xl bg-[#0f172a] border border-slate-700 text-white placeholder-slate-500 focus:border-sky-500 focus:ring-1 focus:ring-sky-500 outline-none transition resize-none"
+              className="mt-2 w-full h-28 px-3 py-2 text-sm rounded-xl bg-[#0f172a] border border-slate-700 text-white placeholder-slate-500 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition resize-none"
             />
           </div>
         </div>
@@ -139,7 +139,7 @@ export function ReviewDialog({ open, onClose, tutorName, subject, bookingId, tut
             type="button"
             onClick={handleSubmit}
             disabled={isPending}
-            className={`px-4 h-10 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-sm transition flex items-center justify-center gap-2 ${
+            className={`px-4 h-10 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-sm transition flex items-center justify-center gap-2 ${
               isPending ? 'opacity-60 cursor-not-allowed' : ''
             }`}
           >
