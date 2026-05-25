@@ -14,7 +14,7 @@ export function ReviewDialog({ open, onClose, tutorName, subject, bookingId, tut
   // Hàm xử lý gửi đánh giá lên API Backend của sếp
   const handleSubmit = async () => {
     if (rating === 0) {
-      alert('Vui lòng chọn số sao trước khi gửi đánh giá sếp ơi!');
+      alert('Vui lòng chọn số sao trước khi gửi đánh giá bạn ơi!');
       return;
     }
 
@@ -44,7 +44,7 @@ export function ReviewDialog({ open, onClose, tutorName, subject, bookingId, tut
       onClose(); // Đóng modal
     } catch (error) {
       console.error("Lỗi gửi đánh giá:", error);
-      alert(error.response?.data?.error?.message || error.response?.data?.message || 'Không thể gửi đánh giá, sếp kiểm tra lại backend nhé!');
+      alert(error.response?.data?.error?.message || error.response?.data?.message || 'Không thể gửi đánh giá, bạn kiểm tra lại backend nhé!');
     } finally {
       setIsPending(false);
     }
@@ -82,7 +82,7 @@ export function ReviewDialog({ open, onClose, tutorName, subject, bookingId, tut
         <div className="space-y-5 p-6">
           {/* Khu vực chọn số Sao (Rating) */}
           <div>
-            <p className="text-sm font-semibold text-slate-200">Mức độ hài lòng của sếp</p>
+            <p className="text-sm font-semibold text-slate-200">Mức độ hài lòng của bạn</p>
             <div className="mt-3 flex gap-1">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
