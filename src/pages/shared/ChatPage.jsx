@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import ChatBox from '../../components/chat/ChatBox';
 import { bookingService } from '../../services/booking.service';
+import { chatService } from '../../services/chat.service';
 import { useAuthStore } from '../../stores/auth-store';
 
 function readStoredUser() {
@@ -52,6 +53,27 @@ function makeRoomFromBooking(booking, currentRole) {
   };
 }
 
+function normalizeRoom(room) {
+  const id = room.roomId || room.id || `booking-${room.bookingId}`;
+  const partner = room.partner || {};
+  return {
+    id,
+    bookingId: room.bookingId,
+    partner: {
+      _id: partner._id || partner.id || '',
+      name: partner.name || room.name || 'Thành viên',
+      email: partner.email || '',
+      role: partner.role || 'partner',
+    },
+    name: room.name || partner.name || 'Thành viên',
+    role: `${partner.role === 'student' ? 'Học viên' : 'Gia sư'} • ${room.subject || 'Buổi học'}`,
+    lastMessage: room.lastMessage || 'Trao đổi trước buổi học tại phòng chat này.',
+    time: room.date || '',
+    status: room.status,
+    meetingUrl: room.meetingUrl || `/room/${id}`,
+  };
+}
+
 export default function TrangChat() {
   const storeUser = useAuthStore((state) => state.user);
   const currentUser = storeUser || readStoredUser();
@@ -69,13 +91,21 @@ export default function TrangChat() {
       setLoading(true);
       setError('');
       try {
-        const bookings = role === 'tutor'
-          ? await bookingService.listForTutor()
-          : await bookingService.listForStudent({ limit: 100 });
+        let nextRooms = [];
 
-        const nextRooms = (Array.isArray(bookings) ? bookings : [])
-          .filter((booking) => getBookingId(booking))
-          .map((booking) => makeRoomFromBooking(booking, role));
+        try {
+          const apiRooms = await chatService.listRooms();
+          nextRooms = (Array.isArray(apiRooms) ? apiRooms : []).map(normalizeRoom);
+        } catch {
+          const bookings = role === 'tutor'
+            ? await bookingService.listForTutor()
+            : await bookingService.listForStudent({ limit: 100 });
+
+          nextRooms = (Array.isArray(bookings) ? bookings : [])
+            .filter((booking) => getBookingId(booking))
+            .filter((booking) => booking.status === 'confirmed')
+            .map((booking) => makeRoomFromBooking(booking, role));
+        }
 
         if (ignore) return;
         setRooms(nextRooms);

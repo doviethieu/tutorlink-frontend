@@ -1,11 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams } from 'react-router-dom'; 
 import io from 'socket.io-client';
 import { api, API_BASE_URL, unwrap } from '../../lib/api';
 
-// Đảm bảo chỉ khởi tạo một instance duy nhất của socket kết nối đến Server
 const SOCKET_URL = API_BASE_URL.replace(/\/api\/?$/, '');
-const socket = io.connect(SOCKET_URL);
+const socket = io(SOCKET_URL, {
+  autoConnect: false,
+  transports: ['websocket', 'polling'],
+});
 
 const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
   const { id } = useParams(); 
@@ -18,10 +20,12 @@ const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
   const emailCuaToi = currentUser?.email || '';
   const emailNguoiKia = nguoiDangChat?.email || nguoiDangChat?._id || "doitac_khong_xac_dinh";
   
-  let roomID = id || idTuUrl; 
-  if (!roomID && nguoiDangChat) {
-     roomID = [emailCuaToi, emailNguoiKia].sort().join("___");
-  }
+  const roomID = useMemo(() => {
+    if (idTuUrl) return idTuUrl;
+    if (id) return id;
+    if (!nguoiDangChat) return '';
+    return [emailCuaToi, emailNguoiKia].sort().join("___");
+  }, [emailCuaToi, emailNguoiKia, id, idTuUrl, nguoiDangChat]);
 
   // Cuộn xuống cuối khi có tin nhắn mới
   useEffect(() => {
@@ -31,11 +35,12 @@ const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
   // 1. QUẢN LÝ VÀO PHÒNG VÀ RỜI PHÒNG (CHỐT CHẶN CHỐNG LẶP TIN NHẮN)
   useEffect(() => {
     if (roomID) {
-      console.log("Đang vào phòng chat CHUNG:", roomID); 
+      const token = localStorage.getItem('tutorlinkToken');
+      socket.auth = { token };
+      if (!socket.connected) socket.connect();
       socket.emit("join_room", roomID);
 
-      // Kéo lịch sử chat từ Database thật
-      api.get(`/messages/${roomID}`)
+      api.get(`/chat/messages/${encodeURIComponent(roomID)}`)
         .then((res) => {
           const rows = unwrap(res.data);
           setTinNhanHienThi(Array.isArray(rows) ? rows : []);
@@ -46,7 +51,6 @@ const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
     // DỌN DẸP: Khi chuyển sang chat với người khác, rời phòng cũ tránh nhận nhầm tin chéo phòng
     return () => {
       if (roomID) {
-        console.log("Đã rời phòng:", roomID);
         socket.emit("leave_room", roomID);
       }
     };
@@ -83,16 +87,17 @@ const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
 
     if (tinNhanMoi.trim() !== '') {
       const dataTinNhan = {
-        room: roomID, 
+        roomId: roomID,
+        room: roomID,
         emailGui: currentUser?.email || "khach@gmail.com",
         nguoiGui: currentUser?.name || "Khách",
-        noiDung: tinNhanMoi,
+        content: tinNhanMoi.trim(),
+        noiDung: tinNhanMoi.trim(),
         thoiGian: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
 
       try {
-        // 🛠️ ĐÃ FIX CHÍ MẠNG: Đẩy dữ liệu qua API lên Backend để lưu giữ lại vào DB vĩnh viễn
-        const res = await api.post('/messages', dataTinNhan);
+        const res = await api.post('/chat/messages', dataTinNhan);
         
         // Sử dụng data trả về từ DB (có kèm theo định danh `_id` thật) để tránh lỗi key lặp
         const savedMsg = unwrap(res.data) || dataTinNhan;
@@ -102,8 +107,7 @@ const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
         ));
         setTinNhanMoi('');
       } catch (err) {
-        console.error("Lỗi lưu tin nhắn vào Database:", err.message);
-        alert('Không thể gửi tin nhắn. Vui lòng thử lại.');
+        alert(err.response?.data?.error?.message || 'Không thể gửi tin nhắn. Vui lòng thử lại.');
       }
     }
   };
@@ -147,7 +151,9 @@ const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
           <p style={{ textAlign: 'center', color: '#94a3b8', marginTop: '50px' }}>Hãy gửi tin nhắn để bắt đầu trao đổi.</p>
         ) : (
           tinNhanHienThi.map((msg, index) => {
-            const isMyMessage = currentUser && msg.emailGui === currentUser.email;
+            const senderId = String(msg.senderId?._id || msg.senderId || '');
+            const currentId = String(currentUser?._id || currentUser?.id || '');
+            const isMyMessage = currentUser && (msg.emailGui === currentUser.email || senderId === currentId);
             return (
               <div key={msg._id || index} style={{ 
                 alignSelf: isMyMessage ? 'flex-end' : 'flex-start', 
