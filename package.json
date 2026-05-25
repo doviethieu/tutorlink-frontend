@@ -10,6 +10,9 @@
     "preview": "vite preview",
     "test:server": "node scripts/e2e-webserver.js"
   },
+  "engines": {
+    "node": ">=20 <25"
+  },
   "dependencies": {
     "@radix-ui/react-label": "^2.1.8",
     "@radix-ui/react-slot": "^1.2.4",

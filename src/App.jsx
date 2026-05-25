@@ -31,7 +31,6 @@ import GiaSuYeuThich from './pages/student/FavoritesPage';
 import KetQuaThanhToan from './pages/student/PaymentResultPage';
 import CongThanhToan from './pages/student/PaymentPage'; 
 import Profile from './pages/shared/ProfilePage'; 
-import StudentPanel from './pages/student/StudentPanelPage'; 
 import TrangChat from './pages/shared/ChatPage'; 
 
 // ⏳ TUTOR PORTAL PAGES (GIA SƯ)
@@ -107,7 +106,6 @@ function AppDashboardLayout() {
         <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <li><Link to="/dashboard" style={styles.sidebarLink}>📅 Tổng quan (Dashboard)</Link></li>
           <li><Link to="/tutor/register" style={{...styles.sidebarLink, color: '#f1c40f', border: '1px dashed rgba(241, 196, 15, 0.3)', backgroundColor: 'rgba(241, 196, 15, 0.05)'}}>📝 Đăng ký làm Gia sư</Link></li>
-          <li><Link to="/student/panel" style={styles.sidebarLink}>🎓 Không gian học viên</Link></li>
           <li><Link to="/bookings" style={styles.sidebarLink}>⏰ Lịch học của bạn</Link></li>
           <li><Link to="/favorites" style={styles.sidebarLink}>💖 Gia sư tâm đắc</Link></li>
           <li><Link to="/chat" style={styles.sidebarLink}>💬 Tin nhắn (Trang Chat)</Link></li>
@@ -182,10 +180,6 @@ function App() {
     }
   };
 
-  const handleAnGiaSuKhoiHocVien = (idGiaSu) => {
-    setAllTutors((items) => items.filter((gs) => (gs._id || gs.id) !== idGiaSu));
-  };
-
   const handleDatLich = (giaSu) => {
     const daCo = gioHang.find(item => item._id === giaSu._id);
     if(daCo) {
@@ -222,7 +216,6 @@ function App() {
         <Route element={<ProtectedRoute><AppDashboardLayout /></ProtectedRoute>}>
           <Route path="/dashboard" element={<RequireRole roles={['student', 'tutor', 'admin']}><Dashboard /></RequireRole>} />
           <Route path="/tutor/register" element={<RequireRole roles={['student', 'tutor', 'admin']}><TaoHoSoCV /></RequireRole>} /> 
-          <Route path="/student/panel" element={<RequireRole roles={['student', 'tutor', 'admin']}><StudentPanel lichSuHoc={allTutors} allTutors={allTutors} handleXoaDonLichSu={handleAnGiaSuKhoiHocVien} /></RequireRole>} /> 
           <Route path="/bookings" element={<RequireRole roles={['student', 'tutor', 'admin']}><LichHocHocVien /></RequireRole>} /> 
           <Route path="/favorites" element={<RequireRole roles={['student', 'tutor', 'admin']}><GiaSuYeuThich /></RequireRole>} /> 
           <Route path="/chat" element={<TrangChat />} /> 
