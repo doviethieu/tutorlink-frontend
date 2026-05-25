@@ -44,12 +44,12 @@ export default function DatLaiMatKhau() {
 
     // Kiểm tra nhanh điều kiện nghiệp vụ ở Client
     if (newPassword.length < 8 || !/[A-Z]/.test(newPassword) || !/\d/.test(newPassword)) {
-      setError('Mật khẩu mới chưa đạt yêu cầu (Tối thiểu 8 ký tự, gồm 1 chữ hoa và 1 số) sếp ơi!');
+      setError('Mật khẩu mới chưa đạt yêu cầu (Tối thiểu 8 ký tự, gồm 1 chữ hoa và 1 số) bạn ơi!');
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setError('Mật khẩu xác nhận không khớp nhau rồi sếp ạ!');
+      setError('Mật khẩu xác nhận không khớp nhau rồi bạn ơi!');
       return;
     }
 
@@ -75,7 +75,7 @@ export default function DatLaiMatKhau() {
           <div style={{ ...styles.iconContainer, color: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)' }}>🛡️</div>
           <h1 style={styles.title}>Mã Token không hợp lệ</h1>
           <p style={styles.subtitle}>
-            Yêu cầu bảo mật không thành công. Sếp vui lòng nhấn vào đường link chính xác được gửi trong hộp thư email.
+            Yêu cầu bảo mật không thành công. Bạn vui lòng nhấn vào đường link chính xác được gửi trong hộp thư email.
           </p>
           <div style={{ marginTop: '25px', textAlign: 'center' }}>
             <Link to="/forgot-password" style={{ textDecoration: 'none', width: '100%' }}>
