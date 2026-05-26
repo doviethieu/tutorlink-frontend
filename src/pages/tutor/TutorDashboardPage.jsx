@@ -123,7 +123,7 @@ export default function TutorPanel() {
           <h2 style={styles.statValue}>{confirmedCount} <span style={styles.statUnit}>ca dạy</span></h2>
         </div>
         <div style={styles.statCard}>
-          <div style={{ ...styles.iconBox, color: '#C05A3E', backgroundColor: 'rgba(192, 90, 62, 0.12)' }}>⭐</div>
+          <div style={{ ...styles.iconBox, color: '#FBBF24', backgroundColor: 'rgba(251, 191, 36, 0.14)' }}>⭐</div>
           <p style={styles.statLabel}>Buổi học đã hoàn thành</p>
           <h2 style={styles.statValue}>{completedCount} <span style={styles.statUnit}>lớp</span></h2>
         </div>

@@ -1,303 +1,288 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Heart, Star, Trash2 } from 'lucide-react';
 import { favoriteService } from '../../services/favorite.service';
+import { getErrorMessage } from '../../lib/api';
+
+function getTutor(item) {
+  return item?.tutor || item?.tutorId || item;
+}
+
+function getTutorId(tutor) {
+  return tutor?._id || tutor?.id;
+}
 
 export default function GiaSuYeuThich() {
-  const navigate = useNavigate();
-
-  // --- STATES QUẢN LÝ DANH SÁCH ---
-  const [tutors, setTutors] = useState([]);
+  const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [removingId, setRemovingId] = useState('');
 
-  // --- FETCH DANH SÁCH GIA SƯ YÊU THÍCH ---
   useEffect(() => {
-    const fetchFavorites = async () => {
+    let alive = true;
+
+    async function loadFavorites() {
       setLoading(true);
+      setError('');
+
       try {
-        if (!localStorage.getItem('tutorlinkToken')) {
-          navigate('/login');
-          return;
-        }
-
         const data = await favoriteService.list();
-        setTutors(Array.isArray(data) ? data : []);
+        const items = Array.isArray(data) ? data : data?.items || data?.favorites || [];
+        if (alive) setFavorites(items);
       } catch (err) {
-        console.error("Lỗi đồng bộ API favorites:", err);
-        setTutors([]);
+        if (alive) setError(getErrorMessage(err, 'Không tải được danh sách gia sư yêu thích.'));
       } finally {
-        setLoading(false);
+        if (alive) setLoading(false);
       }
-    };
-
-    fetchFavorites();
-  }, [navigate]);
-
-  // --- HÀM BỎ YÊU THÍCH (REMOVE FAVORITE) ---
-  const handleRemoveFavorite = async (tutorId) => {
-    try {
-      await favoriteService.remove(tutorId);
-      
-      setTutors(tutors.filter(tutor => tutor.id !== tutorId));
-      alert('💔 Đã xóa gia sư khỏi danh sách yêu thích!');
-    } catch (err) {
-      alert('Không thể xóa gia sư khỏi danh sách yêu thích.');
     }
-  };
 
-  if (loading) {
-    return <div style={styles.loadingBox}>⏳ Đang tải kho lưu trữ gia sư của sếp...</div>;
+    loadFavorites();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  async function handleRemove(tutorId) {
+    if (!tutorId) return;
+
+    try {
+      setRemovingId(tutorId);
+      await favoriteService.remove(tutorId);
+      setFavorites((current) => current.filter((item) => getTutorId(getTutor(item)) !== tutorId));
+    } catch (err) {
+      alert(getErrorMessage(err, 'Không thể xoá gia sư khỏi danh sách yêu thích.'));
+    } finally {
+      setRemovingId('');
+    }
   }
 
   return (
-    <div style={styles.container}>
-      
-      {/* THANH TIÊU ĐỀ HERO KHỞI ĐẦU */}
-      <div style={styles.heroCard}>
+    <main style={styles.page}>
+      <section style={styles.hero}>
         <div>
-          <span style={styles.accentBadge}>Danh sách lưu</span>
-          <h1 style={styles.mainTitle}>Gia sư đã lưu tâm đắc</h1>
-          <p style={styles.subtitle}>Nơi lưu trữ những hồ sơ gia sư chất lượng cao sếp dự định lựa chọn để đồng hành.</p>
+          <span style={styles.badge}><Heart size={15} fill="#C05A3E" /> Học viên</span>
+          <h1 style={styles.title}>Gia sư yêu thích</h1>
+          <p style={styles.subtitle}>Lưu lại các hồ sơ phù hợp để đặt lịch nhanh hơn trong lần sau.</p>
         </div>
-        <Link to="/" style={{ textDecoration: 'none' }}>
-          <button style={styles.btnExplore}>🔍 Tìm thêm gia sư</button>
-        </Link>
-      </div>
+        <Link to="/tutors" style={styles.primaryLink}>Tìm thêm gia sư</Link>
+      </section>
 
-      {/* HIỂN THỊ KHI DANH SÁCH TRỐNG */}
-      {tutors.length === 0 ? (
-        <div style={styles.emptyCard}>
-          <div style={{ fontSize: '44px', marginBottom: '15px' }}>❤️</div>
-          <h3 style={{ color: '#1E293B', margin: '0 0 10px 0', fontSize: '18px', fontWeight: '700' }}>Chưa có gia sư yêu thích</h3>
-          <p style={{ color: '#5F6B7A', margin: '0 0 24px 0', fontSize: '14px', lineHeight: '1.5' }}>
-            Hãy khám phá và lưu lại những gia sư phù hợp với nhu cầu của sếp.
-          </p>
-          <Link to="/" style={{ textDecoration: 'none' }}>
-            <button style={styles.btnActionCenter}>Khám phá gia sư ngay</button>
-          </Link>
-        </div>
-      ) : (
-        /* GRID HIỂN THỊ DANH SÁCH GIA SƯ */
-        <div style={styles.layoutGrid}>
-          {tutors.map((tutor) => (
-            <div key={tutor.id} style={styles.tutorCard}>
-              
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                {/* Avatar thiết kế hình vuông bo góc hiện đại đồng bộ tổng thể */}
-                <div style={styles.avatarFake}>{tutor.name?.charAt(0) || 'T'}</div>
-                <button 
-                  onClick={() => handleRemoveFavorite(tutor.id)} 
-                  style={styles.btnHeartActive}
-                  title="Xóa khỏi danh sách lưu"
-                >
-                  ❤️
-                </button>
-              </div>
+      {loading && <div style={styles.stateBox}>Đang tải danh sách yêu thích...</div>}
+      {!loading && error && <div style={styles.errorBox}>{error}</div>}
 
-              <div style={{ marginTop: '18px' }}>
-                <Link to={`/giasu/${tutor.id}`} style={styles.tutorNameLink}>
-                  {tutor.name}
-                </Link>
-                <p style={styles.tutorTitle} title={tutor.title}>{tutor.title || tutor.headline || tutor.bio}</p>
-              </div>
-
-              {/* KHỐI HIỂN THỊ CÁC THẺ MÔN HỌC */}
-              <div style={styles.badgeWrapper}>
-                {tutor.subjects?.map((subject) => (
-                  <span key={subject} style={styles.subjectBadge}>{subject}</span>
-                ))}
-              </div>
-
-              {/* PHẦN CHÂN CARD: GIÁ TIỀN & ĐÁNH GIÁ SẢN PHẨM */}
-              <div style={styles.cardFooter}>
-                <span style={styles.priceTxt}>{(tutor.price || 0).toLocaleString('vi-VN')} đ/h</span>
-                <span style={styles.ratingBox}>
-                  <span style={{ color: '#fbbf24', marginRight: '3px' }}>⭐</span> {tutor.rating || 0}
-                </span>
-              </div>
-
-            </div>
-          ))}
+      {!loading && !error && favorites.length === 0 && (
+        <div style={styles.emptyBox}>
+          <h2 style={styles.emptyTitle}>Chưa có gia sư yêu thích</h2>
+          <p style={styles.emptyText}>Bạn có thể bấm lưu yêu thích trong trang hồ sơ gia sư.</p>
+          <Link to="/tutors" style={styles.primaryLink}>Xem danh sách gia sư</Link>
         </div>
       )}
-    </div>
+
+      {!loading && !error && favorites.length > 0 && (
+        <section style={styles.grid}>
+          {favorites.map((item, index) => {
+            const tutor = getTutor(item);
+            const tutorId = getTutorId(tutor);
+            const rating = Number(tutor?.averageRating || tutor?.rating || 0);
+
+            return (
+              <article key={item?._id || item?.id || tutorId || index} style={styles.card}>
+                <div style={styles.cardTop}>
+                  <img
+                    src={tutor?.avatarUrl || tutor?.image || 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=300&auto=format&fit=crop'}
+                    alt={tutor?.name || tutor?.fullName || 'Gia sư'}
+                    style={styles.avatar}
+                  />
+                  <div style={{ minWidth: 0 }}>
+                    <h2 style={styles.cardTitle}>{tutor?.name || tutor?.fullName || 'Gia sư TutorLink'}</h2>
+                    <p style={styles.cardSub}>{tutor?.headline || tutor?.title || 'Gia sư đang hoạt động'}</p>
+                    <div style={styles.rating}>
+                      <Star size={17} fill="#FBBF24" color="#FBBF24" />
+                      <span>{rating ? rating.toFixed(1) : 'Chưa có đánh giá'}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <p style={styles.description}>
+                  {tutor?.description || tutor?.bio || 'Hồ sơ gia sư đang được cập nhật.'}
+                </p>
+
+                <div style={styles.actions}>
+                  <Link to={`/giasu/${tutorId}`} style={styles.viewLink}>Xem hồ sơ</Link>
+                  <button
+                    type="button"
+                    onClick={() => handleRemove(tutorId)}
+                    disabled={removingId === tutorId}
+                    style={styles.removeButton}
+                  >
+                    <Trash2 size={16} />
+                    {removingId === tutorId ? 'Đang xoá...' : 'Bỏ lưu'}
+                  </button>
+                </div>
+              </article>
+            );
+          })}
+        </section>
+      )}
+    </main>
   );
 }
 
-// --- 🛠️ BỘ KHUNG CSS INLINE SLATE DARK-MODE PREMIUM SANG TRỌNG ---
 const styles = {
-  container: {
-    backgroundColor: '#FAF7F0',
+  page: {
     minHeight: '100vh',
-    padding: '40px 6%',
+    padding: '32px 24px 56px',
+    background: '#FAF7F0',
     color: '#1E293B',
-    fontFamily: "'Inter', sans-serif"
+    fontFamily: "'Inter', sans-serif",
   },
-  heroCard: {
+  hero: {
+    maxWidth: 1120,
+    margin: '0 auto 24px',
     display: 'flex',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    border: '1px solid #E7DED2',
-    padding: '30px 40px',
-    borderRadius: '16px',
-    marginBottom: '35px',
-    flexWrap: 'wrap',
-    gap: '20px'
-  },
-  accentBadge: {
-    backgroundColor: 'rgba(192, 90, 62, 0.15)', // Đổi sang màu Cam Neon giống trang Đặt Lịch
-    color: '#C05A3E',
-    padding: '5px 12px',
-    borderRadius: '6px',
-    fontSize: '11px',
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px'
-  },
-  mainTitle: { 
-    fontSize: '28px', 
-    fontWeight: '800', 
-    color: '#1E293B', 
-    margin: '12px 0 6px 0',
-    letterSpacing: '-0.5px'
-  },
-  subtitle: { fontSize: '14.5px', color: '#5F6B7A', margin: 0, lineHeight: '1.5' },
-  btnExplore: { 
-    backgroundColor: 'transparent', 
-    border: '1px solid #7C6F64', 
-    color: '#1E293B', 
-    padding: '12px 22px', 
-    borderRadius: '8px', 
-    fontWeight: '700', 
-    cursor: 'pointer', 
-    fontSize: '13.5px',
-    transition: '0.2s'
-  },
-  emptyCard: { 
-    backgroundColor: '#FFFFFF', 
-    border: '1px solid #E7DED2', 
-    padding: '80px 20px', 
-    borderRadius: '16px', 
-    textAlign: 'center',
-    boxShadow: '0 10px 25px -5px rgba(0,0,0,0.3)'
-  },
-  btnActionCenter: { 
-    backgroundColor: '#C05A3E', // Đổi sang Sky Blue tinh tế
-    color: '#FAF7F0', 
-    border: 'none', 
-    padding: '14px 28px', 
-    borderRadius: '8px', 
-    fontWeight: '700', 
-    cursor: 'pointer',
-    fontSize: '14.5px',
-    boxShadow: '0 4px 14px rgba(192, 90, 62, 0.2)'
-  },
-  layoutGrid: { 
-    display: 'grid', 
-    gridTemplateColumns: 'repeat(auto-fill, minmax(310px, 1fr))', 
-    gap: '28px' 
-  },
-  tutorCard: { 
-    backgroundColor: '#FFFFFF', 
-    border: '1px solid #E7DED2', 
-    borderRadius: '16px', 
-    padding: '24px', 
-    display: 'flex', 
-    flexDirection: 'column', 
     justifyContent: 'space-between',
-    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2)',
-    transition: '0.2s'
+    gap: 18,
+    padding: 28,
+    border: '1px solid #E7DED2',
+    borderRadius: 16,
+    background: '#FFFFFF',
   },
-  avatarFake: { 
-    width: '52px', 
-    height: '52px', 
-    borderRadius: '12px', 
-    backgroundColor: '#E7DED2', 
-    color: '#C05A3E', // Điểm nhẹ chữ chữ cái đầu bằng Sky Blue thanh thoát
-    display: 'flex', 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    fontWeight: '800', 
-    fontSize: '22px' 
+  badge: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 8,
+    padding: '6px 12px',
+    borderRadius: 999,
+    background: 'rgba(192, 90, 62, 0.12)',
+    color: '#C05A3E',
+    fontWeight: 800,
+    fontSize: 13,
   },
-  btnHeartActive: { 
-    backgroundColor: 'rgba(239, 68, 68, 0.12)', // Đổi sang Red-Rose dịu mắt chuẩn Tailwind
-    border: 'none', 
-    width: '38px', 
-    height: '38px', 
-    borderRadius: '8px', 
-    cursor: 'pointer', 
-    display: 'flex', 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    fontSize: '16px' 
+  title: {
+    margin: '12px 0 6px',
+    fontSize: 34,
+    lineHeight: 1.1,
   },
-  tutorNameLink: { 
-    color: '#1E293B', 
-    fontSize: '19px', 
-    fontWeight: '700', 
-    textDecoration: 'none', 
-    display: 'block', 
-    marginBottom: '8px',
-    letterSpacing: '-0.3px'
-  },
-  tutorTitle: { 
-    fontSize: '13.5px', 
-    color: '#5F6B7A', 
-    margin: 0, 
-    lineHeight: '1.5',
-    lineClamp: 2, 
-    display: '-webkit-box', 
-    WebkitLineClamp: 2, 
-    WebkitBoxOrient: 'vertical', 
-    overflow: 'hidden', 
-    height: '40px' 
-  },
-  badgeWrapper: { 
-    display: 'flex', 
-    flexWrap: 'wrap', 
-    gap: '6px', 
-    marginTop: '16px', 
-    minHeight: '26px' 
-  },
-  subjectBadge: { 
-    backgroundColor: '#FAF7F0', 
-    color: '#C05A3E', // Chữ môn học đồng bộ Sky Blue siêu mượt
-    fontSize: '11px', 
-    padding: '4px 10px', 
-    borderRadius: '6px', 
-    border: '1px solid rgba(192, 90, 62, 0.25)',
-    fontWeight: '600'
-  },
-  cardFooter: { 
-    borderTop: '1px solid #E7DED2', 
-    marginTop: '20px', 
-    paddingTop: '16px', 
-    display: 'flex', 
-    justifyContent: 'space-between', 
-    alignItems: 'center' 
-  },
-  priceTxt: { 
-    color: '#10b981', // Màu xanh Emerald chuẩn hóa đơn cao cấp
-    fontWeight: '800', 
-    fontSize: '17px' 
-  },
-  ratingBox: { 
-    color: '#1E293B', 
-    fontSize: '13px', 
-    fontWeight: '700', 
-    backgroundColor: '#FAF7F0', 
-    padding: '4px 10px', 
-    borderRadius: '6px', 
-    border: '1px solid #E7DED2' 
-  },
-  loadingBox: {
+  subtitle: {
+    margin: 0,
     color: '#5F6B7A',
+  },
+  primaryLink: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    padding: '11px 16px',
+    background: '#C05A3E',
+    color: '#FFFFFF',
+    textDecoration: 'none',
+    fontWeight: 800,
+    whiteSpace: 'nowrap',
+  },
+  grid: {
+    maxWidth: 1120,
+    margin: '0 auto',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+    gap: 18,
+  },
+  card: {
+    border: '1px solid #E7DED2',
+    borderRadius: 16,
+    padding: 18,
+    background: '#FFFFFF',
+    boxShadow: '0 14px 36px rgba(30, 41, 59, 0.08)',
+  },
+  cardTop: {
+    display: 'flex',
+    gap: 14,
+    alignItems: 'center',
+  },
+  avatar: {
+    width: 68,
+    height: 68,
+    borderRadius: 14,
+    objectFit: 'cover',
+  },
+  cardTitle: {
+    margin: 0,
+    fontSize: 20,
+    color: '#1E293B',
+  },
+  cardSub: {
+    margin: '4px 0 8px',
+    color: '#5F6B7A',
+    fontSize: 14,
+  },
+  rating: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 6,
+    color: '#1E293B',
+    fontWeight: 800,
+  },
+  description: {
+    margin: '16px 0',
+    color: '#334155',
+    lineHeight: 1.6,
+  },
+  actions: {
+    display: 'flex',
+    gap: 10,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  viewLink: {
+    color: '#C05A3E',
+    fontWeight: 800,
+    textDecoration: 'none',
+  },
+  removeButton: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 7,
+    border: '1px solid #E7DED2',
+    borderRadius: 10,
+    padding: '9px 12px',
+    background: '#FAF7F0',
+    color: '#1E293B',
+    cursor: 'pointer',
+    fontWeight: 800,
+  },
+  stateBox: {
+    maxWidth: 1120,
+    margin: '0 auto',
+    padding: 24,
+    borderRadius: 14,
+    background: '#FFFFFF',
+    border: '1px solid #E7DED2',
+  },
+  errorBox: {
+    maxWidth: 1120,
+    margin: '0 auto',
+    padding: 18,
+    borderRadius: 14,
+    background: '#FFF1F0',
+    border: '1px solid #F1A79B',
+    color: '#B42318',
+    fontWeight: 800,
+  },
+  emptyBox: {
+    maxWidth: 720,
+    margin: '0 auto',
+    padding: 32,
     textAlign: 'center',
-    paddingTop: '120px',
-    backgroundColor: '#FAF7F0',
-    minHeight: '100vh',
-    fontSize: '16px',
-    fontFamily: "'Inter', sans-serif"
-  }
+    borderRadius: 16,
+    background: '#FFFFFF',
+    border: '1px solid #E7DED2',
+  },
+  emptyTitle: {
+    margin: '0 0 8px',
+    color: '#1E293B',
+  },
+  emptyText: {
+    margin: '0 0 18px',
+    color: '#5F6B7A',
+  },
 };

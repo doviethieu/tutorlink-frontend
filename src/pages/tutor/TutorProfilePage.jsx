@@ -448,7 +448,7 @@ const styles = {
     padding: '40px 30px',
     borderRadius: '16px',
     textAlign: 'center',
-    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.3)'
+    boxShadow: '0 20px 35px rgba(30, 41, 59, 0.08)'
   },
   btnActionLink: {
     backgroundColor: '#C05A3E',
@@ -471,7 +471,7 @@ const styles = {
     border: '1px solid #E7DED2',
     borderRadius: '14px',
     overflow: 'hidden',
-    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+    boxShadow: '0 12px 28px rgba(30, 41, 59, 0.06)'
   },
   cardHeaderTitle: {
     fontSize: '16px',
@@ -509,17 +509,18 @@ const styles = {
     marginLeft: '2px'
   },
   inputStyle: {
-    backgroundColor: '#FAF7F0',
+    backgroundColor: '#FFFFFF',
     border: '1px solid #E7DED2',
     borderRadius: '8px',
     padding: '12px 16px',
     color: '#1E293B',
     fontSize: '14px',
     outline: 'none',
-    transition: 'border-color 0.2s'
+    transition: 'border-color 0.2s',
+    boxShadow: 'inset 0 1px 0 rgba(30,41,59,0.03)'
   },
   textareaStyle: {
-    backgroundColor: '#FAF7F0',
+    backgroundColor: '#FFFFFF',
     border: '1px solid #E7DED2',
     borderRadius: '8px',
     padding: '14px',
@@ -528,7 +529,8 @@ const styles = {
     outline: 'none',
     resize: 'vertical',
     fontFamily: "'Inter', sans-serif",
-    lineHeight: '1.6'
+    lineHeight: '1.6',
+    boxShadow: 'inset 0 1px 0 rgba(30,41,59,0.03)'
   },
   radioGroup: {
     display: 'grid',

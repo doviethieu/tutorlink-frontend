@@ -258,8 +258,8 @@ const styles = {
     fontWeight: '700' 
   },
   rateBadge: { 
-    backgroundColor: 'rgba(245, 158, 11, 0.15)', 
-    color: '#f59e0b', 
+    backgroundColor: 'rgba(251, 191, 36, 0.16)', 
+    color: '#FBBF24', 
     padding: '2px 8px', 
     borderRadius: '6px', 
     fontSize: '13px', 

@@ -126,7 +126,7 @@ export default function Dashboard() {
         </div>
 
         <div style={styles.statCard}>
-          <div style={{ ...styles.iconWrap, color: '#C05A3E', backgroundColor: 'rgba(192, 90, 62, 0.1)' }}>⭐</div>
+          <div style={{ ...styles.iconWrap, color: '#FBBF24', backgroundColor: 'rgba(251, 191, 36, 0.14)' }}>⭐</div>
           <p style={styles.statLabel}>Gia sư yêu thích</p>
           <p style={styles.statValue}>{renderFavorites.length}</p>
         </div>

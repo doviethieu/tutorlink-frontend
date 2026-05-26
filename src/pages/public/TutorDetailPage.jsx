@@ -203,7 +203,10 @@ export default function ChiTietGiaSu() {
               <div style={styles.metaRow}>
                 <span><MapPin size={16} /> {tutor.location || 'Chưa cập nhật khu vực'}</span>
                 <span><BookOpen size={16} /> {subjects.join(', ') || 'Chưa cập nhật môn học'}</span>
-                <span><Star size={16} /> {Number(tutor.averageRating || tutor.rating || 0).toFixed(1)} ({tutor.totalReviews || tutor.reviews || 0} đánh giá)</span>
+                <span style={styles.ratingLine}>
+                  <Star size={16} fill="#FBBF24" color="#FBBF24" />
+                  {Number(tutor.averageRating || tutor.rating || 0).toFixed(1)} ({tutor.totalReviews || tutor.reviews || 0} đánh giá)
+                </span>
               </div>
             </div>
           </div>
@@ -368,44 +371,46 @@ const styles = {
     display: 'grid',
     gridTemplateColumns: 'minmax(0, 1fr) 280px',
     gap: 22,
-    border: '1px solid #E7DED2',
+    border: '1px solid #D8CBBB',
     borderRadius: 12,
-    background: '#111827',
+    background: '#FFFFFF',
     padding: 24,
+    boxShadow: '0 14px 32px rgba(30,41,59,0.08)',
   },
   heroInfo: { display: 'flex', gap: 22, alignItems: 'center', minWidth: 0 },
   avatar: { width: 150, height: 150, borderRadius: 12, objectFit: 'cover', border: '2px solid #C05A3E' },
   badgeRow: { display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 },
-  greenBadge: { display: 'inline-flex', alignItems: 'center', gap: 5, color: '#34d399', background: 'rgba(52,211,153,.12)', border: '1px solid rgba(52,211,153,.24)', padding: '5px 9px', borderRadius: 999, fontSize: 12, fontWeight: 800 },
-  orangeBadge: { display: 'inline-flex', alignItems: 'center', gap: 5, color: '#fb923c', background: 'rgba(249,115,22,.12)', border: '1px solid rgba(249,115,22,.24)', padding: '5px 9px', borderRadius: 999, fontSize: 12, fontWeight: 800 },
+  greenBadge: { display: 'inline-flex', alignItems: 'center', gap: 5, color: '#047857', background: 'rgba(16,185,129,.12)', border: '1px solid rgba(16,185,129,.24)', padding: '5px 9px', borderRadius: 999, fontSize: 12, fontWeight: 800 },
+  orangeBadge: { display: 'inline-flex', alignItems: 'center', gap: 5, color: '#C05A3E', background: 'rgba(192,90,62,.12)', border: '1px solid rgba(192,90,62,.24)', padding: '5px 9px', borderRadius: 999, fontSize: 12, fontWeight: 800 },
   name: { margin: 0, color: '#1E293B', fontSize: 34, lineHeight: 1.15 },
   headline: { margin: '8px 0 14px', color: '#C05A3E', fontWeight: 800 },
   metaRow: { display: 'flex', flexWrap: 'wrap', gap: 14, color: '#1E293B', fontSize: 14 },
-  pricePanel: { borderLeft: '1px solid #E7DED2', paddingLeft: 22, display: 'flex', flexDirection: 'column', gap: 10 },
+  ratingLine: { display: 'inline-flex', alignItems: 'center', gap: 4, color: '#1E293B', fontWeight: 700 },
+  pricePanel: { borderLeft: '1px solid #D8CBBB', paddingLeft: 22, display: 'flex', flexDirection: 'column', gap: 10 },
   priceLabel: { color: '#5F6B7A', fontSize: 13, fontWeight: 700 },
   price: { color: '#1E293B', fontSize: 30 },
   priceSub: { color: '#5F6B7A', marginTop: -8 },
   primaryButton: { display: 'inline-flex', justifyContent: 'center', alignItems: 'center', gap: 8, border: 0, borderRadius: 10, background: '#C05A3E', color: '#FAF7F0', fontWeight: 800, padding: '12px 16px', cursor: 'pointer', textDecoration: 'none' },
   secondaryButton: { display: 'inline-flex', justifyContent: 'center', alignItems: 'center', gap: 8, border: '1px solid #7C6F64', borderRadius: 10, background: '#FFFFFF', color: '#1E293B', fontWeight: 800, padding: '12px 16px', cursor: 'pointer' },
   statsGrid: { display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 14, margin: '18px 0' },
-  stat: { background: '#111827', border: '1px solid #E7DED2', borderRadius: 10, padding: 16, display: 'flex', flexDirection: 'column', gap: 7 },
+  stat: { background: '#FFFFFF', border: '1px solid #D8CBBB', borderRadius: 10, padding: 16, display: 'flex', flexDirection: 'column', gap: 7, boxShadow: '0 8px 20px rgba(30,41,59,0.06)' },
   contentGrid: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 340px', gap: 18 },
   mainColumn: { display: 'flex', flexDirection: 'column', gap: 18 },
   sideColumn: { display: 'flex', flexDirection: 'column', gap: 18 },
-  section: { background: '#111827', border: '1px solid #E7DED2', borderRadius: 10, padding: 22 },
+  section: { background: '#FFFFFF', border: '1px solid #D8CBBB', borderRadius: 10, padding: 22, boxShadow: '0 8px 20px rgba(30,41,59,0.06)' },
   sectionTitle: { margin: '0 0 16px', color: '#1E293B', fontSize: 18, textTransform: 'uppercase', letterSpacing: '.02em' },
   paragraph: { margin: 0, color: '#1E293B', lineHeight: 1.75, whiteSpace: 'pre-line' },
   muted: { color: '#5F6B7A', margin: 0, lineHeight: 1.6 },
   tagGroup: { display: 'flex', gap: 8, flexWrap: 'wrap' },
   tag: { borderRadius: 999, padding: '7px 10px', fontSize: 13, fontWeight: 800 },
-  orangeTag: { color: '#fed7aa', background: 'rgba(249,115,22,.13)', border: '1px solid rgba(249,115,22,.24)' },
-  greenTag: { color: '#bbf7d0', background: 'rgba(34,197,94,.12)', border: '1px solid rgba(34,197,94,.22)' },
-  blueTag: { color: '#bae6fd', background: 'rgba(14,165,233,.12)', border: '1px solid rgba(14,165,233,.22)' },
+  orangeTag: { color: '#7A351F', background: 'rgba(192,90,62,.12)', border: '1px solid rgba(192,90,62,.28)' },
+  greenTag: { color: '#047857', background: 'rgba(16,185,129,.12)', border: '1px solid rgba(16,185,129,.25)' },
+  blueTag: { color: '#075985', background: 'rgba(14,165,233,.12)', border: '1px solid rgba(14,165,233,.25)' },
   timelineItem: { borderLeft: '2px solid #C05A3E', padding: '0 0 2px 14px', marginBottom: 16, color: '#1E293B' },
   slotList: { display: 'grid', gap: 10 },
-  slotButton: { textAlign: 'left', background: '#FAF7F0', color: '#1E293B', border: '1px solid #E7DED2', borderRadius: 10, padding: 12, cursor: 'pointer' },
+  slotButton: { textAlign: 'left', background: '#FAF7F0', color: '#1E293B', border: '1px solid #D8CBBB', borderRadius: 10, padding: 12, cursor: 'pointer' },
   iconLine: { display: 'flex', alignItems: 'center', gap: 8, color: '#1E293B', fontWeight: 700 },
   videoLink: { color: '#C05A3E', display: 'inline-flex', alignItems: 'center', gap: 8, textDecoration: 'none', fontWeight: 800 },
-  reviewPanel: { marginTop: 18, background: '#111827', color: '#1E293B', border: '1px solid #E7DED2', borderRadius: 10, padding: 22 },
-  stateBox: { maxWidth: 720, margin: '80px auto', background: '#111827', border: '1px solid #E7DED2', borderRadius: 12, padding: 28, textAlign: 'center' },
+  reviewPanel: { marginTop: 18, background: '#FFFFFF', color: '#1E293B', border: '1px solid #D8CBBB', borderRadius: 10, padding: 22, boxShadow: '0 8px 20px rgba(30,41,59,0.06)' },
+  stateBox: { maxWidth: 720, margin: '80px auto', background: '#FFFFFF', border: '1px solid #D8CBBB', borderRadius: 12, padding: 28, textAlign: 'center', boxShadow: '0 8px 20px rgba(30,41,59,0.06)' },
 };

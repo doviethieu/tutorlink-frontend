@@ -102,7 +102,7 @@ export function TutorCard({ tutor, favorite = false }) {
             
             <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-gray-500 dark:text-gray-400">
               <span className="inline-flex items-center gap-1.5">
-                <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                <Star className="h-4 w-4 fill-[#FBBF24] text-[#FBBF24]" />
                 <b className="font-semibold text-gray-900 dark:text-gray-100">{tutor?.rating}</b> ({tutor?.reviews})
               </span>
               <span className="inline-flex items-center gap-1.5">

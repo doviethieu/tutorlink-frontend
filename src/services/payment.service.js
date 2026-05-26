@@ -1,19 +1,23 @@
-import { api, unwrap } from '../lib/api';
+import { api, unwrap } from './api';
 
 export const paymentService = {
-  create(bookingId, gateway = 'sandbox') {
-    return api.post('/payments', { bookingId, gateway }).then((res) => unwrap(res.data));
+  async list(params = {}) {
+    const { data } = await api.get('/payments', { params });
+    return unwrap(data);
   },
 
-  confirm(input) {
-    return api.post('/payments/confirm', input).then((res) => unwrap(res.data));
+  async create(bookingId, method = 'bank_transfer') {
+    const { data } = await api.post('/payments', { bookingId, method });
+    return unwrap(data);
   },
 
-  refund(input) {
-    return api.post('/payments/refund', input).then((res) => unwrap(res.data));
+  async confirm(input) {
+    const { data } = await api.post('/payments/confirm', input);
+    return unwrap(data);
   },
 
-  list(params = {}) {
-    return api.get('/payments', { params }).then((res) => unwrap(res.data));
+  async refund(input) {
+    const { data } = await api.post('/payments/refund', input);
+    return unwrap(data);
   },
 };

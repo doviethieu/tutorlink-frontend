@@ -281,22 +281,22 @@ function TaoHoSoCV() {
   );
 }
 
-// --- 🛠️ BỘ HỆ THỐNG PRESET DESIGN SLATE DARK MODE SANG TRỌNG ---
+// --- BỘ HỆ THỐNG PRESET DESIGN TUTORLINK KEM - NAVY - CAM ĐẤT ---
 const styles = {
   container: { backgroundColor: '#FAF7F0', minHeight: '100vh', padding: '40px 24px', color: '#1E293B', fontFamily: "'Inter', sans-serif", boxSizing: 'border-box' },
-  card: { maxWidth: '880px', margin: '0 auto', backgroundColor: '#FFFFFF', padding: '40px 32px', borderRadius: '16px', border: '1px solid #E7DED2', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', boxSizing: 'border-box' },
+  card: { maxWidth: '880px', margin: '0 auto', backgroundColor: '#FFFFFF', padding: '40px 32px', borderRadius: '16px', border: '1px solid #E7DED2', boxShadow: '0 20px 40px rgba(30,41,59,0.08)', boxSizing: 'border-box' },
   title: { textAlign: 'center', color: '#1E293B', margin: '0 0 10px 0', fontSize: '28px', fontWeight: '800', letterSpacing: '-0.5px' },
   subtitle: { textAlign: 'center', color: '#5F6B7A', marginBottom: '36px', fontSize: '14px', lineHeight: '1.6' },
-  section: { padding: '26px', border: '1px solid #E7DED2', borderRadius: '12px', backgroundColor: '#FAF7F0', marginBottom: '4px' },
+  section: { padding: '26px', border: '1px solid #E7DED2', borderRadius: '12px', backgroundColor: '#FFFCF7', marginBottom: '4px' },
   sectionTitle: { color: '#C05A3E', marginTop: 0, fontSize: '16px', borderBottom: '1px solid #E7DED2', paddingBottom: '12px', marginBottom: '20px', fontWeight: '700', letterSpacing: '0.3px' },
   responsiveGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' },
   arrayRow: { display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' },
   experienceBlock: { display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px', borderBottom: '1px dashed #E7DED2', paddingBottom: '20px' },
   formGroup: { display: 'flex', flexDirection: 'column', gap: '6px', width: '100%' },
   fieldLabel: { fontSize: '12.5px', fontWeight: '700', color: '#1E293B' },
-  input: { flex: 1, minWidth: '150px', padding: '12px 16px', border: '1px solid #E7DED2', borderRadius: '8px', fontSize: '14px', outline: 'none', boxSizing: 'border-box', backgroundColor: '#FFFFFF', color: '#1E293B', transition: 'border-color 0.2s' },
-  select: { width: '100%', padding: '12px 16px', border: '1px solid #E7DED2', borderRadius: '8px', fontSize: '14px', outline: 'none', boxSizing: 'border-box', backgroundColor: '#FFFFFF', color: '#1E293B', cursor: 'pointer' },
-  textarea: { width: '100%', padding: '12px 16px', border: '1px solid #E7DED2', borderRadius: '8px', fontSize: '14px', outline: 'none', boxSizing: 'border-box', backgroundColor: '#FFFFFF', color: '#1E293B', resize: 'vertical', fontFamily: "'Inter', sans-serif" },
+  input: { flex: 1, minWidth: '150px', padding: '12px 16px', border: '1px solid #E7DED2', borderRadius: '8px', fontSize: '14px', outline: 'none', boxSizing: 'border-box', backgroundColor: '#FFFFFF', color: '#1E293B', transition: 'border-color 0.2s', boxShadow: 'inset 0 1px 0 rgba(30,41,59,0.03)' },
+  select: { width: '100%', padding: '12px 16px', border: '1px solid #E7DED2', borderRadius: '8px', fontSize: '14px', outline: 'none', boxSizing: 'border-box', backgroundColor: '#FFFFFF', color: '#1E293B', cursor: 'pointer', boxShadow: 'inset 0 1px 0 rgba(30,41,59,0.03)' },
+  textarea: { width: '100%', padding: '12px 16px', border: '1px solid #E7DED2', borderRadius: '8px', fontSize: '14px', outline: 'none', boxSizing: 'border-box', backgroundColor: '#FFFFFF', color: '#1E293B', resize: 'vertical', fontFamily: "'Inter', sans-serif", boxShadow: 'inset 0 1px 0 rgba(30,41,59,0.03)' },
   errorText: { color: '#f87171', fontSize: '12.5px', fontWeight: '600', paddingLeft: '2px', marginTop: '2px' },
   addBtn: { alignSelf: 'flex-start', padding: '8px 14px', backgroundColor: 'transparent', color: '#C05A3E', border: '1px dashed rgba(192, 90, 62, 0.4)', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: '700', marginTop: '10px', transition: 'background-color 0.2s' },
   btnDeleteRow: { backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.15)', borderRadius: '8px', padding: '12px 15px', cursor: 'pointer', fontWeight: '700' },

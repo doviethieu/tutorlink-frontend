@@ -117,7 +117,7 @@ const styles = {
   responsiveGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '30px', justifyContent: 'center' },
   tutorCard: { backgroundColor: '#FFFFFF', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 10px 25px rgba(30,41,59,0.08)', border: '1px solid #E7DED2', display: 'flex', flexDirection: 'column', transition: 'all 0.2s ease' },
   tutorImg: { width: '100%', height: '240px', objectFit: 'cover' },
-  ratingBadge: { position: 'absolute', top: '16px', right: '16px', backgroundColor: 'rgba(250, 247, 240, 0.85)', backdropFilter: 'blur(4px)', color: '#FBBF24', padding: '5px 10px', borderRadius: '6px', fontSize: '13px', fontWeight: '700', border: '1px solid rgba(245, 158, 11, 0.2)' },
+  ratingBadge: { position: 'absolute', top: '16px', right: '16px', backgroundColor: 'rgba(250, 247, 240, 0.85)', backdropFilter: 'blur(4px)', color: '#FBBF24', padding: '5px 10px', borderRadius: '6px', fontSize: '13px', fontWeight: '700', border: '1px solid rgba(251, 191, 36, 0.32)' },
   cardBody: { padding: '24px', display: 'flex', flexDirection: 'column', flexGrow: 1 },
   tutorName: { margin: '0 0 12px 0', fontSize: '19px', color: '#1E293B', fontWeight: '700', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' },
   tutorSubject: { margin: '0 0 8px 0', color: '#5F6B7A', fontSize: '14px' },

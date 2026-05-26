@@ -5,6 +5,8 @@
 # =========================================================================
 node_modules/
 /node_modules
+node_modules_broken/
+.git-broken-*/
 /.pnp
 .pnp.*
 

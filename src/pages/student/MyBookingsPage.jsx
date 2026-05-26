@@ -242,7 +242,9 @@ export default function LichHocHocVien() {
                           booking.hasReview ? (
                             <button type="button" disabled style={styles.btnReviewedMini}>Đã đánh giá</button>
                           ) : (
-                            <button onClick={() => handleOpenReview(booking)} style={styles.btnReviewMini}>⭐ Đánh giá</button>
+                            <button onClick={() => handleOpenReview(booking)} style={styles.btnReviewMini}>
+                              <span style={styles.reviewStar}>⭐</span> Đánh giá
+                            </button>
                           )
                         )}
                       </div>
@@ -283,7 +285,9 @@ export default function LichHocHocVien() {
                         booking.hasReview ? (
                           <button type="button" disabled style={{ ...styles.btnReviewedMini, flex: 1 }}>Đã đánh giá</button>
                         ) : (
-                          <button onClick={() => handleOpenReview(booking)} style={{ ...styles.btnReviewMini, flex: 1 }}>⭐ Đánh giá</button>
+                          <button onClick={() => handleOpenReview(booking)} style={{ ...styles.btnReviewMini, flex: 1 }}>
+                            <span style={styles.reviewStar}>⭐</span> Đánh giá
+                          </button>
                         )
                       )}
                     </div>
@@ -381,7 +385,8 @@ const styles = {
   btnLinkAction: { backgroundColor: '#a855f7', color: '#1E293B', padding: '7px 14px', borderRadius: '6px', fontSize: '12.5px', fontWeight: '700', textDecoration: 'none', display: 'inline-block', boxShadow: '0 4px 12px rgba(168, 85, 247, 0.2)' },
   btnDangerMini: { backgroundColor: 'transparent', border: '1px solid #f87171', color: '#f87171', padding: '6px 12px', borderRadius: '6px', fontSize: '12.5px', cursor: 'pointer', fontWeight: '600' },
   btnPayMini: { backgroundColor: '#10b981', color: '#1E293B', border: 'none', padding: '7px 14px', borderRadius: '6px', fontSize: '12.5px', cursor: 'pointer', fontWeight: '700' },
-  btnReviewMini: { backgroundColor: '#f59e0b', color: '#FAF7F0', border: 'none', padding: '7px 14px', borderRadius: '6px', fontSize: '12.5px', cursor: 'pointer', fontWeight: '700' },
+  btnReviewMini: { backgroundColor: '#FFFFFF', color: '#1E293B', border: '1px solid rgba(251, 191, 36, 0.45)', padding: '7px 14px', borderRadius: '6px', fontSize: '12.5px', cursor: 'pointer', fontWeight: '700' },
+  reviewStar: { color: '#FBBF24', marginRight: 4 },
   btnReviewedMini: { backgroundColor: '#E7DED2', color: '#5F6B7A', border: '1px solid #7C6F64', padding: '7px 14px', borderRadius: '6px', fontSize: '12.5px', cursor: 'not-allowed', fontWeight: '700' },
   statsRow: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' },
   miniStatCard: { backgroundColor: '#FFFFFF', border: '1px solid #E7DED2', borderRadius: '10px', padding: '14px', textAlign: 'center' },
