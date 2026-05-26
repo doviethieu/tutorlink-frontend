@@ -107,7 +107,7 @@ export default function ThuNhapGiaSu() {
             {safeDataThongKe.length > 0 ? (
               <SimpleBars data={safeDataThongKe} height={220} />
             ) : (
-              <p style={{ color: '#64748b', fontSize: '13px', margin: 0, fontStyle: 'italic' }}>
+              <p style={{ color: '#8A7D72', fontSize: '13px', margin: 0, fontStyle: 'italic' }}>
                 Đang nạp dữ liệu đồ thị tài chính...
               </p>
             )}
@@ -129,7 +129,7 @@ export default function ThuNhapGiaSu() {
               </p>
               
               <div style={styles.cardTextHighlight}>
-                <span style={{ color: '#fff', fontWeight: '700' }}>Buổi đủ điều kiện:</span> {summary.availableSessionCount} buổi. Yêu cầu rút tiền sẽ chuyển sang trạng thái chờ admin duyệt.
+                <span style={{ color: '#1E293B', fontWeight: '700' }}>Buổi đủ điều kiện:</span> {summary.availableSessionCount} buổi. Yêu cầu rút tiền sẽ chuyển sang trạng thái chờ admin duyệt.
               </div>
               
               {/* CỤM NÚT ĐIỀU HƯỚNG LINK CHÉO HỆ THỐNG */}
@@ -173,11 +173,11 @@ export default function ThuNhapGiaSu() {
 // --- 🛠️ BỘ HỆ THỐNG DESIGN SYSTEM SLATE PREMIUM ĐỒNG BỘ TOÀN DỰ ÁN ---
 const styles = {
   container: {
-    backgroundColor: '#0f172a',
+    backgroundColor: '#FAF7F0',
     minHeight: 'calc(100vh - 70px)',
     padding: '40px 24px',
     fontFamily: "'Inter', sans-serif",
-    color: '#cbd5e1',
+    color: '#1E293B',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'flex-start',
@@ -194,8 +194,8 @@ const styles = {
     width: '100%'
   },
   topBadge: {
-    backgroundColor: 'rgba(56, 189, 248, 0.1)',
-    color: '#38bdf8',
+    backgroundColor: 'rgba(192, 90, 62, 0.1)',
+    color: '#C05A3E',
     fontSize: '11px',
     fontWeight: '700',
     padding: '6px 14px',
@@ -207,11 +207,11 @@ const styles = {
     fontSize: '28px',
     fontWeight: '800',
     margin: '14px 0 8px 0',
-    color: '#fff',
+    color: '#1E293B',
     letterSpacing: '-0.5px'
   },
   subtitle: {
-    color: '#94a3b8',
+    color: '#5F6B7A',
     fontSize: '14px',
     margin: 0,
     lineHeight: '1.6'
@@ -226,15 +226,15 @@ const styles = {
     fontWeight: '700'
   },
   chartCard: {
-    backgroundColor: '#1e293b',
-    border: '1px solid #334155',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E7DED2',
     borderRadius: '12px',
     padding: '26px',
     boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.2)'
   },
   chartTitle: {
     margin: 0,
-    color: '#fff',
+    color: '#1E293B',
     fontSize: '15.5px',
     fontWeight: '700',
     letterSpacing: '-0.2px'
@@ -246,24 +246,24 @@ const styles = {
     marginTop: '18px'
   },
   metricBox: {
-    backgroundColor: '#0f172a',
-    border: '1px solid #334155',
+    backgroundColor: '#FAF7F0',
+    border: '1px solid #E7DED2',
     borderRadius: '8px',
     padding: '14px'
   },
   metricLabel: {
     display: 'block',
-    color: '#94a3b8',
+    color: '#5F6B7A',
     fontSize: '12px',
     marginBottom: '6px'
   },
   metricValue: {
-    color: '#fff',
+    color: '#1E293B',
     fontSize: '18px'
   },
   card: {
-    backgroundColor: '#1e293b',
-    border: '1px solid rgba(56, 189, 248, 0.15)', 
+    backgroundColor: '#FFFFFF',
+    border: '1px solid rgba(192, 90, 62, 0.15)', 
     borderRadius: '12px',
     padding: '30px',
     boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.15)'
@@ -279,7 +279,7 @@ const styles = {
     width: '52px',
     height: '52px',
     borderRadius: '10px',
-    backgroundColor: 'rgba(56, 189, 248, 0.1)',
+    backgroundColor: 'rgba(192, 90, 62, 0.1)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -294,34 +294,34 @@ const styles = {
     fontSize: '19px',
     fontWeight: '700',
     margin: '0 0 10px 0',
-    color: '#fff',
+    color: '#1E293B',
     letterSpacing: '-0.3px'
   },
   cardText: {
     fontSize: '14px',
-    color: '#94a3b8',
+    color: '#5F6B7A',
     margin: '0 0 14px 0',
     lineHeight: '1.6'
   },
   cardTextHighlight: {
     fontSize: '13.5px',
-    color: '#94a3b8',
+    color: '#5F6B7A',
     margin: '0 0 24px 0',
     lineHeight: '1.6',
-    backgroundColor: '#0f172a',
+    backgroundColor: '#FAF7F0',
     padding: '14px 18px',
     borderRadius: '8px',
-    border: '1px solid #334155'
+    border: '1px solid #E7DED2'
   },
   codeStyle: {
     fontFamily: "'Courier New', Courier, monospace",
-    backgroundColor: '#1e293b',
-    color: '#38bdf8', 
+    backgroundColor: '#FFFFFF',
+    color: '#C05A3E', 
     padding: '3px 8px',
     borderRadius: '4px',
     fontSize: '13px',
     fontWeight: '700',
-    border: '1px solid #334155'
+    border: '1px solid #E7DED2'
   },
   btnGroup: {
     display: 'flex',
@@ -329,8 +329,8 @@ const styles = {
     flexWrap: 'wrap'
   },
   btnPrimary: {
-    backgroundColor: '#38bdf8', 
-    color: '#0f172a',
+    backgroundColor: '#C05A3E', 
+    color: '#FAF7F0',
     border: 'none',
     padding: '11px 20px',
     borderRadius: '8px',
@@ -339,7 +339,7 @@ const styles = {
     textDecoration: 'none',
     display: 'inline-block',
     textAlign: 'center',
-    boxShadow: '0 4px 14px rgba(56, 189, 248, 0.2)',
+    boxShadow: '0 4px 14px rgba(192, 90, 62, 0.2)',
     transition: 'all 0.15s ease'
   },
   payoutList: {
@@ -353,15 +353,15 @@ const styles = {
     justifyContent: 'space-between',
     gap: '12px',
     padding: '12px 14px',
-    backgroundColor: '#0f172a',
-    border: '1px solid #334155',
+    backgroundColor: '#FAF7F0',
+    border: '1px solid #E7DED2',
     borderRadius: '8px',
-    color: '#cbd5e1'
+    color: '#1E293B'
   },
   btnOutline: {
     backgroundColor: 'transparent',
-    color: '#cbd5e1',
-    border: '1px solid #475569',
+    color: '#1E293B',
+    border: '1px solid #7C6F64',
     padding: '10px 20px',
     borderRadius: '8px',
     fontSize: '13.5px',

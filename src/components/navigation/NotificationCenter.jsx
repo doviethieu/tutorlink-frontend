@@ -53,7 +53,7 @@ export function NotificationCenter() {
         >
           <Bell className="h-5 w-5" />
           {unread > 0 && (
-            <span className="absolute top-1.5 right-1.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-600 px-1 text-[10px] font-bold text-white animate-pulse">
+            <span className="absolute top-1.5 right-1.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[#C05A3E] px-1 text-[10px] font-bold text-[#FAF7F0] animate-pulse">
               {unread}
             </span>
           )}
@@ -72,7 +72,7 @@ export function NotificationCenter() {
             <button
               type="button"
               onClick={() => markAll.mutate()}
-              className="text-xs font-medium text-blue-600 hover:underline dark:text-blue-400"
+              className="text-xs font-medium text-[#C05A3E] hover:underline dark:text-[#C05A3E]"
             >
               Đánh dấu đã đọc
             </button>
@@ -101,7 +101,7 @@ export function NotificationCenter() {
                     )}
                   >
                     {/* Icon đại diện theo danh mục */}
-                    <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400">
+                    <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-[#C05A3E] dark:bg-blue-950/50 dark:text-[#C05A3E]">
                       <Icon className="h-4 w-4" />
                     </span>
                     
@@ -114,7 +114,7 @@ export function NotificationCenter() {
                       </p>
                     </div>
                     {/* Dấu chấm tròn báo chưa đọc */}
-                    {!n.read && <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-blue-600 dark:bg-blue-400" />}
+                    {!n.read && <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#C05A3E] dark:bg-blue-400" />}
                   </Link>
                 </DropdownMenu.Item>
               );
@@ -123,7 +123,7 @@ export function NotificationCenter() {
 
           {/* Footer xem tất cả */}
           <div className="border-t border-gray-100 dark:border-gray-800 px-4 py-3 text-center">
-            <Link to="/dashboard" className="text-xs font-medium text-blue-600 hover:underline dark:text-blue-400">
+            <Link to="/dashboard" className="text-xs font-medium text-[#C05A3E] hover:underline dark:text-[#C05A3E]">
               Xem tất cả thông báo
             </Link>
           </div>

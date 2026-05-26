@@ -18,10 +18,10 @@ function Navbar({ setTuKhoa }) {
   };
 
   return (
-    <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 40px', backgroundColor: '#2c3e50', color: 'white', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+    <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 40px', backgroundColor: '#FAF7F0', color: '#1E293B', boxShadow: '0 4px 14px rgba(30,41,59,0.08)', borderBottom: '1px solid #E7DED2' }}>
       {/* Logo */}
-      <Link to="/" style={{ textDecoration: 'none', color: 'white' }}>
-        <h1 style={{ margin: 0, fontSize: '28px', letterSpacing: '1px' }}>🎓 Tutor<span style={{ color: '#3498db' }}>Link</span></h1>
+      <Link to="/" style={{ textDecoration: 'none', color: '#1E293B' }}>
+        <h1 style={{ margin: 0, fontSize: '28px', letterSpacing: '1px' }}>🎓 Tutor<span style={{ color: '#C05A3E' }}>Link</span></h1>
       </Link>
 
       {/* Thanh Tìm Kiếm */}
@@ -30,7 +30,7 @@ function Navbar({ setTuKhoa }) {
           type="text" 
           placeholder="🔍 Tìm môn học, tên gia sư..." 
           onChange={(e) => setTuKhoa(e.target.value)}
-          style={{ padding: '10px 15px', borderRadius: '25px', border: 'none', width: '300px', outline: 'none', fontSize: '15px' }}
+          style={{ padding: '10px 15px', borderRadius: '25px', border: '1px solid #E7DED2', width: '300px', outline: 'none', fontSize: '15px', color: '#1E293B', backgroundColor: '#FFFFFF' }}
         />
       </div>
 
@@ -42,15 +42,15 @@ function Navbar({ setTuKhoa }) {
           <button style={{ 
             padding: '10px 20px', 
             backgroundColor: 'transparent', 
-            color: '#e67e22', 
-            border: '2px solid #e67e22', 
+            color: '#C05A3E', 
+            border: '2px solid #C05A3E', 
             borderRadius: '25px', 
             cursor: 'pointer', 
             fontWeight: 'bold',
             transition: 'all 0.3s'
           }}
-          onMouseOver={(e) => { e.target.style.backgroundColor = '#e67e22'; e.target.style.color = 'white'; }}
-          onMouseOut={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#e67e22'; }}
+          onMouseOver={(e) => { e.target.style.backgroundColor = '#C05A3E'; e.target.style.color = '#FAF7F0'; }}
+          onMouseOut={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#C05A3E'; }}
           >
             📬 Trợ Giúp Admin
           </button>
@@ -61,12 +61,12 @@ function Navbar({ setTuKhoa }) {
           <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
             {/* Nếu chưa đăng nhập, vẫn cho họ thấy nút đăng ký làm gia sư vãng lai */}
             <Link to="/tutor/register">
-              <button style={{ padding: '10px 20px', backgroundColor: '#27ae60', color: 'white', border: 'none', borderRadius: '25px', cursor: 'pointer', fontWeight: 'bold' }}>
+              <button style={{ padding: '10px 20px', backgroundColor: '#27ae60', color: '#FAF7F0', border: 'none', borderRadius: '25px', cursor: 'pointer', fontWeight: 'bold' }}>
                 🎓 Trở Thành Gia Sư
               </button>
             </Link>
             <Link to="/login">
-              <button style={{ padding: '10px 20px', backgroundColor: '#3498db', color: 'white', border: 'none', borderRadius: '25px', cursor: 'pointer', fontWeight: 'bold' }}>
+              <button style={{ padding: '10px 20px', backgroundColor: '#C05A3E', color: '#FAF7F0', border: 'none', borderRadius: '25px', cursor: 'pointer', fontWeight: 'bold' }}>
                  Đăng nhập
               </button>
             </Link>
@@ -89,7 +89,7 @@ function Navbar({ setTuKhoa }) {
             {/* Nút dành riêng cho Admin */}
             {user && user.role === 'admin' && (
               <Link to="/admin">
-                <button style={{ padding: '10px 20px', backgroundColor: '#f39c12', color: 'white', border: 'none', borderRadius: '25px', cursor: 'pointer', fontWeight: 'bold' }}>
+                <button style={{ padding: '10px 20px', backgroundColor: '#f39c12', color: '#FAF7F0', border: 'none', borderRadius: '25px', cursor: 'pointer', fontWeight: 'bold' }}>
                   ⚙️ Quản trị (Admin)
                 </button>
               </Link>
@@ -104,7 +104,7 @@ function Navbar({ setTuKhoa }) {
                   style={{ 
                     padding: '10px 20px', 
                     backgroundColor: isHoveredCV ? '#218838' : '#27ae60', 
-                    color: 'white', 
+                    color: '#FAF7F0', 
                     border: 'none', 
                     borderRadius: '25px', 
                     cursor: 'pointer', 
@@ -119,7 +119,7 @@ function Navbar({ setTuKhoa }) {
             )}
 
             {/* Nút Đăng xuất */}
-            <button onClick={handleDangXuat} style={{ padding: '10px 20px', backgroundColor: '#e74c3c', color: 'white', border: 'none', borderRadius: '25px', cursor: 'pointer', fontWeight: 'bold' }}>
+            <button onClick={handleDangXuat} style={{ padding: '10px 20px', backgroundColor: '#e74c3c', color: '#FAF7F0', border: 'none', borderRadius: '25px', cursor: 'pointer', fontWeight: 'bold' }}>
               Đăng xuất
             </button>
           </div>

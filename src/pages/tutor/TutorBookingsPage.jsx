@@ -85,11 +85,11 @@ export default function LichDayGiaSu() {
       case 'confirmed': 
         return <span style={{ ...styles.badge, backgroundColor: 'rgba(16, 185, 129, 0.15)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.25)' }}>✓ Đã xác nhận</span>;
       case 'completed': 
-        return <span style={{ ...styles.badge, backgroundColor: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', border: '1px solid rgba(56, 189, 248, 0.25)' }}>🏆 Đã hoàn thành</span>;
+        return <span style={{ ...styles.badge, backgroundColor: 'rgba(192, 90, 62, 0.15)', color: '#C05A3E', border: '1px solid rgba(192, 90, 62, 0.25)' }}>🏆 Đã hoàn thành</span>;
       case 'rejected': 
         return <span style={{ ...styles.badge, backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.25)' }}>✕ Đã từ chối</span>;
       default: 
-        return <span style={{ ...styles.badge, backgroundColor: '#334155', color: '#cbd5e1' }}>{status}</span>;
+        return <span style={{ ...styles.badge, backgroundColor: '#E7DED2', color: '#1E293B' }}>{status}</span>;
     }
   };
 
@@ -127,7 +127,7 @@ export default function LichDayGiaSu() {
                 </div>
                 
                 <h3 style={styles.subjectTitle}>{booking.subject}</h3>
-                <p style={styles.studentSub}>Học viên: <b style={{ color: '#f1f5f9' }}>{booking.studentName}</b> · Hình thức: {booking.format}</p>
+                <p style={styles.studentSub}>Học viên: <b style={{ color: '#1E293B' }}>{booking.studentName}</b> · Hình thức: {booking.format}</p>
                 
                 <div style={styles.metaGrid}>
                   <span style={styles.metaItem}>📅 {booking.date} &nbsp;·&nbsp; ⏰ {booking.time}</span>
@@ -136,7 +136,7 @@ export default function LichDayGiaSu() {
 
                 {booking.goal && (
                   <div style={styles.goalBox}>
-                    <span style={{ color: '#38bdf8', fontWeight: '700' }}>🎯 Tiêu điểm học viên:</span> {booking.goal}
+                    <span style={{ color: '#C05A3E', fontWeight: '700' }}>🎯 Tiêu điểm học viên:</span> {booking.goal}
                   </div>
                 )}
               </div>
@@ -190,35 +190,35 @@ export default function LichDayGiaSu() {
 // --- 🛠️ HỆ THỐNG CSS INLINE PRESET DARK SLATE PREMIUM ĐỒNG BỘ ---
 const styles = {
   container: {
-    backgroundColor: '#0f172a',
+    backgroundColor: '#FAF7F0',
     minHeight: '100vh',
     padding: '40px 20px',
     fontFamily: "'Inter', sans-serif",
-    color: '#cbd5e1'
+    color: '#1E293B'
   },
   headerArea: {
     maxWidth: '1000px',
     margin: '0 auto 35px auto'
   },
   topBadge: {
-    backgroundColor: 'rgba(56, 189, 248, 0.12)',
-    color: '#38bdf8',
+    backgroundColor: 'rgba(192, 90, 62, 0.12)',
+    color: '#C05A3E',
     fontSize: '12px',
     fontWeight: '700',
     padding: '6px 14px',
     borderRadius: '20px',
     display: 'inline-block',
-    border: '1px solid rgba(56, 189, 248, 0.2)'
+    border: '1px solid rgba(192, 90, 62, 0.2)'
   },
   title: {
     fontSize: '28px',
     fontWeight: '800',
     margin: '14px 0 8px 0',
-    color: '#fff',
+    color: '#1E293B',
     letterSpacing: '-0.5px'
   },
   subtitle: {
-    color: '#94a3b8',
+    color: '#5F6B7A',
     fontSize: '14.5px',
     lineHeight: '1.6',
     margin: 0
@@ -231,17 +231,17 @@ const styles = {
     gap: '18px'
   },
   emptyCard: {
-    backgroundColor: '#1e293b',
-    border: '1px solid #334155',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E7DED2',
     borderRadius: '16px',
     padding: '60px 20px',
     textAlign: 'center',
-    color: '#94a3b8',
+    color: '#5F6B7A',
     fontSize: '15px'
   },
   card: {
-    backgroundColor: '#1e293b',
-    border: '1px solid #334155',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E7DED2',
     borderRadius: '16px',
     padding: '24px',
     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
@@ -258,14 +258,14 @@ const styles = {
     width: '52px',
     height: '52px',
     borderRadius: '12px', // Đồng bộ bo góc vuông mềm như avatar toàn hệ thống
-    backgroundColor: '#334155',
-    color: '#38bdf8',
+    backgroundColor: '#E7DED2',
+    color: '#C05A3E',
     fontSize: '20px',
     fontWeight: '700',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    border: '1px solid #475569'
+    border: '1px solid #7C6F64'
   },
   infoContent: {
     flex: 1,
@@ -278,13 +278,13 @@ const styles = {
     marginBottom: '10px'
   },
   idLabel: {
-    backgroundColor: '#0f172a',
-    color: '#94a3b8',
+    backgroundColor: '#FAF7F0',
+    color: '#5F6B7A',
     fontSize: '11px',
     fontWeight: '700',
     padding: '4px 10px',
     borderRadius: '6px',
-    border: '1px solid #334155'
+    border: '1px solid #E7DED2'
   },
   badge: {
     fontSize: '11px',
@@ -296,38 +296,38 @@ const styles = {
     fontSize: '20px',
     fontWeight: '700',
     margin: '0 0 6px 0',
-    color: '#fff',
+    color: '#1E293B',
     letterSpacing: '-0.3px'
   },
   studentSub: {
     fontSize: '14px',
-    color: '#94a3b8',
+    color: '#5F6B7A',
     margin: '0 0 14px 0'
   },
   metaGrid: {
     display: 'flex',
     gap: '24px',
     fontSize: '14px',
-    color: '#cbd5e1',
+    color: '#1E293B',
     marginBottom: '14px',
     flexWrap: 'wrap'
   },
   metaItem: {
     display: 'inline-flex',
     alignItems: 'center',
-    color: '#94a3b8'
+    color: '#5F6B7A'
   },
   priceItem: {
     fontWeight: '700',
     color: '#10b981' // Đưa về Emerald thanh lịch
   },
   goalBox: {
-    backgroundColor: '#0f172a',
-    border: '1px solid #334155',
+    backgroundColor: '#FAF7F0',
+    border: '1px solid #E7DED2',
     borderRadius: '10px',
     padding: '14px 18px',
     fontSize: '13.5px',
-    color: '#cbd5e1',
+    color: '#1E293B',
     lineHeight: '1.6'
   },
   actionColumn: {
@@ -339,7 +339,7 @@ const styles = {
   },
   btnAccept: {
     backgroundColor: '#10b981', // Emerald hiện đại tương phản cao
-    color: '#0f172a',
+    color: '#FAF7F0',
     border: 'none',
     padding: '11px 14px',
     borderRadius: '8px',
@@ -364,7 +364,7 @@ const styles = {
   },
   btnVideoCall: {
     backgroundColor: '#a855f7', // Nâng cấp lên Violet Neon công nghệ đỉnh cao
-    color: '#fff',
+    color: '#1E293B',
     textDecoration: 'none',
     textAlign: 'center',
     padding: '11px 14px',
@@ -378,8 +378,8 @@ const styles = {
   },
   btnComplete: {
     backgroundColor: 'transparent',
-    color: '#cbd5e1',
-    border: '1px solid #475569',
+    color: '#1E293B',
+    border: '1px solid #7C6F64',
     padding: '10px 14px',
     borderRadius: '8px',
     fontSize: '13.5px',

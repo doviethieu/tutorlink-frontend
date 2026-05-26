@@ -283,26 +283,26 @@ function TaoHoSoCV() {
 
 // --- 🛠️ BỘ HỆ THỐNG PRESET DESIGN SLATE DARK MODE SANG TRỌNG ---
 const styles = {
-  container: { backgroundColor: '#0f172a', minHeight: '100vh', padding: '40px 24px', color: '#cbd5e1', fontFamily: "'Inter', sans-serif", boxSizing: 'border-box' },
-  card: { maxWidth: '880px', margin: '0 auto', backgroundColor: '#1e293b', padding: '40px 32px', borderRadius: '16px', border: '1px solid #334155', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', boxSizing: 'border-box' },
-  title: { textAlign: 'center', color: '#fff', margin: '0 0 10px 0', fontSize: '28px', fontWeight: '800', letterSpacing: '-0.5px' },
-  subtitle: { textAlign: 'center', color: '#94a3b8', marginBottom: '36px', fontSize: '14px', lineHeight: '1.6' },
-  section: { padding: '26px', border: '1px solid #334155', borderRadius: '12px', backgroundColor: '#0f172a', marginBottom: '4px' },
-  sectionTitle: { color: '#38bdf8', marginTop: 0, fontSize: '16px', borderBottom: '1px solid #334155', paddingBottom: '12px', marginBottom: '20px', fontWeight: '700', letterSpacing: '0.3px' },
+  container: { backgroundColor: '#FAF7F0', minHeight: '100vh', padding: '40px 24px', color: '#1E293B', fontFamily: "'Inter', sans-serif", boxSizing: 'border-box' },
+  card: { maxWidth: '880px', margin: '0 auto', backgroundColor: '#FFFFFF', padding: '40px 32px', borderRadius: '16px', border: '1px solid #E7DED2', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', boxSizing: 'border-box' },
+  title: { textAlign: 'center', color: '#1E293B', margin: '0 0 10px 0', fontSize: '28px', fontWeight: '800', letterSpacing: '-0.5px' },
+  subtitle: { textAlign: 'center', color: '#5F6B7A', marginBottom: '36px', fontSize: '14px', lineHeight: '1.6' },
+  section: { padding: '26px', border: '1px solid #E7DED2', borderRadius: '12px', backgroundColor: '#FAF7F0', marginBottom: '4px' },
+  sectionTitle: { color: '#C05A3E', marginTop: 0, fontSize: '16px', borderBottom: '1px solid #E7DED2', paddingBottom: '12px', marginBottom: '20px', fontWeight: '700', letterSpacing: '0.3px' },
   responsiveGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' },
   arrayRow: { display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' },
-  experienceBlock: { display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px', borderBottom: '1px dashed #334155', paddingBottom: '20px' },
+  experienceBlock: { display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px', borderBottom: '1px dashed #E7DED2', paddingBottom: '20px' },
   formGroup: { display: 'flex', flexDirection: 'column', gap: '6px', width: '100%' },
-  fieldLabel: { fontSize: '12.5px', fontWeight: '700', color: '#cbd5e1' },
-  input: { flex: 1, minWidth: '150px', padding: '12px 16px', border: '1px solid #334155', borderRadius: '8px', fontSize: '14px', outline: 'none', boxSizing: 'border-box', backgroundColor: '#1e293b', color: '#fff', transition: 'border-color 0.2s' },
-  select: { width: '100%', padding: '12px 16px', border: '1px solid #334155', borderRadius: '8px', fontSize: '14px', outline: 'none', boxSizing: 'border-box', backgroundColor: '#1e293b', color: '#fff', cursor: 'pointer' },
-  textarea: { width: '100%', padding: '12px 16px', border: '1px solid #334155', borderRadius: '8px', fontSize: '14px', outline: 'none', boxSizing: 'border-box', backgroundColor: '#1e293b', color: '#fff', resize: 'vertical', fontFamily: "'Inter', sans-serif" },
+  fieldLabel: { fontSize: '12.5px', fontWeight: '700', color: '#1E293B' },
+  input: { flex: 1, minWidth: '150px', padding: '12px 16px', border: '1px solid #E7DED2', borderRadius: '8px', fontSize: '14px', outline: 'none', boxSizing: 'border-box', backgroundColor: '#FFFFFF', color: '#1E293B', transition: 'border-color 0.2s' },
+  select: { width: '100%', padding: '12px 16px', border: '1px solid #E7DED2', borderRadius: '8px', fontSize: '14px', outline: 'none', boxSizing: 'border-box', backgroundColor: '#FFFFFF', color: '#1E293B', cursor: 'pointer' },
+  textarea: { width: '100%', padding: '12px 16px', border: '1px solid #E7DED2', borderRadius: '8px', fontSize: '14px', outline: 'none', boxSizing: 'border-box', backgroundColor: '#FFFFFF', color: '#1E293B', resize: 'vertical', fontFamily: "'Inter', sans-serif" },
   errorText: { color: '#f87171', fontSize: '12.5px', fontWeight: '600', paddingLeft: '2px', marginTop: '2px' },
-  addBtn: { alignSelf: 'flex-start', padding: '8px 14px', backgroundColor: 'transparent', color: '#38bdf8', border: '1px dashed rgba(56, 189, 248, 0.4)', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: '700', marginTop: '10px', transition: 'background-color 0.2s' },
+  addBtn: { alignSelf: 'flex-start', padding: '8px 14px', backgroundColor: 'transparent', color: '#C05A3E', border: '1px dashed rgba(192, 90, 62, 0.4)', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: '700', marginTop: '10px', transition: 'background-color 0.2s' },
   btnDeleteRow: { backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.15)', borderRadius: '8px', padding: '12px 15px', cursor: 'pointer', fontWeight: '700' },
   btnDeleteBlock: { backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.15)', borderRadius: '6px', padding: '6px 12px', fontSize: '12px', cursor: 'pointer', fontWeight: '700' },
-  submitBtn: { width: '100%', padding: '15px', backgroundColor: '#38bdf8', color: '#0f172a', fontSize: '15.5px', fontWeight: '800', border: 'none', borderRadius: '8px', cursor: 'pointer', marginTop: '10px', boxShadow: '0 4px 14px rgba(56, 189, 248, 0.2)', transition: 'transform 0.1s' },
-  submitBtnDisabled: { width: '100%', padding: '15px', backgroundColor: '#1e293b', color: '#475569', fontSize: '15.5px', fontWeight: '800', border: '1px solid #334155', borderRadius: '8px', cursor: 'not-allowed', marginTop: '10px' }
+  submitBtn: { width: '100%', padding: '15px', backgroundColor: '#C05A3E', color: '#FAF7F0', fontSize: '15.5px', fontWeight: '800', border: 'none', borderRadius: '8px', cursor: 'pointer', marginTop: '10px', boxShadow: '0 4px 14px rgba(192, 90, 62, 0.2)', transition: 'transform 0.1s' },
+  submitBtnDisabled: { width: '100%', padding: '15px', backgroundColor: '#FFFFFF', color: '#7C6F64', fontSize: '15.5px', fontWeight: '800', border: '1px solid #E7DED2', borderRadius: '8px', cursor: 'not-allowed', marginTop: '10px' }
 };
 
 export default TaoHoSoCV;

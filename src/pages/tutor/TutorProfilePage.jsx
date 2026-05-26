@@ -150,8 +150,8 @@ export default function HoSoGiaSu() {
     return (
       <div style={styles.noProfileBox}>
         <div style={{ fontSize: '40px', marginBottom: '12px' }}>📝</div>
-        <h3 style={{ fontSize: '18px', margin: '0 0 10px 0', color: '#fff', fontWeight: '700' }}>Sếp chưa khởi tạo hồ sơ gia sư</h3>
-        <p style={{ color: '#94a3b8', fontSize: '14px', margin: '0 0 20px 0', lineHeight: '1.5' }}>Bật cấu hình profile để mở khoá luồng nhận học viên và quản lý lịch trình giảng dạy.</p>
+        <h3 style={{ fontSize: '18px', margin: '0 0 10px 0', color: '#1E293B', fontWeight: '700' }}>Sếp chưa khởi tạo hồ sơ gia sư</h3>
+        <p style={{ color: '#5F6B7A', fontSize: '14px', margin: '0 0 20px 0', lineHeight: '1.5' }}>Bật cấu hình profile để mở khoá luồng nhận học viên và quản lý lịch trình giảng dạy.</p>
         <Link to="/tutor/register" style={styles.btnActionLink}>Khởi tạo ngay</Link>
       </div>
     );
@@ -241,9 +241,9 @@ export default function HoSoGiaSu() {
                       key={opt.v}
                       style={{
                         ...styles.radioLabel,
-                        borderColor: formData.format === opt.v ? '#38bdf8' : '#334155',
-                        backgroundColor: formData.format === opt.v ? 'rgba(56, 189, 248, 0.08)' : 'transparent',
-                        color: formData.format === opt.v ? '#38bdf8' : '#cbd5e1'
+                        borderColor: formData.format === opt.v ? '#C05A3E' : '#E7DED2',
+                        backgroundColor: formData.format === opt.v ? 'rgba(192, 90, 62, 0.08)' : 'transparent',
+                        color: formData.format === opt.v ? '#C05A3E' : '#1E293B'
                       }}
                     >
                       <input 
@@ -387,10 +387,10 @@ export default function HoSoGiaSu() {
 // --- 🛠️ HỆ THỐNG CSS INLINE PRESET DARK SLATE PREMIUM ---
 const styles = {
   container: {
-    backgroundColor: '#0f172a',
+    backgroundColor: '#FAF7F0',
     minHeight: '100vh',
     padding: '40px 20px',
-    color: '#cbd5e1',
+    color: '#1E293B',
     fontFamily: "'Inter', sans-serif"
   },
   wrapper: {
@@ -398,7 +398,7 @@ const styles = {
     margin: '0 auto'
   },
   backLink: {
-    color: '#94a3b8',
+    color: '#5F6B7A',
     textDecoration: 'none',
     fontSize: '13.5px',
     fontWeight: '700',
@@ -416,7 +416,7 @@ const styles = {
     fontSize: '28px',
     fontWeight: '800',
     margin: 0,
-    color: '#fff',
+    color: '#1E293B',
     letterSpacing: '-0.5px'
   },
   badge: {
@@ -426,16 +426,16 @@ const styles = {
     borderRadius: '20px'
   },
   subtextTitle: {
-    color: '#94a3b8',
+    color: '#5F6B7A',
     fontSize: '14.5px',
     margin: '8px 0 32px 0',
     lineHeight: '1.6'
   },
   loadingBox: {
-    color: '#94a3b8',
+    color: '#5F6B7A',
     textAlign: 'center',
     padding: '120px 20px',
-    backgroundColor: '#0f172a',
+    backgroundColor: '#FAF7F0',
     minHeight: '100vh',
     fontSize: '16px',
     fontFamily: "'Inter', sans-serif"
@@ -443,23 +443,23 @@ const styles = {
   noProfileBox: {
     maxWidth: '520px',
     margin: '120px auto',
-    backgroundColor: '#1e293b',
-    border: '1px solid #334155',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E7DED2',
     padding: '40px 30px',
     borderRadius: '16px',
     textAlign: 'center',
     boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.3)'
   },
   btnActionLink: {
-    backgroundColor: '#38bdf8',
-    color: '#0f172a',
+    backgroundColor: '#C05A3E',
+    color: '#FAF7F0',
     padding: '12px 24px',
     borderRadius: '8px',
     textDecoration: 'none',
     fontWeight: '700',
     display: 'inline-block',
     fontSize: '14.5px',
-    boxShadow: '0 4px 14px rgba(56, 189, 248, 0.2)'
+    boxShadow: '0 4px 14px rgba(192, 90, 62, 0.2)'
   },
   formSpace: {
     display: 'flex',
@@ -467,8 +467,8 @@ const styles = {
     gap: '26px'
   },
   card: {
-    backgroundColor: '#1e293b',
-    border: '1px solid #334155',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E7DED2',
     borderRadius: '14px',
     overflow: 'hidden',
     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
@@ -476,11 +476,11 @@ const styles = {
   cardHeaderTitle: {
     fontSize: '16px',
     fontWeight: '700',
-    backgroundColor: '#1e293b',
+    backgroundColor: '#FFFFFF',
     padding: '16px 24px',
     margin: 0,
-    borderBottom: '1px solid #334155',
-    color: '#fff',
+    borderBottom: '1px solid #E7DED2',
+    color: '#1E293B',
     letterSpacing: '-0.3px'
   },
   cardContent: {
@@ -502,28 +502,28 @@ const styles = {
   labelForm: {
     fontSize: '13.5px',
     fontWeight: '700',
-    color: '#cbd5e1'
+    color: '#1E293B'
   },
   required: {
     color: '#f87171',
     marginLeft: '2px'
   },
   inputStyle: {
-    backgroundColor: '#0f172a',
-    border: '1px solid #334155',
+    backgroundColor: '#FAF7F0',
+    border: '1px solid #E7DED2',
     borderRadius: '8px',
     padding: '12px 16px',
-    color: '#fff',
+    color: '#1E293B',
     fontSize: '14px',
     outline: 'none',
     transition: 'border-color 0.2s'
   },
   textareaStyle: {
-    backgroundColor: '#0f172a',
-    border: '1px solid #334155',
+    backgroundColor: '#FAF7F0',
+    border: '1px solid #E7DED2',
     borderRadius: '8px',
     padding: '14px',
-    color: '#fff',
+    color: '#1E293B',
     fontSize: '14px',
     outline: 'none',
     resize: 'vertical',
@@ -537,7 +537,7 @@ const styles = {
     marginTop: '4px'
   },
   radioLabel: {
-    border: '1px solid #334155',
+    border: '1px solid #E7DED2',
     borderRadius: '8px',
     padding: '14px',
     textAlign: 'center',
@@ -565,15 +565,15 @@ const styles = {
     marginTop: '8px'
   },
   btnSave: {
-    backgroundColor: '#38bdf8',
-    color: '#0f172a',
+    backgroundColor: '#C05A3E',
+    color: '#FAF7F0',
     border: 'none',
     padding: '14px 36px',
     borderRadius: '8px',
     fontSize: '15.5px',
     fontWeight: '700',
     cursor: 'pointer',
-    boxShadow: '0 4px 14px rgba(56, 189, 248, 0.2)',
+    boxShadow: '0 4px 14px rgba(192, 90, 62, 0.2)',
     transition: 'all 0.2s'
   }
 };

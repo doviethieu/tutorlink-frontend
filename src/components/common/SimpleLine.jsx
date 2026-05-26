@@ -13,9 +13,9 @@ export function SimpleLine({ data = [], height = 180, className, formatValue }) 
           alignItems: 'center',
           justifyContent: 'center',
           borderRadius: '12px',
-          border: '1px dashed #334155',
-          backgroundColor: '#0f172a',
-          color: '#64748b',
+          border: '1px dashed #E7DED2',
+          backgroundColor: '#FAF7F0',
+          color: '#8A7D72',
           fontSize: '14px'
         }}>
           📈 Chưa có dữ liệu đường xu hướng
@@ -58,8 +58,8 @@ export function SimpleLine({ data = [], height = 180, className, formatValue }) 
       <defs>
         {/* Đổ màu mờ dần phía dưới đường kẻ (Xanh Neon dịu mắt) */}
         <linearGradient id="tutorlink-line-gradient" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#0ea5e9" stopOpacity="0.25" />
-          <stop offset="100%" stopColor="#0ea5e9" stopOpacity="0" />
+          <stop offset="0%" stopColor="#A94730" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="#A94730" stopOpacity="0" />
         </linearGradient>
       </defs>
 
@@ -70,7 +70,7 @@ export function SimpleLine({ data = [], height = 180, className, formatValue }) 
       <path
         d={pathData}
         fill="none"
-        stroke="#0ea5e9"
+        stroke="#A94730"
         strokeWidth="3"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -80,9 +80,9 @@ export function SimpleLine({ data = [], height = 180, className, formatValue }) 
       {points.map((p) => (
         <g key={p.label}>
           {/* Chấm tròn lõi */}
-          <circle cx={p.x} cy={p.y} r="4" fill="#38bdf8" />
+          <circle cx={p.x} cy={p.y} r="4" fill="#C05A3E" />
           {/* Vòng tròn hiệu ứng radar bao ngoài */}
-          <circle cx={p.x} cy={p.y} r="9" fill="#38bdf8" opacity="0.2" />
+          <circle cx={p.x} cy={p.y} r="9" fill="#C05A3E" opacity="0.2" />
 
           {/* Nhãn mốc thời gian / danh mục (Ví dụ: Tuần 1, Tuần 2,...) */}
           <text
@@ -90,7 +90,7 @@ export function SimpleLine({ data = [], height = 180, className, formatValue }) 
             y={height - 4}
             textAnchor="middle"
             fontSize="12"
-            fill="#94a3b8"
+            fill="#5F6B7A"
             fontWeight="500"
           >
             {p.label}

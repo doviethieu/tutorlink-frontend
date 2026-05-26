@@ -13,4 +13,29 @@ export default defineConfig({
     port: 5173,
     cors: true,
   },
+  test: {
+    environment: 'jsdom',
+    setupFiles: './src/test/setup.jsx',
+    globals: true,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text'],
+      include: ['src/**/*.{js,jsx}'],
+      exclude: [
+        'src/main.jsx',
+        'src/App.jsx',
+        'src/lib/api.js',
+        'src/pages/shared/VideoCallPage.jsx',
+        'src/assets/**',
+        'src/data/**',
+        'src/test/**',
+        'src/**/*.test.{js,jsx}',
+      ],
+      thresholds: {
+        statements: 85,
+        lines: 85,
+        functions: 85,
+      },
+    },
+  },
 });

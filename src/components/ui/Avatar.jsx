@@ -24,7 +24,7 @@ export function Avatar({ name, size = 'md', className }) {
   return (
     <span
       className={cn(
-        'inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full font-bold text-white',
+        'inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full font-bold text-[#FAF7F0]',
         'bg-white shadow-sm ring-1 ring-gray-200 dark:ring-gray-800',
         sizeMap[size],
         className,
@@ -60,7 +60,7 @@ function buildAvatarConfig(seed) {
     noseStyle: pick(['short', 'long', 'round'], 10),
     mouthStyle: pick(['laugh', 'smile', 'peace'], 11),
     shirtStyle: pick(['hoody', 'short', 'polo'], 12),
-    shirtColor: pick(['#0A66C2', '#057642', '#7C3AED', '#334155', '#B45309'], 13),
+    shirtColor: pick(['#0A66C2', '#057642', '#7C3AED', '#E7DED2', '#B45309'], 13),
     bgColor: pick(['#DCEBFA', '#DDF7EC', '#FDECC8', '#ECE7FF', '#FCE1E7'], 14),
     isGradient: true,
   };

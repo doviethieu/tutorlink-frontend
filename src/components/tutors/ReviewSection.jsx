@@ -43,7 +43,7 @@ const ReviewSection = ({ tutorId, studentId }) => {
 
     return (
         <div className="w-full text-slate-100">
-            <h3 className="mb-6 text-xl font-bold text-white">Đánh giá từ Học viên ({reviews.length})</h3>
+            <h3 className="mb-6 text-xl font-bold text-[#FAF7F0]">Đánh giá từ Học viên ({reviews.length})</h3>
 
             {studentId ? (
                 <form onSubmit={handleSubmit} className="mb-8 rounded-xl border border-slate-700 bg-slate-900/70 p-5">
@@ -56,7 +56,7 @@ const ReviewSection = ({ tutorId, studentId }) => {
                                     key={i}
                                     className="cursor-pointer transition-colors"
                                     size={24}
-                                    color={starValue <= (hover || rating) ? "#f97316" : "#475569"}
+                                    color={starValue <= (hover || rating) ? "#C05A3E" : "#7C6F64"}
                                     onClick={() => setRating(starValue)}
                                     onMouseEnter={() => setHover(starValue)}
                                     onMouseLeave={() => setHover(null)}
@@ -71,12 +71,12 @@ const ReviewSection = ({ tutorId, studentId }) => {
                         onChange={(e) => setComment(e.target.value)}
                         required
                     />
-                    <button type="submit" className="mt-3 rounded-lg bg-orange-600 px-6 py-2 font-bold text-white transition hover:bg-orange-500">
+                    <button type="submit" className="mt-3 rounded-lg bg-[#C05A3E] px-6 py-2 font-bold text-[#FAF7F0] transition hover:bg-[#A94730]">
                         Gửi đánh giá
                     </button>
                 </form>
             ) : (
-                <div className="mb-8 rounded-lg border border-orange-500/30 bg-orange-500/10 p-4 text-orange-100">
+                <div className="mb-8 rounded-lg border border-orange-500/30 bg-[#A94730]/10 p-4 text-orange-100">
                     Đăng nhập để viết đánh giá cho gia sư này.
                 </div>
             )}
@@ -85,8 +85,8 @@ const ReviewSection = ({ tutorId, studentId }) => {
                 {reviews.map((rv) => (
                     <div key={rv._id} className="rounded-lg border border-slate-700 bg-slate-900/70 p-4 shadow-sm">
                         <div className="mb-2 flex items-center justify-between gap-3">
-                            <span className="font-bold text-white">{rv.student || rv.studentId?.name || "Học viên"}</span>
-                            <div className="flex text-orange-500">
+                            <span className="font-bold text-[#FAF7F0]">{rv.student || rv.studentId?.name || "Học viên"}</span>
+                            <div className="flex text-[#C05A3E]">
                                 {[...Array(rv.rating)].map((_, i) => <FaStar key={i} size={14} />)}
                             </div>
                         </div>

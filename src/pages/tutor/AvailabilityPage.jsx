@@ -150,8 +150,8 @@ export default function LichRanhGiaSu() {
                       title={`Thứ ${dayIdx + 2} lúc ${hour}:00`}
                       style={{
                         ...styles.slotButton,
-                        backgroundColor: isSelected ? 'rgba(16, 185, 129, 0.2)' : '#1e293b',
-                        borderColor: isSelected ? '#10b981' : '#334155',
+                        backgroundColor: isSelected ? 'rgba(16, 185, 129, 0.2)' : '#FFFFFF',
+                        borderColor: isSelected ? '#10b981' : '#E7DED2',
                         boxShadow: isSelected ? '0 0 8px rgba(16, 185, 129, 0.15)' : 'none'
                       }}
                     >
@@ -177,17 +177,17 @@ export default function LichRanhGiaSu() {
 // --- 🛠️ HỆ THỐNG CSS INLINE PRESET DARK SLATE PREMIUM ĐỒNG BỘ MƯỚT MẮT ---
 const styles = {
   pageContainer: {
-    backgroundColor: '#0f172a',
+    backgroundColor: '#FAF7F0',
     minHeight: '100vh',
     padding: '40px 24px',
     fontFamily: "'Inter', sans-serif",
-    color: '#cbd5e1'
+    color: '#1E293B'
   },
   headerControl: {
     maxWidth: '1200px',
     margin: '0 auto 28px auto',
-    backgroundColor: '#1e293b',
-    border: '1px solid #334155',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E7DED2',
     borderRadius: '16px',
     padding: '28px',
     display: 'flex',
@@ -212,11 +212,11 @@ const styles = {
     fontSize: '28px',
     fontWeight: '800',
     margin: '14px 0 6px 0',
-    color: '#fff',
+    color: '#1E293B',
     letterSpacing: '-0.5px'
   },
   subtitle: {
-    color: '#94a3b8',
+    color: '#5F6B7A',
     fontSize: '14.5px',
     margin: 0,
     lineHeight: '1.5'
@@ -227,9 +227,9 @@ const styles = {
     flexWrap: 'wrap'
   },
   btnToggleActive: {
-    backgroundColor: '#334155',
-    border: '1px solid #475569',
-    color: '#38bdf8',
+    backgroundColor: '#E7DED2',
+    border: '1px solid #7C6F64',
+    color: '#C05A3E',
     padding: '11px 18px',
     borderRadius: '8px',
     fontSize: '14px',
@@ -239,8 +239,8 @@ const styles = {
   },
   btnToggleOutline: {
     backgroundColor: 'transparent',
-    border: '1px solid #475569',
-    color: '#cbd5e1',
+    border: '1px solid #7C6F64',
+    color: '#1E293B',
     padding: '11px 18px',
     borderRadius: '8px',
     fontSize: '14px',
@@ -249,22 +249,22 @@ const styles = {
     transition: 'all 0.2s'
   },
   btnSave: {
-    backgroundColor: '#38bdf8', // Đưa về dải màu chủ đạo sắc nét của TutorLink
+    backgroundColor: '#C05A3E', // Đưa về dải màu chủ đạo sắc nét của TutorLink
     border: 'none',
-    color: '#0f172a',
+    color: '#FAF7F0',
     padding: '11px 22px',
     borderRadius: '8px',
     fontSize: '14px',
     fontWeight: '700',
     cursor: 'pointer',
     transition: 'all 0.2s',
-    boxShadow: '0 4px 14px rgba(56, 189, 248, 0.2)'
+    boxShadow: '0 4px 14px rgba(192, 90, 62, 0.2)'
   },
   card: {
     maxWidth: '1200px',
     margin: '0 auto',
-    backgroundColor: '#1e293b',
-    border: '1px solid #334155',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E7DED2',
     borderRadius: '16px',
     padding: '28px'
   },
@@ -289,16 +289,16 @@ const styles = {
     fontSize: '18px',
     fontWeight: '700',
     margin: 0,
-    color: '#fff'
+    color: '#1E293B'
   },
   slotCountBadge: {
-    backgroundColor: '#0f172a',
-    color: '#94a3b8',
+    backgroundColor: '#FAF7F0',
+    color: '#5F6B7A',
     fontSize: '13px',
     padding: '5px 14px',
     borderRadius: '20px',
     fontWeight: '700',
-    border: '1px solid #334155'
+    border: '1px solid #E7DED2'
   },
   overflowWrapper: {
     overflowX: 'auto',
@@ -315,13 +315,13 @@ const styles = {
     gridTemplateColumns: '90px repeat(7, 1fr)',
     gap: '8px',
     paddingBottom: '14px',
-    borderBottom: '1px solid #334155'
+    borderBottom: '1px solid #E7DED2'
   },
   dayLabelHeader: {
     textAlign: 'center',
     fontSize: '13.5px',
     fontWeight: '700',
-    color: '#cbd5e1',
+    color: '#1E293B',
     letterSpacing: '0.3px'
   },
   gridRowHours: {
@@ -334,7 +334,7 @@ const styles = {
     textAlign: 'right',
     paddingRight: '16px',
     fontSize: '13px',
-    color: '#94a3b8',
+    color: '#5F6B7A',
     fontWeight: '700',
     fontFamily: 'monospace'
   },

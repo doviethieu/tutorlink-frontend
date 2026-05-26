@@ -139,7 +139,7 @@ export default function DatLaiMatKhau() {
               required
               style={styles.input}
             />
-            <p style={{ color: '#94a3b8', fontSize: '11px', marginTop: '6px', lineHeight: '1.4' }}>
+            <p style={{ color: '#5F6B7A', fontSize: '11px', marginTop: '6px', lineHeight: '1.4' }}>
               📌 Yêu cầu: Ít nhất 8 ký tự, bao gồm 1 chữ viết hoa và 1 chữ số.
             </p>
           </div>
@@ -163,8 +163,8 @@ export default function DatLaiMatKhau() {
             disabled={loading}
             style={{
               ...styles.buttonPrimary,
-              backgroundColor: loading ? '#475569' : '#38bdf8',
-              boxShadow: loading ? 'none' : '0 4px 14px rgba(56, 189, 248, 0.2)',
+              backgroundColor: loading ? '#7C6F64' : '#C05A3E',
+              boxShadow: loading ? 'none' : '0 4px 14px rgba(192, 90, 62, 0.2)',
               cursor: loading ? 'not-allowed' : 'pointer'
             }}
           >
@@ -181,7 +181,7 @@ export default function DatLaiMatKhau() {
 // -------------------------------------------------------------
 const styles = {
   container: {
-    background: 'linear-gradient(135deg, #0f172a 0%, #020617 100%)',
+    background: 'linear-gradient(135deg, #FAF7F0 0%, #FAF7F0 100%)',
     minHeight: '100vh',
     display: 'flex',
     justifyContent: 'center',
@@ -190,14 +190,14 @@ const styles = {
     fontFamily: "'Inter', sans-serif"
   },
   card: {
-    backgroundColor: '#1e293b',
+    backgroundColor: '#FFFFFF',
     borderRadius: '16px',
     padding: '40px 30px',
     width: '100%',
     maxWidth: '450px',
     boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
-    border: '1px solid #334155',
-    color: '#f1f5f9'
+    border: '1px solid #E7DED2',
+    color: '#1E293B'
   },
   iconContainer: {
     fontSize: '32px',
@@ -214,12 +214,12 @@ const styles = {
     fontWeight: '800',
     textAlign: 'center',
     margin: '0 0 10px 0',
-    color: '#fff',
+    color: '#1E293B',
     letterSpacing: '-0.5px'
   },
   subtitle: {
     fontSize: '14px',
-    color: '#94a3b8',
+    color: '#5F6B7A',
     textAlign: 'center',
     lineHeight: '1.5',
     margin: 0
@@ -229,15 +229,15 @@ const styles = {
     marginBottom: '8px',
     fontWeight: '700',
     fontSize: '14px',
-    color: '#e2e8f0'
+    color: '#1E293B'
   },
   input: {
     width: '100%',
     padding: '12px 16px',
     borderRadius: '8px',
-    border: '1px solid #334155',
-    backgroundColor: '#0f172a',
-    color: 'white',
+    border: '1px solid #E7DED2',
+    backgroundColor: '#FAF7F0',
+    color: '#FAF7F0',
     fontSize: '15px',
     outline: 'none',
     boxSizing: 'border-box',
@@ -255,7 +255,7 @@ const styles = {
   buttonPrimary: {
     width: '100%',
     padding: '14px',
-    color: '#0f172a',
+    color: '#FAF7F0',
     border: 'none',
     borderRadius: '8px',
     fontSize: '15px',
@@ -268,8 +268,8 @@ const styles = {
     width: '100%',
     padding: '12px',
     backgroundColor: 'transparent',
-    color: '#e2e8f0',
-    border: '1px solid #475569',
+    color: '#1E293B',
+    border: '1px solid #7C6F64',
     borderRadius: '8px',
     fontSize: '14px',
     fontWeight: '700',

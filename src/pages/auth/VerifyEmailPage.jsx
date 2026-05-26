@@ -82,7 +82,7 @@ export default function XacMinhEmail() {
 // --- 🛠️ DESIGN SYSTEM SLATE PREMIUM DARK MODE ---
 const styles = {
   container: {
-    backgroundColor: '#0f172a',
+    backgroundColor: '#FAF7F0',
     minHeight: '100vh',
     display: 'flex',
     justifyContent: 'center',
@@ -92,19 +92,19 @@ const styles = {
     boxSizing: 'border-box'
   },
   card: {
-    backgroundColor: '#1e293b',
+    backgroundColor: '#FFFFFF',
     borderRadius: '16px',
     padding: '40px 32px',
     width: '100%',
     maxWidth: '460px',
     boxShadow: '0 20px 40px rgba(0, 0, 0, 0.25)',
-    border: '1px solid #334155',
-    color: '#f1f5f9',
+    border: '1px solid #E7DED2',
+    color: '#1E293B',
     boxSizing: 'border-box'
   },
   iconContainer: { fontSize: '56px', marginBottom: '16px', lineHeight: 1 },
-  title: { fontSize: '24px', fontWeight: '800', margin: '0 0 12px 0', color: '#fff', letterSpacing: '-0.5px' },
-  subtitle: { fontSize: '14px', color: '#94a3b8', lineHeight: '1.6', margin: 0 },
+  title: { fontSize: '24px', fontWeight: '800', margin: '0 0 12px 0', color: '#1E293B', letterSpacing: '-0.5px' },
+  subtitle: { fontSize: '14px', color: '#5F6B7A', lineHeight: '1.6', margin: 0 },
   errorAlertBox: {
     fontSize: '13.5px',
     color: '#fca5a5',
@@ -118,21 +118,21 @@ const styles = {
   buttonPrimary: {
     width: '100%',
     padding: '13px 20px',
-    backgroundColor: '#38bdf8',
-    color: '#0f172a',
+    backgroundColor: '#C05A3E',
+    color: '#FAF7F0',
     border: 'none',
     borderRadius: '8px',
     fontSize: '14.5px',
     fontWeight: '800',
-    boxShadow: '0 4px 14px rgba(56, 189, 248, 0.2)',
+    boxShadow: '0 4px 14px rgba(192, 90, 62, 0.2)',
     cursor: 'pointer'
   },
   buttonSecondary: {
     width: '100%',
     padding: '12px 20px',
     backgroundColor: 'transparent',
-    color: '#cbd5e1',
-    border: '1px solid #475569',
+    color: '#1E293B',
+    border: '1px solid #7C6F64',
     borderRadius: '8px',
     fontSize: '14px',
     fontWeight: '700',
@@ -141,8 +141,8 @@ const styles = {
   spinner: {
     width: '46px',
     height: '46px',
-    border: '4px solid #334155',
-    borderTop: '4px solid #38bdf8',
+    border: '4px solid #E7DED2',
+    borderTop: '4px solid #C05A3E',
     borderRadius: '50%',
     margin: '0 auto 24px auto',
     animation: 'spin 0.8s linear infinite',

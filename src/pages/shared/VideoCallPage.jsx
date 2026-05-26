@@ -72,7 +72,7 @@ export default function VideoCall() {
             <div style={styles.topControlBar}>
                 <div style={styles.roomBadge}>
                     <span style={styles.pulseDot}></span>
-                    PHÒNG HỌC REALTIME ĐANG BẬT · ID: <span style={{ color: '#38bdf8', fontWeight: '700' }}>{roomId}</span>
+                    PHÒNG HỌC REALTIME ĐANG BẬT · ID: <span style={{ color: '#C05A3E', fontWeight: '700' }}>{roomId}</span>
                 </div>
                 <button onClick={() => navigate(-1)} style={styles.btnExit}>
                     🚪 Rời Phòng Học
@@ -104,15 +104,15 @@ const styles = {
   videoContainer: { 
     width: '100vw', 
     height: '100vh', 
-    backgroundColor: '#0f172a', // Màu Slate Dark chủ đạo của hệ thống
+    backgroundColor: '#FAF7F0', // Màu Slate Dark chủ đạo của hệ thống
     display: 'flex',
     flexDirection: 'column',
     overflow: 'hidden', // Khử hoàn toàn thanh cuộn răng cưa của trình duyệt
     fontFamily: "'Inter', sans-serif"
   },
   topControlBar: {
-    backgroundColor: '#1e293b',
-    borderBottom: '1px solid #334155',
+    backgroundColor: '#FFFFFF',
+    borderBottom: '1px solid #E7DED2',
     padding: '12px 24px',
     display: 'flex',
     justifyContent: 'space-between',
@@ -120,7 +120,7 @@ const styles = {
     zIndex: 10
   },
   roomBadge: {
-    color: '#cbd5e1',
+    color: '#1E293B',
     fontSize: '13px',
     fontWeight: '600',
     display: 'flex',
@@ -149,7 +149,7 @@ const styles = {
   sdkZone: { 
     width: '100%', 
     flex: 1,
-    backgroundColor: '#0f172a'
+    backgroundColor: '#FAF7F0'
   },
   missingConfig: {
     flex: 1,
@@ -157,25 +157,25 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    color: '#cbd5e1',
+    color: '#1E293B',
     padding: '24px',
     textAlign: 'center'
   },
   missingTitle: {
     margin: '0 0 10px',
-    color: '#fff',
+    color: '#1E293B',
     fontSize: '24px'
   },
   missingText: {
     margin: '0 0 18px',
-    color: '#94a3b8',
+    color: '#5F6B7A',
     maxWidth: '560px',
     lineHeight: 1.6
   },
   codeBlock: {
-    backgroundColor: '#1e293b',
-    border: '1px solid #334155',
-    color: '#38bdf8',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E7DED2',
+    color: '#C05A3E',
     padding: '14px 18px',
     borderRadius: '8px',
     textAlign: 'left'

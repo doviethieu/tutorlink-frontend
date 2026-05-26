@@ -157,7 +157,7 @@ export default function DangNhap() {
               </div>
 
               <div style={styles.flexRow}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13.5px', color: '#94a3b8' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13.5px', color: '#5F6B7A' }}>
                   <input 
                     type="checkbox" 
                     checked={remember}
@@ -166,7 +166,7 @@ export default function DangNhap() {
                   />
                   Ghi nhớ phiên đăng nhập
                 </label>
-                <Link to="/forgot-password" style={{ color: '#38bdf8', textDecoration: 'none', fontSize: '13.5px', fontWeight: '700' }}>
+                <Link to="/forgot-password" style={{ color: '#C05A3E', textDecoration: 'none', fontSize: '13.5px', fontWeight: '700' }}>
                   Quên mật khẩu?
                 </Link>
               </div>
@@ -176,8 +176,8 @@ export default function DangNhap() {
                 disabled={loading}
                 style={{
                   ...styles.buttonPrimary,
-                  backgroundColor: loading ? '#475569' : '#38bdf8',
-                  boxShadow: loading ? 'none' : '0 4px 14px rgba(56, 189, 248, 0.2)'
+                  backgroundColor: loading ? '#7C6F64' : '#C05A3E',
+                  boxShadow: loading ? 'none' : '0 4px 14px rgba(192, 90, 62, 0.2)'
                 }}
               >
                 {loading ? '⏳ Đang kiểm tra dữ liệu...' : 'Đăng nhập hệ thống'}
@@ -204,7 +204,7 @@ export default function DangNhap() {
                 <button 
                   type="button" 
                   onClick={() => handleOAuthAlert('Facebook')} 
-                  style={{ ...styles.buttonOAuth, border: '1px solid #1e293b', backgroundColor: '#1e293b' }}
+                  style={{ ...styles.buttonOAuth, border: '1px solid #FFFFFF', backgroundColor: '#FFFFFF' }}
                 >
                   <span style={{ marginRight: '10px', fontSize: '16px' }}>📘</span>
                   Liên kết tài khoản Facebook
@@ -234,7 +234,7 @@ export default function DangNhap() {
                 disabled={loading}
                 style={{
                   ...styles.buttonPrimary,
-                  backgroundColor: loading ? '#475569' : '#10b981',
+                  backgroundColor: loading ? '#7C6F64' : '#10b981',
                   boxShadow: loading ? 'none' : '0 4px 14px rgba(16, 185, 129, 0.2)'
                 }}
               >
@@ -244,16 +244,16 @@ export default function DangNhap() {
               <button 
                 type="button" 
                 onClick={() => setStep(1)} 
-                style={{ ...styles.buttonOAuth, backgroundColor: 'transparent', border: 'none', color: '#94a3b8' }}
+                style={{ ...styles.buttonOAuth, backgroundColor: 'transparent', border: 'none', color: '#5F6B7A' }}
               >
                 ← Quay lại trang điền mật khẩu
               </button>
             </form>
           )}
 
-          <p style={{ textAlign: 'center', marginTop: '30px', fontSize: '14px', color: '#94a3b8' }}>
+          <p style={{ textAlign: 'center', marginTop: '30px', fontSize: '14px', color: '#5F6B7A' }}>
             Bạn chưa có tài khoản đối tác?{' '}
-            <Link to="/register" style={{ color: '#f97316', textDecoration: 'none', fontWeight: 'bold' }}>
+            <Link to="/register" style={{ color: '#C05A3E', textDecoration: 'none', fontWeight: 'bold' }}>
               Tạo tài khoản miễn phí
             </Link>
           </p>
@@ -269,7 +269,7 @@ export default function DangNhap() {
 // -------------------------------------------------------------
 const styles = {
   container: { 
-    background: 'linear-gradient(135deg, #0f172a 0%, #020617 100%)', 
+    background: 'linear-gradient(135deg, #FAF7F0 0%, #FAF7F0 100%)', 
     minHeight: '100vh', 
     display: 'flex', 
     justifyContent: 'center', 
@@ -278,21 +278,21 @@ const styles = {
     fontFamily: "'Inter', sans-serif" 
   },
   card: { 
-    backgroundColor: '#1e293b', 
+    backgroundColor: '#FFFFFF', 
     borderRadius: '16px', 
     padding: '40px 30px', 
     width: '100%', 
     maxWidth: '460px', 
     boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)', 
-    border: '1px solid #334155', 
-    color: '#f1f5f9' 
+    border: '1px solid #E7DED2', 
+    color: '#1E293B' 
   },
-  title: { fontSize: '28px', fontWeight: '800', color: '#fff', margin: '0 0 8px 0', letterSpacing: '-0.5px' },
-  subtitle: { fontSize: '14px', color: '#94a3b8', lineHeight: '1.5', margin: 0 },
-  label: { display: 'block', marginBottom: '8px', fontWeight: '700', fontSize: '14px', color: '#e2e8f0' },
+  title: { fontSize: '28px', fontWeight: '800', color: '#1E293B', margin: '0 0 8px 0', letterSpacing: '-0.5px' },
+  subtitle: { fontSize: '14px', color: '#5F6B7A', lineHeight: '1.5', margin: 0 },
+  label: { display: 'block', marginBottom: '8px', fontWeight: '700', fontSize: '14px', color: '#1E293B' },
   input: { 
-    width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #334155', 
-    backgroundColor: '#0f172a', color: 'white', fontSize: '15px', outline: 'none', boxSizing: 'border-box',
+    width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #E7DED2', 
+    backgroundColor: '#FAF7F0', color: '#FAF7F0', fontSize: '15px', outline: 'none', boxSizing: 'border-box',
     transition: '0.2s'
   },
   flexRow: { display: 'flex', justifycontent: 'space-between', justifyContent: 'space-between', alignItems: 'center', marginTop: '5px' },
@@ -301,15 +301,15 @@ const styles = {
     color: '#f87171', padding: '12px', borderRadius: '8px', fontSize: '13.5px', fontWeight: 'bold' 
   },
   buttonPrimary: { 
-    width: '100%', padding: '14px', color: 'white', border: 'none', borderRadius: '8px', 
+    width: '100%', padding: '14px', color: '#FAF7F0', border: 'none', borderRadius: '8px', 
     fontSize: '15px', fontWeight: 'bold', marginTop: '10px', cursor: 'pointer', transition: '0.2s' 
   },
   dividerContainer: { position: 'relative', textAlign: 'center', margin: '20px 0' },
-  dividerLine: { position: 'absolute', top: '50%', left: 0, borderTop: '1px solid #334155', width: '100%' },
-  dividerText: { position: 'relative', backgroundColor: '#1e293b', padding: '0 12px', fontSize: '11px', color: '#64748b', fontWeight: '800', letterSpacing: '0.5px', zIndex: 2 },
+  dividerLine: { position: 'absolute', top: '50%', left: 0, borderTop: '1px solid #E7DED2', width: '100%' },
+  dividerText: { position: 'relative', backgroundColor: '#FFFFFF', padding: '0 12px', fontSize: '11px', color: '#8A7D72', fontWeight: '800', letterSpacing: '0.5px', zIndex: 2 },
   buttonOAuth: { 
     display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px', 
-    backgroundColor: '#0f172a', color: 'white', border: '1px solid #334155', borderRadius: '8px', 
+    backgroundColor: '#FAF7F0', color: '#FAF7F0', border: '1px solid #E7DED2', borderRadius: '8px', 
     fontSize: '14px', fontWeight: '700', cursor: 'pointer', transition: '0.2s' 
   },
   googleButtonWrap: {

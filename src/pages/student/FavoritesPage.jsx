@@ -67,8 +67,8 @@ export default function GiaSuYeuThich() {
       {tutors.length === 0 ? (
         <div style={styles.emptyCard}>
           <div style={{ fontSize: '44px', marginBottom: '15px' }}>❤️</div>
-          <h3 style={{ color: '#fff', margin: '0 0 10px 0', fontSize: '18px', fontWeight: '700' }}>Chưa có gia sư yêu thích</h3>
-          <p style={{ color: '#94a3b8', margin: '0 0 24px 0', fontSize: '14px', lineHeight: '1.5' }}>
+          <h3 style={{ color: '#1E293B', margin: '0 0 10px 0', fontSize: '18px', fontWeight: '700' }}>Chưa có gia sư yêu thích</h3>
+          <p style={{ color: '#5F6B7A', margin: '0 0 24px 0', fontSize: '14px', lineHeight: '1.5' }}>
             Hãy khám phá và lưu lại những gia sư phù hợp với nhu cầu của sếp.
           </p>
           <Link to="/" style={{ textDecoration: 'none' }}>
@@ -126,18 +126,18 @@ export default function GiaSuYeuThich() {
 // --- 🛠️ BỘ KHUNG CSS INLINE SLATE DARK-MODE PREMIUM SANG TRỌNG ---
 const styles = {
   container: {
-    backgroundColor: '#0f172a',
+    backgroundColor: '#FAF7F0',
     minHeight: '100vh',
     padding: '40px 6%',
-    color: '#cbd5e1',
+    color: '#1E293B',
     fontFamily: "'Inter', sans-serif"
   },
   heroCard: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#1e293b',
-    border: '1px solid #334155',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E7DED2',
     padding: '30px 40px',
     borderRadius: '16px',
     marginBottom: '35px',
@@ -145,8 +145,8 @@ const styles = {
     gap: '20px'
   },
   accentBadge: {
-    backgroundColor: 'rgba(249, 115, 22, 0.15)', // Đổi sang màu Cam Neon giống trang Đặt Lịch
-    color: '#f97316',
+    backgroundColor: 'rgba(192, 90, 62, 0.15)', // Đổi sang màu Cam Neon giống trang Đặt Lịch
+    color: '#C05A3E',
     padding: '5px 12px',
     borderRadius: '6px',
     fontSize: '11px',
@@ -157,15 +157,15 @@ const styles = {
   mainTitle: { 
     fontSize: '28px', 
     fontWeight: '800', 
-    color: '#fff', 
+    color: '#1E293B', 
     margin: '12px 0 6px 0',
     letterSpacing: '-0.5px'
   },
-  subtitle: { fontSize: '14.5px', color: '#94a3b8', margin: 0, lineHeight: '1.5' },
+  subtitle: { fontSize: '14.5px', color: '#5F6B7A', margin: 0, lineHeight: '1.5' },
   btnExplore: { 
     backgroundColor: 'transparent', 
-    border: '1px solid #475569', 
-    color: '#fff', 
+    border: '1px solid #7C6F64', 
+    color: '#1E293B', 
     padding: '12px 22px', 
     borderRadius: '8px', 
     fontWeight: '700', 
@@ -174,23 +174,23 @@ const styles = {
     transition: '0.2s'
   },
   emptyCard: { 
-    backgroundColor: '#1e293b', 
-    border: '1px solid #334155', 
+    backgroundColor: '#FFFFFF', 
+    border: '1px solid #E7DED2', 
     padding: '80px 20px', 
     borderRadius: '16px', 
     textAlign: 'center',
     boxShadow: '0 10px 25px -5px rgba(0,0,0,0.3)'
   },
   btnActionCenter: { 
-    backgroundColor: '#38bdf8', // Đổi sang Sky Blue tinh tế
-    color: '#0f172a', 
+    backgroundColor: '#C05A3E', // Đổi sang Sky Blue tinh tế
+    color: '#FAF7F0', 
     border: 'none', 
     padding: '14px 28px', 
     borderRadius: '8px', 
     fontWeight: '700', 
     cursor: 'pointer',
     fontSize: '14.5px',
-    boxShadow: '0 4px 14px rgba(56, 189, 248, 0.2)'
+    boxShadow: '0 4px 14px rgba(192, 90, 62, 0.2)'
   },
   layoutGrid: { 
     display: 'grid', 
@@ -198,8 +198,8 @@ const styles = {
     gap: '28px' 
   },
   tutorCard: { 
-    backgroundColor: '#1e293b', 
-    border: '1px solid #334155', 
+    backgroundColor: '#FFFFFF', 
+    border: '1px solid #E7DED2', 
     borderRadius: '16px', 
     padding: '24px', 
     display: 'flex', 
@@ -212,8 +212,8 @@ const styles = {
     width: '52px', 
     height: '52px', 
     borderRadius: '12px', 
-    backgroundColor: '#334155', 
-    color: '#38bdf8', // Điểm nhẹ chữ chữ cái đầu bằng Sky Blue thanh thoát
+    backgroundColor: '#E7DED2', 
+    color: '#C05A3E', // Điểm nhẹ chữ chữ cái đầu bằng Sky Blue thanh thoát
     display: 'flex', 
     alignItems: 'center', 
     justifyContent: 'center', 
@@ -233,7 +233,7 @@ const styles = {
     fontSize: '16px' 
   },
   tutorNameLink: { 
-    color: '#fff', 
+    color: '#1E293B', 
     fontSize: '19px', 
     fontWeight: '700', 
     textDecoration: 'none', 
@@ -243,7 +243,7 @@ const styles = {
   },
   tutorTitle: { 
     fontSize: '13.5px', 
-    color: '#94a3b8', 
+    color: '#5F6B7A', 
     margin: 0, 
     lineHeight: '1.5',
     lineClamp: 2, 
@@ -261,16 +261,16 @@ const styles = {
     minHeight: '26px' 
   },
   subjectBadge: { 
-    backgroundColor: '#0f172a', 
-    color: '#38bdf8', // Chữ môn học đồng bộ Sky Blue siêu mượt
+    backgroundColor: '#FAF7F0', 
+    color: '#C05A3E', // Chữ môn học đồng bộ Sky Blue siêu mượt
     fontSize: '11px', 
     padding: '4px 10px', 
     borderRadius: '6px', 
-    border: '1px solid rgba(56, 189, 248, 0.25)',
+    border: '1px solid rgba(192, 90, 62, 0.25)',
     fontWeight: '600'
   },
   cardFooter: { 
-    borderTop: '1px solid #334155', 
+    borderTop: '1px solid #E7DED2', 
     marginTop: '20px', 
     paddingTop: '16px', 
     display: 'flex', 
@@ -283,19 +283,19 @@ const styles = {
     fontSize: '17px' 
   },
   ratingBox: { 
-    color: '#fff', 
+    color: '#1E293B', 
     fontSize: '13px', 
     fontWeight: '700', 
-    backgroundColor: '#0f172a', 
+    backgroundColor: '#FAF7F0', 
     padding: '4px 10px', 
     borderRadius: '6px', 
-    border: '1px solid #334155' 
+    border: '1px solid #E7DED2' 
   },
   loadingBox: {
-    color: '#94a3b8',
+    color: '#5F6B7A',
     textAlign: 'center',
     paddingTop: '120px',
-    backgroundColor: '#0f172a',
+    backgroundColor: '#FAF7F0',
     minHeight: '100vh',
     fontSize: '16px',
     fontFamily: "'Inter', sans-serif"

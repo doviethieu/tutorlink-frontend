@@ -58,8 +58,8 @@ export default function NotificationsPage() {
               onClick={() => markRead(item.id)}
               style={{
                 ...styles.item,
-                borderColor: item.read ? '#334155' : '#38bdf8',
-                backgroundColor: item.read ? '#1e293b' : 'rgba(56, 189, 248, 0.08)',
+                borderColor: item.read ? '#E7DED2' : '#C05A3E',
+                backgroundColor: item.read ? '#FFFFFF' : 'rgba(192, 90, 62, 0.08)',
               }}
             >
               <div style={styles.itemTop}>
@@ -79,8 +79,8 @@ export default function NotificationsPage() {
 const styles = {
   container: {
     minHeight: '100vh',
-    backgroundColor: '#0f172a',
-    color: '#e2e8f0',
+    backgroundColor: '#FAF7F0',
+    color: '#1E293B',
     padding: '40px 6%',
     fontFamily: "'Inter', sans-serif",
   },
@@ -89,29 +89,29 @@ const styles = {
     justifyContent: 'space-between',
     gap: '20px',
     alignItems: 'center',
-    backgroundColor: '#1e293b',
-    border: '1px solid #334155',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E7DED2',
     borderRadius: '16px',
     padding: '28px',
     marginBottom: '24px',
   },
   badge: {
-    color: '#38bdf8',
+    color: '#C05A3E',
     fontSize: '12px',
     fontWeight: 800,
     textTransform: 'uppercase',
   },
   title: {
     margin: '8px 0',
-    color: '#fff',
+    color: '#1E293B',
   },
   subtitle: {
     margin: 0,
-    color: '#94a3b8',
+    color: '#5F6B7A',
   },
   button: {
-    backgroundColor: '#38bdf8',
-    color: '#0f172a',
+    backgroundColor: '#C05A3E',
+    color: '#FAF7F0',
     border: 'none',
     borderRadius: '8px',
     padding: '12px 16px',
@@ -125,10 +125,10 @@ const styles = {
   },
   item: {
     textAlign: 'left',
-    border: '1px solid #334155',
+    border: '1px solid #E7DED2',
     borderRadius: '12px',
     padding: '18px',
-    color: '#e2e8f0',
+    color: '#1E293B',
     cursor: 'pointer',
   },
   itemTop: {
@@ -137,30 +137,30 @@ const styles = {
     gap: '12px',
   },
   itemTitle: {
-    color: '#fff',
+    color: '#1E293B',
   },
   unread: {
-    color: '#0f172a',
-    backgroundColor: '#38bdf8',
+    color: '#FAF7F0',
+    backgroundColor: '#C05A3E',
     borderRadius: '999px',
     padding: '2px 8px',
     fontSize: '12px',
     fontWeight: 800,
   },
   body: {
-    color: '#cbd5e1',
+    color: '#1E293B',
     margin: '8px 0',
   },
   time: {
-    color: '#94a3b8',
+    color: '#5F6B7A',
     fontSize: '12px',
   },
   empty: {
-    backgroundColor: '#1e293b',
-    border: '1px solid #334155',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E7DED2',
     borderRadius: '12px',
     padding: '32px',
     textAlign: 'center',
-    color: '#94a3b8',
+    color: '#5F6B7A',
   },
 };

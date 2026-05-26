@@ -140,7 +140,7 @@ export default function LichHocHocVien() {
 
       {/* THANH TÌM KIẾM THEO MÔN HỌC HOẶC MÃ ĐƠN */}
       <div style={styles.searchBox}>
-        <span style={{ marginRight: '10px', fontSize: '16px', color: '#94a3b8' }}>🔍</span>
+        <span style={{ marginRight: '10px', fontSize: '16px', color: '#5F6B7A' }}>🔍</span>
         <input 
           type="text" 
           placeholder="Tìm kiếm nhanh theo mã booking hoặc tiêu đề môn học..." 
@@ -162,8 +162,8 @@ export default function LichHocHocVien() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div style={styles.agendaHeader}>
               <div>
-                <p style={{ margin: 0, color: '#94a3b8', fontSize: '13px', fontWeight: '500' }}>Kế hoạch học tập</p>
-                <h2 style={{ margin: '4px 0 0 0', color: '#fff', fontSize: '20px', fontWeight: '700' }}>{filteredBookings.length} buổi học được tìm thấy</h2>
+                <p style={{ margin: 0, color: '#5F6B7A', fontSize: '13px', fontWeight: '500' }}>Kế hoạch học tập</p>
+                <h2 style={{ margin: '4px 0 0 0', color: '#1E293B', fontSize: '20px', fontWeight: '700' }}>{filteredBookings.length} buổi học được tìm thấy</h2>
               </div>
               <button onClick={() => setSelectedDate(toDateKey(new Date()))} style={styles.btnToday}>Hôm nay</button>
             </div>
@@ -180,15 +180,15 @@ export default function LichHocHocVien() {
                     onClick={() => setSelectedDate(dateKey)}
                     style={{
                       ...styles.agendaRow,
-                      border: isSelected ? '1px solid #38bdf8' : '1px solid #334155',
-                      backgroundColor: isSelected ? 'rgba(56, 189, 248, 0.05)' : '#1e293b'
+                      border: isSelected ? '1px solid #C05A3E' : '1px solid #E7DED2',
+                      backgroundColor: isSelected ? 'rgba(192, 90, 62, 0.05)' : '#FFFFFF'
                     }}
                   >
                     <div style={styles.dateBadgeColumn}>
-                      <span style={{ fontSize: '12px', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      <span style={{ fontSize: '12px', fontWeight: '700', color: '#5F6B7A', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                         {dayObj.toLocaleDateString('vi-VN', { weekday: 'short' })}
                       </span>
-                      <span style={{ fontSize: '28px', fontWeight: '800', color: '#fff', lineHeight: '1.2' }}>{dayObj.getDate()}</span>
+                      <span style={{ fontSize: '28px', fontWeight: '800', color: '#1E293B', lineHeight: '1.2' }}>{dayObj.getDate()}</span>
                       {isToday && <span style={styles.todayMiniBadge}>Hiện tại</span>}
                     </div>
 
@@ -197,10 +197,10 @@ export default function LichHocHocVien() {
                         <div key={booking.id} style={styles.innerBookingCard}>
                           <div style={{ flex: 1 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                              <span style={{ fontWeight: '700', color: '#fff', fontSize: '15px' }}>{booking.subject}</span>
+                              <span style={{ fontWeight: '700', color: '#1E293B', fontSize: '15px' }}>{booking.subject}</span>
                               <span style={renderStatusStyle(booking.status)}>{translateStatus(booking.status)}</span>
                             </div>
-                            <p style={{ margin: '6px 0 0 0', color: '#94a3b8', fontSize: '13px' }}>
+                            <p style={{ margin: '6px 0 0 0', color: '#5F6B7A', fontSize: '13px' }}>
                               ⏱️ {booking.time} &nbsp;·&nbsp; 👤 {booking.tutor?.name || 'Gia sư'}
                             </p>
                           </div>
@@ -216,17 +216,17 @@ export default function LichHocHocVien() {
 
             {/* PHẦN TIMELINE CHI TIẾT CỦA NGÀY ĐANG CHỌN */}
             <div style={styles.timelineContainer}>
-              <h3 style={{ margin: 0, color: '#fff', fontSize: '16px', fontWeight: '700' }}>📍 Tiến trình ngày chọn: <span style={{ color: '#38bdf8' }}>{selectedDate}</span></h3>
+              <h3 style={{ margin: 0, color: '#1E293B', fontSize: '16px', fontWeight: '700' }}>📍 Tiến trình ngày chọn: <span style={{ color: '#C05A3E' }}>{selectedDate}</span></h3>
               {selectedBookings.length === 0 ? (
-                <p style={{ color: '#94a3b8', fontSize: '13.5px', margin: '12px 0 0 0' }}>Không có lịch học nào được sắp xếp trong ngày này.</p>
+                <p style={{ color: '#5F6B7A', fontSize: '13.5px', margin: '12px 0 0 0' }}>Không có lịch học nào được sắp xếp trong ngày này.</p>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px' }}>
                   {selectedBookings.map((booking) => (
                     <div key={booking.id} style={styles.timelineItem}>
-                      <span style={{ color: '#38bdf8', fontWeight: '700', fontSize: '14px', minWidth: '90px' }}>{booking.time}</span>
+                      <span style={{ color: '#C05A3E', fontWeight: '700', fontSize: '14px', minWidth: '90px' }}>{booking.time}</span>
                       <div style={{ flex: 1 }}>
-                        <h4 style={{ margin: 0, color: '#fff', fontSize: '14.5px', fontWeight: '700' }}>{booking.subject}</h4>
-                        <p style={{ margin: '3px 0 0 0', color: '#94a3b8', fontSize: '12.5px' }}>Gia sư phụ trách: {booking.tutor?.name}</p>
+                        <h4 style={{ margin: 0, color: '#1E293B', fontSize: '14.5px', fontWeight: '700' }}>{booking.subject}</h4>
+                        <p style={{ margin: '3px 0 0 0', color: '#5F6B7A', fontSize: '12.5px' }}>Gia sư phụ trách: {booking.tutor?.name}</p>
                       </div>
                       <div style={{ display: 'flex', gap: '8px' }}>
                         {booking.meetingUrl && ['confirmed', 'completed'].includes(booking.status) && (
@@ -262,7 +262,7 @@ export default function LichHocHocVien() {
             </div>
 
             <div style={styles.asideMainCard}>
-              <h4 style={{ margin: '0 0 16px 0', color: '#fff', fontSize: '15px', fontWeight: '700' }}>📋 Tiêu điểm hệ thống</h4>
+              <h4 style={{ margin: '0 0 16px 0', color: '#1E293B', fontSize: '15px', fontWeight: '700' }}>📋 Tiêu điểm hệ thống</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 {(selectedBookings.length ? selectedBookings : safeBookings.slice(0, 3)).map((booking) => (
                   <div key={booking.id} style={styles.asideItemCard}>
@@ -270,9 +270,9 @@ export default function LichHocHocVien() {
                       <span style={styles.asideIdBadge}>{booking.id}</span>
                       <span style={renderStatusStyle(booking.status)}>{translateStatus(booking.status)}</span>
                     </div>
-                    <h5 style={{ margin: '0 0 4px 0', color: '#fff', fontSize: '14px', fontWeight: '700' }}>{booking.subject}</h5>
-                    <p style={{ margin: 0, color: '#94a3b8', fontSize: '12.5px' }}>Gia sư: {booking.tutor?.name}</p>
-                    <p style={{ margin: '6px 0 0 0', color: '#cbd5e1', fontSize: '12.5px' }}>💻 Hình thức: {booking.format || 'Trực tuyến'}</p>
+                    <h5 style={{ margin: '0 0 4px 0', color: '#1E293B', fontSize: '14px', fontWeight: '700' }}>{booking.subject}</h5>
+                    <p style={{ margin: 0, color: '#5F6B7A', fontSize: '12.5px' }}>Gia sư: {booking.tutor?.name}</p>
+                    <p style={{ margin: '6px 0 0 0', color: '#1E293B', fontSize: '12.5px' }}>💻 Hình thức: {booking.format || 'Trực tuyến'}</p>
                     <div style={{ marginTop: '12px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                       {booking.meetingUrl && <a href={booking.meetingUrl} target="_blank" rel="noreferrer" style={{ ...styles.btnLinkAction, flex: 1, textAlign: 'center' }}>Vào lớp</a>}
                       {['pending', 'confirmed'].includes(booking.status) && <button onClick={() => handleCancelBooking(booking.id)} style={{ ...styles.btnDangerMini, flex: 1 }}>Hủy lịch</button>}
@@ -353,41 +353,41 @@ function renderStatusStyle(status) {
   if (status === 'pending') return { ...base, backgroundColor: 'rgba(245, 158, 11, 0.12)', color: '#f59e0b', border: '1px solid rgba(245, 158, 11, 0.2)' };
   if (status === 'cancelled') return { ...base, backgroundColor: 'rgba(239, 68, 68, 0.12)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.2)' };
   // 🛠️ ĐÃ THÊM: Đồng bộ màu sắc lục bảo quý tộc cho trạng thái Hoàn thành lớp học
-  if (status === 'completed') return { ...base, backgroundColor: 'rgba(56, 189, 248, 0.12)', color: '#38bdf8', border: '1px solid rgba(56, 189, 248, 0.2)' };
-  return { ...base, backgroundColor: '#334155', color: '#cbd5e1' };
+  if (status === 'completed') return { ...base, backgroundColor: 'rgba(192, 90, 62, 0.12)', color: '#C05A3E', border: '1px solid rgba(192, 90, 62, 0.2)' };
+  return { ...base, backgroundColor: '#E7DED2', color: '#1E293B' };
 }
 
 // --- 🛠️ HỆ THỐNG CSS INLINE PRESET DARK SLATE PREMIUM MƯỚT MẮT ---
 const styles = {
-  container: { backgroundColor: '#0f172a', minHeight: '100vh', padding: '40px 4%', color: '#cbd5e1', fontFamily: "'Inter', sans-serif" },
-  heroCard: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#1e293b', border: '1px solid #334155', padding: '28px 32px', borderRadius: '16px', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' },
-  accentBadge: { backgroundColor: 'rgba(56, 189, 248, 0.12)', color: '#38bdf8', padding: '5px 12px', borderRadius: '20px', fontSize: '11.5px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', border: '1px solid rgba(56, 189, 248, 0.2)' },
-  mainTitle: { fontSize: '28px', fontWeight: '800', color: '#fff', margin: '12px 0 6px 0', letterSpacing: '-0.5px' },
-  subtitle: { fontSize: '14px', color: '#94a3b8', margin: 0, lineHeight: '1.5' },
-  btnCsv: { backgroundColor: 'transparent', border: '1px solid #475569', color: '#cbd5e1', padding: '9px 18px', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: '700', transition: 'all 0.2s' },
-  searchBox: { display: 'flex', alignItems: 'center', backgroundColor: '#1e293b', border: '1px solid #334155', padding: '12px 18px', borderRadius: '10px', marginBottom: '24px' },
-  searchInput: { backgroundColor: 'transparent', border: 'none', color: '#fff', width: '100%', outline: 'none', fontSize: '14.5px' },
-  emptyCard: { backgroundColor: '#1e293b', border: '1px solid #334155', padding: '50px 20px', borderRadius: '16px', textAlign: 'center', color: '#94a3b8' },
-  btnNavigate: { backgroundColor: '#38bdf8', color: '#0f172a', border: 'none', padding: '11px 24px', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', marginTop: '15px', transition: 'all 0.2s' },
+  container: { backgroundColor: '#FAF7F0', minHeight: '100vh', padding: '40px 4%', color: '#1E293B', fontFamily: "'Inter', sans-serif" },
+  heroCard: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#FFFFFF', border: '1px solid #E7DED2', padding: '28px 32px', borderRadius: '16px', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' },
+  accentBadge: { backgroundColor: 'rgba(192, 90, 62, 0.12)', color: '#C05A3E', padding: '5px 12px', borderRadius: '20px', fontSize: '11.5px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', border: '1px solid rgba(192, 90, 62, 0.2)' },
+  mainTitle: { fontSize: '28px', fontWeight: '800', color: '#1E293B', margin: '12px 0 6px 0', letterSpacing: '-0.5px' },
+  subtitle: { fontSize: '14px', color: '#5F6B7A', margin: 0, lineHeight: '1.5' },
+  btnCsv: { backgroundColor: 'transparent', border: '1px solid #7C6F64', color: '#1E293B', padding: '9px 18px', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: '700', transition: 'all 0.2s' },
+  searchBox: { display: 'flex', alignItems: 'center', backgroundColor: '#FFFFFF', border: '1px solid #E7DED2', padding: '12px 18px', borderRadius: '10px', marginBottom: '24px' },
+  searchInput: { backgroundColor: 'transparent', border: 'none', color: '#1E293B', width: '100%', outline: 'none', fontSize: '14.5px' },
+  emptyCard: { backgroundColor: '#FFFFFF', border: '1px solid #E7DED2', padding: '50px 20px', borderRadius: '16px', textAlign: 'center', color: '#5F6B7A' },
+  btnNavigate: { backgroundColor: '#C05A3E', color: '#FAF7F0', border: 'none', padding: '11px 24px', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', marginTop: '15px', transition: 'all 0.2s' },
   layoutGrid: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 340px', gap: '24px', alignItems: 'start' },
-  agendaHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#1e293b', padding: '18px 24px', borderRadius: '14px 14px 0 0', borderBottom: '1px solid #334155' },
-  btnToday: { backgroundColor: 'transparent', border: '1px solid #475569', color: '#fff', padding: '6px 14px', borderRadius: '6px', fontSize: '12.5px', cursor: 'pointer', fontWeight: '600' },
+  agendaHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#FFFFFF', padding: '18px 24px', borderRadius: '14px 14px 0 0', borderBottom: '1px solid #E7DED2' },
+  btnToday: { backgroundColor: 'transparent', border: '1px solid #7C6F64', color: '#1E293B', padding: '6px 14px', borderRadius: '6px', fontSize: '12.5px', cursor: 'pointer', fontWeight: '600' },
   agendaRow: { display: 'grid', gridTemplateColumns: '85px 1fr', gap: '18px', padding: '20px', borderRadius: '12px', cursor: 'pointer', transition: 'all 0.2s ease' },
-  dateBadgeColumn: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRight: '1px solid #334155', paddingRight: '12px' },
-  todayMiniBadge: { backgroundColor: '#38bdf8', color: '#0f172a', fontSize: '9px', fontWeight: '800', padding: '2px 5px', borderRadius: '4px', marginTop: '6px', textTransform: 'uppercase' },
-  innerBookingCard: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'rgba(15, 23, 42, 0.4)', border: '1px solid #334155', padding: '14px', borderRadius: '10px' },
-  timelineContainer: { backgroundColor: '#1e293b', border: '1px solid #334155', padding: '22px', borderRadius: '14px', marginTop: '12px' },
-  timelineItem: { display: 'flex', alignItems: 'center', gap: '16px', padding: '14px', backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '10px' },
-  btnLinkAction: { backgroundColor: '#a855f7', color: '#fff', padding: '7px 14px', borderRadius: '6px', fontSize: '12.5px', fontWeight: '700', textDecoration: 'none', display: 'inline-block', boxShadow: '0 4px 12px rgba(168, 85, 247, 0.2)' },
+  dateBadgeColumn: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRight: '1px solid #E7DED2', paddingRight: '12px' },
+  todayMiniBadge: { backgroundColor: '#C05A3E', color: '#FAF7F0', fontSize: '9px', fontWeight: '800', padding: '2px 5px', borderRadius: '4px', marginTop: '6px', textTransform: 'uppercase' },
+  innerBookingCard: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'rgba(250, 247, 240, 0.4)', border: '1px solid #E7DED2', padding: '14px', borderRadius: '10px' },
+  timelineContainer: { backgroundColor: '#FFFFFF', border: '1px solid #E7DED2', padding: '22px', borderRadius: '14px', marginTop: '12px' },
+  timelineItem: { display: 'flex', alignItems: 'center', gap: '16px', padding: '14px', backgroundColor: '#FAF7F0', border: '1px solid #E7DED2', borderRadius: '10px' },
+  btnLinkAction: { backgroundColor: '#a855f7', color: '#1E293B', padding: '7px 14px', borderRadius: '6px', fontSize: '12.5px', fontWeight: '700', textDecoration: 'none', display: 'inline-block', boxShadow: '0 4px 12px rgba(168, 85, 247, 0.2)' },
   btnDangerMini: { backgroundColor: 'transparent', border: '1px solid #f87171', color: '#f87171', padding: '6px 12px', borderRadius: '6px', fontSize: '12.5px', cursor: 'pointer', fontWeight: '600' },
-  btnPayMini: { backgroundColor: '#10b981', color: '#fff', border: 'none', padding: '7px 14px', borderRadius: '6px', fontSize: '12.5px', cursor: 'pointer', fontWeight: '700' },
-  btnReviewMini: { backgroundColor: '#f59e0b', color: '#0f172a', border: 'none', padding: '7px 14px', borderRadius: '6px', fontSize: '12.5px', cursor: 'pointer', fontWeight: '700' },
-  btnReviewedMini: { backgroundColor: '#334155', color: '#94a3b8', border: '1px solid #475569', padding: '7px 14px', borderRadius: '6px', fontSize: '12.5px', cursor: 'not-allowed', fontWeight: '700' },
+  btnPayMini: { backgroundColor: '#10b981', color: '#1E293B', border: 'none', padding: '7px 14px', borderRadius: '6px', fontSize: '12.5px', cursor: 'pointer', fontWeight: '700' },
+  btnReviewMini: { backgroundColor: '#f59e0b', color: '#FAF7F0', border: 'none', padding: '7px 14px', borderRadius: '6px', fontSize: '12.5px', cursor: 'pointer', fontWeight: '700' },
+  btnReviewedMini: { backgroundColor: '#E7DED2', color: '#5F6B7A', border: '1px solid #7C6F64', padding: '7px 14px', borderRadius: '6px', fontSize: '12.5px', cursor: 'not-allowed', fontWeight: '700' },
   statsRow: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' },
-  miniStatCard: { backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '10px', padding: '14px', textAlign: 'center' },
-  statNum: { fontSize: '20px', fontWeight: '800', color: '#fff', margin: 0 },
-  statTxt: { fontSize: '11.5px', color: '#94a3b8', margin: '4px 0 0 0', fontWeight: '500' },
-  asideMainCard: { backgroundColor: '#1e293b', border: '1px solid #334155', padding: '24px', borderRadius: '14px' },
-  asideItemCard: { backgroundColor: '#0f172a', border: '1px solid #334155', padding: '14px', borderRadius: '10px' },
-  asideIdBadge: { color: '#38bdf8', fontSize: '11px', fontFamily: 'monospace', fontWeight: '600' }
+  miniStatCard: { backgroundColor: '#FFFFFF', border: '1px solid #E7DED2', borderRadius: '10px', padding: '14px', textAlign: 'center' },
+  statNum: { fontSize: '20px', fontWeight: '800', color: '#1E293B', margin: 0 },
+  statTxt: { fontSize: '11.5px', color: '#5F6B7A', margin: '4px 0 0 0', fontWeight: '500' },
+  asideMainCard: { backgroundColor: '#FFFFFF', border: '1px solid #E7DED2', padding: '24px', borderRadius: '14px' },
+  asideItemCard: { backgroundColor: '#FAF7F0', border: '1px solid #E7DED2', padding: '14px', borderRadius: '10px' },
+  asideIdBadge: { color: '#C05A3E', fontSize: '11px', fontFamily: 'monospace', fontWeight: '600' }
 };

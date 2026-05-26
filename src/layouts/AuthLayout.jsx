@@ -15,7 +15,7 @@ export default function AuthLayout({ children }) {
             <span style={styles.logoBadge}>
               🎓
             </span>
-            <span style={{ color: '#fff' }}>Tutor</span>
+            <span style={{ color: '#1E293B' }}>Tutor</span>
             <span style={styles.logoTextAccent}>Link</span>
           </Link>
           
@@ -45,7 +45,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
-    backgroundColor: '#0f172a', // Màu nền Slate-900 cực sang
+    backgroundColor: '#FAF7F0', // Màu nền Slate-900 cực sang
     padding: '32px 16px',
     boxSizing: 'border-box',
     fontFamily: 'Arial, sans-serif'
@@ -61,7 +61,7 @@ const styles = {
     position: 'absolute',
     width: '400px',
     height: '400px',
-    backgroundColor: '#3498db',
+    backgroundColor: '#C05A3E',
     filter: 'blur(120px)',
     borderRadius: '50%',
     pointerEvents: 'none',
@@ -95,11 +95,11 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: '10px',
-    background: 'linear-gradient(135deg, #3498db 0%, #2ecc71 100%)',
+    background: 'linear-gradient(135deg, #C05A3E 0%, #2ecc71 100%)',
     boxShadow: '0 4px 14px rgba(52, 152, 219, 0.4)',
   },
   logoTextAccent: {
-    background: 'linear-gradient(135deg, #3498db 0%, #2ecc71 100%)',
+    background: 'linear-gradient(135deg, #C05A3E 0%, #2ecc71 100%)',
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
     marginLeft: '-2px',
@@ -110,7 +110,7 @@ const styles = {
     gap: '4px',
     fontSize: '14px',
     fontWeight: '500',
-    color: '#94a3b8',
+    color: '#5F6B7A',
     textDecoration: 'none',
     transition: 'color 0.2s',
   },

@@ -92,8 +92,8 @@ export default function Dashboard() {
     return (
       <div style={styles.loadingContainer}>
         <div style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#fff' }}>⏳ Đang đồng bộ hóa dữ liệu trung tâm...</p>
-          <p style={{ fontSize: '14px', color: '#64748b', marginTop: '6px' }}>Hệ thống đang quét luồng dữ liệu thực tế từ Database.</p>
+          <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#1E293B' }}>⏳ Đang đồng bộ hóa dữ liệu trung tâm...</p>
+          <p style={{ fontSize: '14px', color: '#8A7D72', marginTop: '6px' }}>Hệ thống đang quét luồng dữ liệu thực tế từ Database.</p>
         </div>
       </div>
     );
@@ -120,13 +120,13 @@ export default function Dashboard() {
       {/* BỘ BA THẺ THỐNG KÊ CHỬ SỐ (STATISTICS GRID) */}
       <div style={styles.statsGrid}>
         <div style={styles.statCard}>
-          <div style={{ ...styles.iconWrap, color: '#38bdf8', backgroundColor: 'rgba(56, 189, 248, 0.1)' }}>📅</div>
+          <div style={{ ...styles.iconWrap, color: '#C05A3E', backgroundColor: 'rgba(192, 90, 62, 0.1)' }}>📅</div>
           <p style={styles.statLabel}>Buổi học sắp tới</p>
           <p style={styles.statValue}>{upcomingCount}</p>
         </div>
 
         <div style={styles.statCard}>
-          <div style={{ ...styles.iconWrap, color: '#f97316', backgroundColor: 'rgba(249, 115, 22, 0.1)' }}>⭐</div>
+          <div style={{ ...styles.iconWrap, color: '#C05A3E', backgroundColor: 'rgba(192, 90, 62, 0.1)' }}>⭐</div>
           <p style={styles.statLabel}>Gia sư yêu thích</p>
           <p style={styles.statValue}>{renderFavorites.length}</p>
         </div>
@@ -147,7 +147,7 @@ export default function Dashboard() {
           {renderBookings.length === 0 ? (
             <div style={styles.emptyContainer}>
               <p style={styles.emptyText}>ℹ️ Chưa có lịch đặt chỗ nào được ghi nhận từ tài khoản này.</p>
-              <p style={{ color: '#64748b', fontSize: '13px', margin: '5px 0 0 0' }}>Sếp hãy thử bấm "Tìm gia sư ngay" để tạo đơn đặt lịch thật nhé!</p>
+              <p style={{ color: '#8A7D72', fontSize: '13px', margin: '5px 0 0 0' }}>Sếp hãy thử bấm "Tìm gia sư ngay" để tạo đơn đặt lịch thật nhé!</p>
             </div>
           ) : (
             <div style={{ overflowX: 'auto', marginTop: '15px' }}>
@@ -163,7 +163,7 @@ export default function Dashboard() {
                 <tbody>
                   {renderBookings.map((booking) => (
                     <tr key={booking._id || booking.id} style={styles.tr}>
-                      <td style={{ ...styles.td, fontWeight: 'bold', color: '#38bdf8' }}>{booking.id}</td>
+                      <td style={{ ...styles.td, fontWeight: 'bold', color: '#C05A3E' }}>{booking.id}</td>
                       <td style={styles.td}>{booking.subject}</td>
                       <td style={styles.td}>{booking.date}</td>
                       <td style={styles.td}>
@@ -208,21 +208,21 @@ function renderStatusStyle(status) {
   const base = { fontSize: '11px', padding: '4px 10px', borderRadius: '6px', fontWeight: 'bold', display: 'inline-block' };
   if (status === 'confirmed') return { ...base, backgroundColor: 'rgba(16, 185, 129, 0.15)', color: '#10b981' };
   if (status === 'pending') return { ...base, backgroundColor: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b' };
-  if (status === 'completed') return { ...base, backgroundColor: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8' };
+  if (status === 'completed') return { ...base, backgroundColor: 'rgba(192, 90, 62, 0.15)', color: '#C05A3E' };
   return { ...base, backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#ef4444' };
 }
 
 // --- 🛠️ BỘ CSS INLINE ĐỒNG BỘ DARK SLATE TOÀN DIỆN THỜI THƯỢNG ---
 const styles = {
   container: { 
-    backgroundColor: '#0f172a', 
+    backgroundColor: '#FAF7F0', 
     minHeight: '100vh',
     padding: '40px 6%', 
-    color: '#cbd5e1', 
+    color: '#1E293B', 
     fontFamily: "'Inter', sans-serif" 
   },
   loadingContainer: {
-    backgroundColor: '#0f172a', 
+    backgroundColor: '#FAF7F0', 
     minHeight: '100vh', 
     display: 'flex', 
     alignItems: 'center', 
@@ -233,8 +233,8 @@ const styles = {
     display: 'flex', 
     justifyContent: 'space-between', 
     alignItems: 'center', 
-    backgroundColor: '#1e293b', 
-    border: '1px solid #334155', 
+    backgroundColor: '#FFFFFF', 
+    border: '1px solid #E7DED2', 
     padding: '30px', 
     borderRadius: '16px', 
     marginBottom: '30px', 
@@ -251,11 +251,11 @@ const styles = {
     textTransform: 'uppercase',
     letterSpacing: '0.5px'
   },
-  mainTitle: { fontSize: '30px', fontWeight: '800', color: '#fff', margin: '12px 0 6px 0', letterSpacing: '-0.5px' },
-  subtitle: { fontSize: '14px', color: '#94a3b8', margin: 0 },
+  mainTitle: { fontSize: '30px', fontWeight: '800', color: '#1E293B', margin: '12px 0 6px 0', letterSpacing: '-0.5px' },
+  subtitle: { fontSize: '14px', color: '#5F6B7A', margin: 0 },
   btnSearch: { 
-    backgroundColor: '#38bdf8', 
-    color: '#0f172a', 
+    backgroundColor: '#C05A3E', 
+    color: '#FAF7F0', 
     border: 'none', 
     padding: '12px 24px', 
     borderRadius: '8px', 
@@ -263,7 +263,7 @@ const styles = {
     cursor: 'pointer', 
     fontSize: '14px', 
     transition: '0.2s',
-    boxShadow: '0 4px 14px rgba(56, 189, 248, 0.2)'
+    boxShadow: '0 4px 14px rgba(192, 90, 62, 0.2)'
   },
   statsGrid: { 
     display: 'grid', 
@@ -272,14 +272,14 @@ const styles = {
     marginBottom: '35px' 
   },
   statCard: { 
-    backgroundColor: '#1e293b', 
-    border: '1px solid #334155', 
+    backgroundColor: '#FFFFFF', 
+    border: '1px solid #E7DED2', 
     borderRadius: '14px', 
     padding: '24px' 
   },
   iconWrap: { width: '44px', height: '44px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' },
-  statLabel: { fontSize: '13.5px', color: '#94a3b8', margin: '16px 0 4px 0', fontWeight: '600' },
-  statValue: { fontSize: '28px', fontWeight: '900', color: '#fff', margin: 0 },
+  statLabel: { fontSize: '13.5px', color: '#5F6B7A', margin: '16px 0 4px 0', fontWeight: '600' },
+  statValue: { fontSize: '28px', fontWeight: '900', color: '#1E293B', margin: 0 },
   
   // 🛠️ ĐÃ SỬA: Bố cục Grid tự động xuống hàng cực mượt trên Mobile thay cho đoạn innerWidth cũ
   mainLayout: { 
@@ -288,23 +288,23 @@ const styles = {
     gap: '25px', 
     alignItems: 'start' 
   },
-  contentCard: { backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '14px', padding: '24px' },
-  cardTitle: { fontSize: '18px', fontWeight: '700', color: '#fff', margin: 0 },
+  contentCard: { backgroundColor: '#FFFFFF', border: '1px solid #E7DED2', borderRadius: '14px', padding: '24px' },
+  cardTitle: { fontSize: '18px', fontWeight: '700', color: '#1E293B', margin: 0 },
   emptyContainer: { textAlign: 'center', padding: '40px 10px' },
-  emptyText: { color: '#94a3b8', fontSize: '14px', margin: 0, fontStyle: 'italic' },
+  emptyText: { color: '#5F6B7A', fontSize: '14px', margin: 0, fontStyle: 'italic' },
   table: { width: '100%', borderCollapse: 'collapse', marginTop: '10px' },
-  thRow: { borderBottom: '1px solid #334155' },
-  th: { color: '#94a3b8', fontSize: '12px', textTransform: 'uppercase', padding: '12px', textAlign: 'left', fontWeight: 'bold', letterSpacing: '0.5px' },
-  tr: { borderBottom: '1px solid #0f172a', transition: '0.2s' },
-  td: { padding: '14px 12px', color: '#cbd5e1', fontSize: '14px' },
+  thRow: { borderBottom: '1px solid #E7DED2' },
+  th: { color: '#5F6B7A', fontSize: '12px', textTransform: 'uppercase', padding: '12px', textAlign: 'left', fontWeight: 'bold', letterSpacing: '0.5px' },
+  tr: { borderBottom: '1px solid #FAF7F0', transition: '0.2s' },
+  td: { padding: '14px 12px', color: '#1E293B', fontSize: '14px' },
   tutorRowLink: { 
     display: 'flex', 
     alignItems: 'center', 
     gap: '15px', 
     padding: '12px', 
     borderRadius: '10px', 
-    border: '1px solid #334155', 
-    backgroundColor: '#0f172a', 
+    border: '1px solid #E7DED2', 
+    backgroundColor: '#FAF7F0', 
     textDecoration: 'none',
     transition: '0.2s'
   },
@@ -312,14 +312,14 @@ const styles = {
     width: '40px', 
     height: '40px', 
     borderRadius: '8px', 
-    backgroundColor: 'rgba(249, 115, 22, 0.15)', 
-    color: '#f97316', 
+    backgroundColor: 'rgba(192, 90, 62, 0.15)', 
+    color: '#C05A3E', 
     display: 'flex', 
     alignItems: 'center', 
     justifyContent: 'center', 
     fontWeight: '800', 
     fontSize: '16px' 
   },
-  tutorName: { margin: 0, color: '#fff', fontWeight: '700', fontSize: '14px' },
-  tutorTitle: { margin: '4px 0 0 0', color: '#94a3b8', fontSize: '12px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }
+  tutorName: { margin: 0, color: '#1E293B', fontWeight: '700', fontSize: '14px' },
+  tutorTitle: { margin: '4px 0 0 0', color: '#5F6B7A', fontSize: '12px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }
 };

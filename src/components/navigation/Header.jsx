@@ -21,7 +21,7 @@ import { authService } from '@/services/auth.service';
 // Gọi trực tiếp các component UI đã viết hoa chuẩn đét của sếp
 import { Button } from '@/components/ui/Button';
 import { Avatar } from '@/components/ui/Avatar';
-import { NotificationCenter } from './notification-center'; // Giữ nguyên theo cấu trúc của sếp
+import { NotificationCenter } from './NotificationCenter';
 
 const navItems = [
   { href: '/tutors', tutorHref: '/tutors', label: 'Tìm gia sư', icon: Search, roles: ['student', 'tutor', 'admin'] },
@@ -64,11 +64,11 @@ export function Header() {
           to="/"
           className="group flex items-center gap-3 text-lg font-semibold tracking-tight"
         >
-          <span className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-white shadow-sm transition group-hover:bg-blue-700">
+          <span className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-[#C05A3E] text-[#FAF7F0] shadow-sm transition group-hover:bg-[#A94730]">
             <GraduationCap className="h-5 w-5" />
           </span>
           <span className="font-bold text-gray-900 dark:text-gray-100">
-            Edu<span className="text-blue-600 dark:text-blue-400">Match</span>
+            Edu<span className="text-[#C05A3E] dark:text-[#C05A3E]">Match</span>
           </span>
         </Link>
 
@@ -134,7 +134,7 @@ export function Header() {
                     <div className="border-b border-gray-100 dark:border-gray-800 p-4">
                       <p className="font-semibold text-gray-900 dark:text-gray-100">{user.fullName}</p>
                       <p className="mt-0.5 truncate text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
-                      <span className="mt-2 inline-flex rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-blue-600 dark:bg-blue-950/50 dark:text-blue-400">
+                      <span className="mt-2 inline-flex rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#C05A3E] dark:bg-blue-950/50 dark:text-[#C05A3E]">
                         {roleLabels[user.role]}
                       </span>
                     </div>

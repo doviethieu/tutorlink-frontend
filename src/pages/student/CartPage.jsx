@@ -16,8 +16,8 @@ function GioHang({ gioHang, xoaKhoiGioHang, thanhToanThanhCong }) {
         /* TRẠNG THÁI GIỎ HÀNG TRỐNG TRƠN */
         <div style={styles.emptyCard}>
           <div style={{ fontSize: '50px', marginBottom: '15px' }}>💨</div>
-          <h3 style={{ color: '#fff', margin: '0 0 10px 0', fontSize: '18px', fontWeight: '700' }}>Giỏ hàng của sếp đang trống trơn!</h3>
-          <p style={{ color: '#94a3b8', fontSize: '14px', margin: '0 0 24px 0', lineHeight: '1.5' }}>Hãy lướt trang chủ để tìm kiếm và thêm những gia sư ưng ý nhất vào đây nhé.</p>
+          <h3 style={{ color: '#1E293B', margin: '0 0 10px 0', fontSize: '18px', fontWeight: '700' }}>Giỏ hàng của sếp đang trống trơn!</h3>
+          <p style={{ color: '#5F6B7A', fontSize: '14px', margin: '0 0 24px 0', lineHeight: '1.5' }}>Hãy lướt trang chủ để tìm kiếm và thêm những gia sư ưng ý nhất vào đây nhé.</p>
           <Link to="/" style={{ textDecoration: 'none' }}>
             <button style={styles.backHomeBtn}>
               ✨ Khám phá danh sách gia sư ngay
@@ -46,7 +46,7 @@ function GioHang({ gioHang, xoaKhoiGioHang, thanhToanThanhCong }) {
               {/* BÊN PHẢI: GIÁ TIỀN VÀ HÀNH ĐỘNG XÓA */}
               <div style={styles.itemActions}>
                 <h4 style={styles.itemPrice}>
-                  {(gs.price || 0).toLocaleString('vi-VN')} ₫<span style={{ fontSize: '13px', color: '#94a3b8', fontWeight: 'normal' }}>/h</span>
+                  {(gs.price || 0).toLocaleString('vi-VN')} ₫<span style={{ fontSize: '13px', color: '#5F6B7A', fontWeight: 'normal' }}>/h</span>
                 </h4>
                 
                 <button 
@@ -63,9 +63,9 @@ function GioHang({ gioHang, xoaKhoiGioHang, thanhToanThanhCong }) {
 
           {/* KHỐI TỔNG TIỀN */}
           <div style={styles.totalSection}>
-            <h3 style={{ margin: 0, color: '#94a3b8', fontSize: '15px', fontWeight: '700' }}>Tổng chi phí dự kiến (Tạm tính):</h3>
+            <h3 style={{ margin: 0, color: '#5F6B7A', fontSize: '15px', fontWeight: '700' }}>Tổng chi phí dự kiến (Tạm tính):</h3>
             <h2 style={{ margin: 0, color: '#10b981', fontSize: '24px', fontWeight: '900' }}>
-              {tongTien.toLocaleString('vi-VN')} ₫<span style={{ fontSize: '14px', color: '#64748b', fontWeight: 'normal' }}>/giờ</span>
+              {tongTien.toLocaleString('vi-VN')} ₫<span style={{ fontSize: '14px', color: '#8A7D72', fontWeight: 'normal' }}>/giờ</span>
             </h2>
           </div>
 
@@ -88,12 +88,12 @@ const styles = {
     padding: '40px 20px',
     maxWidth: '850px',
     margin: '0 auto',
-    color: '#cbd5e1',
+    color: '#1E293B',
     fontFamily: "'Inter', sans-serif"
   },
   mainTitle: {
     textAlign: 'center',
-    color: '#fff',
+    color: '#1E293B',
     marginBottom: '35px',
     fontSize: '28px',
     fontWeight: '800',
@@ -102,26 +102,26 @@ const styles = {
   emptyCard: {
     textAlign: 'center',
     padding: '60px 30px',
-    backgroundColor: '#1e293b',
-    border: '1px dashed #334155',
+    backgroundColor: '#FFFFFF',
+    border: '1px dashed #E7DED2',
     borderRadius: '16px',
     boxShadow: '0 10px 25px -5px rgba(0,0,0,0.3)'
   },
   backHomeBtn: {
     padding: '12px 24px',
-    backgroundColor: '#38bdf8', // Đồng bộ Sky Blue tinh tế
-    color: '#0f172a',
+    backgroundColor: '#C05A3E', // Đồng bộ Sky Blue tinh tế
+    color: '#FAF7F0',
     border: 'none',
     borderRadius: '8px',
     cursor: 'pointer',
     fontSize: '15px',
     fontWeight: '700',
     transition: 'all 0.2s',
-    boxShadow: '0 4px 14px rgba(56, 189, 248, 0.2)'
+    boxShadow: '0 4px 14px rgba(192, 90, 62, 0.2)'
   },
   cartCard: {
-    backgroundColor: '#1e293b',
-    border: '1px solid #334155',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E7DED2',
     padding: '30px',
     borderRadius: '16px',
     boxShadow: '0 20px 25px -5px rgba(0,0,0,0.3)'
@@ -130,7 +130,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderBottom: '1px solid #334155',
+    borderBottom: '1px solid #E7DED2',
     paddingBottom: '20px',
     marginBottom: '20px',
     flexWrap: 'wrap',
@@ -146,19 +146,19 @@ const styles = {
     height: '64px',
     borderRadius: '12px', // Chuyển sang bo góc vuông hiện đại giống avatar trang chủ/favorites
     objectFit: 'cover',
-    border: '1px solid #334155',
-    backgroundColor: '#0f172a'
+    border: '1px solid #E7DED2',
+    backgroundColor: '#FAF7F0'
   },
   tutorName: {
     margin: '0 0 6px 0',
     fontSize: '18px',
-    color: '#fff',
+    color: '#1E293B',
     fontWeight: '700',
     letterSpacing: '-0.3px'
   },
   tutorSubject: {
     margin: 0,
-    color: '#94a3b8',
+    color: '#5F6B7A',
     fontSize: '14px',
     fontWeight: '500'
   },
@@ -169,7 +169,7 @@ const styles = {
   },
   itemPrice: {
     margin: 0,
-    color: '#f1f5f9',
+    color: '#1E293B',
     fontSize: '18px',
     fontWeight: '700'
   },
@@ -190,21 +190,21 @@ const styles = {
     alignItems: 'center',
     marginTop: '35px',
     paddingTop: '25px',
-    borderTop: '2px dashed #334155'
+    borderTop: '2px dashed #E7DED2'
   },
   checkoutBtn: {
     width: '100%',
     padding: '16px',
     marginTop: '30px',
-    backgroundColor: '#38bdf8', // Đổi sang Sky Blue tương phản tốt, chữ tối trên nền sáng
-    color: '#0f172a',
+    backgroundColor: '#C05A3E', // Đổi sang Sky Blue tương phản tốt, chữ tối trên nền sáng
+    color: '#FAF7F0',
     border: 'none',
     borderRadius: '8px',
     cursor: 'pointer',
     fontWeight: '700',
     fontSize: '16px',
     transition: 'all 0.2s',
-    boxShadow: '0 4px 14px rgba(56, 189, 248, 0.2)'
+    boxShadow: '0 4px 14px rgba(192, 90, 62, 0.2)'
   }
 };
 

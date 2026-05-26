@@ -30,7 +30,7 @@ export default function DangKy() {
 
   // ĐỒNG BỘ MÀU SẮC THEO TÔNG NEON HIỆN ĐẠI
   const strengthLabels = ['Yếu', 'Trung bình', 'Khá', 'Mạnh'];
-  const strengthColors = ['#ef4444', '#f59e0b', '#38bdf8', '#10b981'];
+  const strengthColors = ['#ef4444', '#f59e0b', '#C05A3E', '#10b981'];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -97,24 +97,24 @@ export default function DangKy() {
               {/* Box Học viên */}
               <label style={{
                 ...styles.roleBox,
-                borderColor: role === 'student' ? '#38bdf8' : '#334155',
-                backgroundColor: role === 'student' ? 'rgba(56, 189, 248, 0.1)' : '#0f172a'
+                borderColor: role === 'student' ? '#C05A3E' : '#E7DED2',
+                backgroundColor: role === 'student' ? 'rgba(192, 90, 62, 0.1)' : '#FAF7F0'
               }}>
                 <input type="radio" name="role" value="student" checked={role === 'student'} onChange={() => setRole('student')} style={{ display: 'none' }} />
                 <span style={{ fontSize: '24px' }}>🎓</span>
-                <p style={{ ...styles.roleTitle, color: role === 'student' ? '#38bdf8' : '#fff' }}>Tôi muốn học</p>
+                <p style={{ ...styles.roleTitle, color: role === 'student' ? '#C05A3E' : '#1E293B' }}>Tôi muốn học</p>
                 <p style={styles.roleDesc}>Đặt lịch với gia sư phù hợp, học trực tuyến tương tác cao.</p>
               </label>
 
               {/* Box Gia sư */}
               <label style={{
                 ...styles.roleBox,
-                borderColor: role === 'tutor' ? '#f97316' : '#334155',
-                backgroundColor: role === 'tutor' ? 'rgba(249, 115, 22, 0.1)' : '#0f172a'
+                borderColor: role === 'tutor' ? '#C05A3E' : '#E7DED2',
+                backgroundColor: role === 'tutor' ? 'rgba(192, 90, 62, 0.1)' : '#FAF7F0'
               }}>
                 <input type="radio" name="role" value="tutor" checked={role === 'tutor'} onChange={() => setRole('tutor')} style={{ display: 'none' }} />
                 <span style={{ fontSize: '24px' }}>📝</span>
-                <p style={{ ...styles.roleTitle, color: role === 'tutor' ? '#f97316' : '#fff' }}>Tôi muốn dạy</p>
+                <p style={{ ...styles.roleTitle, color: role === 'tutor' ? '#C05A3E' : '#1E293B' }}>Tôi muốn dạy</p>
                 <p style={styles.roleDesc}>Tạo hồ sơ CV Joboko, nhận lớp học và bùng nổ thu nhập.</p>
               </label>
 
@@ -137,7 +137,7 @@ export default function DangKy() {
           <div>
             <label style={styles.label}>Mật khẩu bảo mật *</label>
             <input type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required style={styles.input} />
-            <p style={{ color: '#94a3b8', fontSize: '11px', marginTop: '6px' }}>📌 Quy định mật mật an toàn: Ít nhất 8 ký tự, 1 chữ in hoa và 1 chữ số</p>
+            <p style={{ color: '#5F6B7A', fontSize: '11px', marginTop: '6px' }}>📌 Quy định mật mật an toàn: Ít nhất 8 ký tự, 1 chữ in hoa và 1 chữ số</p>
             
             {/* Thanh tiến trình đo độ mạnh mật khẩu */}
             {password.length > 0 && (
@@ -148,12 +148,12 @@ export default function DangKy() {
                       key={i} 
                       style={{
                         height: '5px', flex: 1, borderRadius: '4px', transition: 'all 0.3s',
-                        backgroundColor: strength >= i ? strengthColors[strength - 1] : '#334155'
+                        backgroundColor: strength >= i ? strengthColors[strength - 1] : '#E7DED2'
                       }}
                     />
                   ))}
                 </div>
-                <p style={{ fontSize: '12px', color: '#94a3b8', marginTop: '6px', fontWeight: '500' }}>
+                <p style={{ fontSize: '12px', color: '#5F6B7A', marginTop: '6px', fontWeight: '500' }}>
                   Đánh giá độ an toàn: <span style={{ color: strengthColors[Math.max(0, strength - 1)], fontWeight: '700' }}>{strengthLabels[Math.max(0, strength - 1)] || 'Yếu'}</span>
                 </p>
               </div>
@@ -161,19 +161,19 @@ export default function DangKy() {
           </div>
 
           {/* NÚT SUBMIT ĐỒNG BỘ NEON EMERALD GREEN */}
-          <button type="submit" disabled={loading} style={{ ...styles.buttonPrimary, backgroundColor: loading ? '#475569' : '#10b981', cursor: loading ? 'not-allowed' : 'pointer' }}>
+          <button type="submit" disabled={loading} style={{ ...styles.buttonPrimary, backgroundColor: loading ? '#7C6F64' : '#10b981', cursor: loading ? 'not-allowed' : 'pointer' }}>
             {loading ? '⏳ Đang khởi tạo tài khoản hệ thống...' : '🚀 Tạo tài khoản miễn phí ngay'}
           </button>
 
-          <p style={{ textAlign: 'center', fontSize: '12px', color: '#94a3b8', margin: '5px 0 0 0', lineHeight: '1.5' }}>
+          <p style={{ textAlign: 'center', fontSize: '12px', color: '#5F6B7A', margin: '5px 0 0 0', lineHeight: '1.5' }}>
             Bằng việc đăng ký, bạn đồng ý với <span style={styles.linkFake}>Điều khoản dịch vụ</span> và <span style={styles.linkFake}>Chính sách bảo mật</span> của TutorLink.
           </p>
         </form>
 
         {/* CHUYỂN HƯỚNG SANG ĐĂNG NHẬP */}
-        <p style={{ textAlign: 'center', marginTop: '30px', fontSize: '14px', color: '#94a3b8' }}>
+        <p style={{ textAlign: 'center', marginTop: '30px', fontSize: '14px', color: '#5F6B7A' }}>
           Đã có tài khoản đối tác?{' '}
-          <Link to="/login" style={{ color: '#f97316', textDecoration: 'none', fontWeight: 'bold' }}>
+          <Link to="/login" style={{ color: '#C05A3E', textDecoration: 'none', fontWeight: 'bold' }}>
             Đăng nhập ngay
           </Link>
         </p>
@@ -188,7 +188,7 @@ export default function DangKy() {
 // -------------------------------------------------------------
 const styles = {
   container: {
-    background: 'linear-gradient(135deg, #0f172a 0%, #020617 100%)',
+    background: 'linear-gradient(135deg, #FAF7F0 0%, #FAF7F0 100%)',
     minHeight: '100vh',
     display: 'flex',
     justifyContent: 'center',
@@ -197,21 +197,21 @@ const styles = {
     fontFamily: "'Inter', sans-serif"
   },
   card: {
-    backgroundColor: '#1e293b',
+    backgroundColor: '#FFFFFF',
     borderRadius: '16px',
     padding: '40px 30px',
     width: '100%',
     maxWidth: '490px',
     boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
-    border: '1px solid #334155',
-    color: '#f1f5f9'
+    border: '1px solid #E7DED2',
+    color: '#1E293B'
   },
-  title: { fontSize: '28px', fontWeight: '800', color: '#fff', margin: '0 0 8px 0', letterSpacing: '-0.5px' },
-  subtitle: { fontSize: '14px', color: '#94a3b8', lineHeight: '1.5', margin: 0 },
-  label: { display: 'block', marginBottom: '8px', fontWeight: '700', fontSize: '14px', color: '#e2e8f0' },
+  title: { fontSize: '28px', fontWeight: '800', color: '#1E293B', margin: '0 0 8px 0', letterSpacing: '-0.5px' },
+  subtitle: { fontSize: '14px', color: '#5F6B7A', lineHeight: '1.5', margin: 0 },
+  label: { display: 'block', marginBottom: '8px', fontWeight: '700', fontSize: '14px', color: '#1E293B' },
   input: {
-    width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #334155',
-    backgroundColor: '#0f172a', color: 'white', fontSize: '14px', outline: 'none', boxSizing: 'border-box',
+    width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #E7DED2',
+    backgroundColor: '#FAF7F0', color: '#FAF7F0', fontSize: '14px', outline: 'none', boxSizing: 'border-box',
     transition: '0.2s'
   },
   gridRoles: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' },
@@ -220,15 +220,15 @@ const styles = {
     border: '2px solid', cursor: 'pointer', transition: 'all 0.25s', boxSizing: 'border-box'
   },
   roleTitle: { fontSize: '15px', fontWeight: '700', margin: '10px 0 4px 0' },
-  roleDesc: { fontSize: '11px', color: '#94a3b8', margin: 0, lineHeight: '1.4' },
+  roleDesc: { fontSize: '11px', color: '#5F6B7A', margin: 0, lineHeight: '1.4' },
   errorBox: {
     backgroundColor: 'rgba(239, 68, 68, 0.1)', border: '1px solid #ef4444',
     color: '#f87171', padding: '12px', borderRadius: '8px', fontSize: '13px', fontWeight: 'bold'
   },
   buttonPrimary: {
-    width: '100%', padding: '14px', color: 'white', border: 'none', borderRadius: '8px',
+    width: '100%', padding: '14px', color: '#FAF7F0', border: 'none', borderRadius: '8px',
     fontSize: '15px', fontWeight: 'bold', boxShadow: '0 4px 14px rgba(16, 185, 129, 0.2)', marginTop: '10px',
     transition: '0.2s'
   },
-  linkFake: { color: '#38bdf8', cursor: 'pointer', textDecoration: 'underline' }
+  linkFake: { color: '#C05A3E', cursor: 'pointer', textDecoration: 'underline' }
 };

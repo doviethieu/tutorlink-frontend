@@ -113,10 +113,10 @@ const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
   };
 
   return (
-    <div style={{ flex: 1, backgroundColor: '#0f172a', borderRadius: '12px', border: '1px solid #334155', display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
+    <div style={{ flex: 1, backgroundColor: '#FAF7F0', borderRadius: '12px', border: '1px solid #E7DED2', display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
       
       {/* THANH TIÊU ĐỀ + NÚT VÀO PHÒNG HỌC VIDEO TRỰC TUYẾN */}
-      <div style={{ backgroundColor: '#1e293b', color: 'white', padding: '14px 16px', fontWeight: 'bold', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #334155' }}>
+      <div style={{ backgroundColor: '#FFFFFF', color: '#FAF7F0', padding: '14px 16px', fontWeight: 'bold', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #E7DED2' }}>
         <div>
           {nguoiDangChat ? `💬 Đang chat với: ${nguoiDangChat.name}` : "💬 Kênh Chat"}
         </div>
@@ -144,11 +144,11 @@ const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
       </div>
       
       {/* KHU VỰC HIỂN THỊ NỘI DUNG CHAT */}
-      <div style={{ flex: 1, minHeight: 0, padding: '15px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', backgroundColor: '#0f172a' }}>
+      <div style={{ flex: 1, minHeight: 0, padding: '15px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', backgroundColor: '#FAF7F0' }}>
         {!nguoiDangChat ? (
-          <p style={{ textAlign: 'center', color: '#94a3b8', marginTop: '50px' }}>Chọn một người để bắt đầu hội thoại</p>
+          <p style={{ textAlign: 'center', color: '#5F6B7A', marginTop: '50px' }}>Chọn một người để bắt đầu hội thoại</p>
         ) : tinNhanHienThi.length === 0 ? (
-          <p style={{ textAlign: 'center', color: '#94a3b8', marginTop: '50px' }}>Hãy gửi tin nhắn để bắt đầu trao đổi.</p>
+          <p style={{ textAlign: 'center', color: '#5F6B7A', marginTop: '50px' }}>Hãy gửi tin nhắn để bắt đầu trao đổi.</p>
         ) : (
           tinNhanHienThi.map((msg, index) => {
             const senderId = String(msg.senderId?._id || msg.senderId || '');
@@ -176,16 +176,16 @@ const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
 
       {/* THANH INPUT NHẬP LIỆU GỬI ĐI */}
       {nguoiDangChat && (
-        <div style={{ padding: '15px', borderTop: '1px solid #334155', display: 'flex', backgroundColor: '#1e293b' }}>
+        <div style={{ padding: '15px', borderTop: '1px solid #E7DED2', display: 'flex', backgroundColor: '#FFFFFF' }}>
           <input 
             type="text" 
             placeholder="Nhập tin nhắn..." 
             value={tinNhanMoi}
             onChange={(e) => setTinNhanMoi(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-            style={{ flex: 1, padding: '10px 15px', borderRadius: '25px', border: '1px solid #334155', outline: 'none', backgroundColor: '#0f172a', color: '#fff' }} 
+            style={{ flex: 1, padding: '10px 15px', borderRadius: '25px', border: '1px solid #E7DED2', outline: 'none', backgroundColor: '#FAF7F0', color: '#1E293B' }} 
           />
-          <button onClick={handleSend} style={{ marginLeft: '10px', padding: '0 20px', borderRadius: '25px', backgroundColor: '#F97316', color: 'white', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}>
+          <button onClick={handleSend} style={{ marginLeft: '10px', padding: '0 20px', borderRadius: '25px', backgroundColor: '#F97316', color: '#FAF7F0', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}>
             Gửi
           </button>
         </div>

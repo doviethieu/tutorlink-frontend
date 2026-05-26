@@ -3,13 +3,52 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+:root {
+  --tl-bg: #FAF7F0;
+  --tl-text: #1E293B;
+  --tl-accent: #C05A3E;
+  --tl-accent-hover: #A94730;
+  --tl-border: #E7DED2;
+  --tl-surface: #FFFFFF;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  background: var(--tl-bg);
+  color: var(--tl-text);
+}
+
+body {
+  font-family: Inter, Arial, sans-serif;
+}
+
+::selection {
+  background: rgba(192, 90, 62, 0.2);
+  color: var(--tl-text);
+}
+
+input,
+textarea,
+select,
+button {
+  font: inherit;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #7C6F64;
+}
+
 /* Trạng thái bình thường của nút */
 .btn-dat-lich {
   margin-top: 15px;
   padding: 10px 20px;
   width: 100%;
-  background-color: #3498db;
-  color: white;
+  background-color: var(--tl-accent);
+  color: var(--tl-bg);
   font-weight: bold;
   border: none;
   border-radius: 8px;
@@ -20,7 +59,7 @@
 
 /* Hiệu ứng khi KÉO CHUỘT VÀO (hover) */
 .btn-dat-lich:hover {
-  background-color: #2980b9; /* Đổi sang màu xanh đậm hơn */
+  background-color: var(--tl-accent-hover);
   transform: scale(1.05); /* Phóng to cái nút lên 5% */
-  box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4); /* Tỏa hào quang màu xanh xung quanh */
+  box-shadow: 0 5px 15px rgba(192, 90, 62, 0.25);
 }

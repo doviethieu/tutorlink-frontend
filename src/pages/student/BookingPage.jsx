@@ -176,7 +176,7 @@ export default function DatLichHoc() {
             <div style={styles.cardHeader}>
               <div>
                 <h3 style={styles.cardTitle}>Chọn lịch học</h3>
-                <p style={{ color: '#94a3b8', fontSize: '13px', margin: '4px 0 0 0' }}>Khung giờ trống thực tế từ gia sư</p>
+                <p style={{ color: '#5F6B7A', fontSize: '13px', margin: '4px 0 0 0' }}>Khung giờ trống thực tế từ gia sư</p>
               </div>
               <span style={styles.badgeLike}>{openSlots.length} slot trống</span>
             </div>
@@ -382,10 +382,10 @@ export default function DatLichHoc() {
 // --- 🛠️ ĐÃ CẬP NHẬT: BỘ CSS INLINE CHUẨN SLATE DARK-MODE PREMIUM ---
 const styles = {
   container: {
-    backgroundColor: '#0f172a',
+    backgroundColor: '#FAF7F0',
     minHeight: '100vh',
     padding: '40px 6%',
-    color: '#e2e8f0',
+    color: '#1E293B',
     fontFamily: "'Inter', sans-serif"
   },
   // 🛠️ ĐÃ SỬA: Responsive layout qua CSS Grid tự động, thay thế cho đoạn mô phỏng cũ lỗi thời
@@ -406,7 +406,7 @@ const styles = {
     flex: '1 1 65%'
   },
   backLink: {
-    color: '#94a3b8',
+    color: '#5F6B7A',
     textDecoration: 'none',
     fontSize: '13.5px',
     fontWeight: '700',
@@ -418,11 +418,11 @@ const styles = {
     fontSize: '32px',
     fontWeight: '800',
     margin: 0,
-    color: '#fff',
+    color: '#1E293B',
     letterSpacing: '-0.5px'
   },
   subtextTitle: {
-    color: '#94a3b8',
+    color: '#5F6B7A',
     fontSize: '14px',
     margin: '6px 0 0 0',
     lineHeight: '1.5'
@@ -437,49 +437,49 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '10px',
-    backgroundColor: '#1e293b',
-    border: '1px solid #334155',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E7DED2',
     padding: '14px',
     borderRadius: '8px',
     fontSize: '13.5px',
     fontWeight: '700',
-    color: '#64748b'
+    color: '#8A7D72'
   },
   stepActive: {
-    borderColor: '#38bdf8', // Đổi sang Sky Blue đồng bộ thương hiệu
-    color: '#38bdf8',
-    backgroundColor: 'rgba(56, 189, 248, 0.08)'
+    borderColor: '#C05A3E', // Đổi sang Sky Blue đồng bộ thương hiệu
+    color: '#C05A3E',
+    backgroundColor: 'rgba(192, 90, 62, 0.08)'
   },
   card: {
-    backgroundColor: '#1e293b',
-    border: '1px solid #334155',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E7DED2',
     borderRadius: '14px',
     overflow: 'hidden'
   },
   cardSticky: {
-    backgroundColor: '#1e293b',
-    border: '1px solid #334155',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E7DED2',
     borderRadius: '14px',
     overflow: 'hidden',
     boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.3)'
   },
   cardHeader: {
     padding: '18px 24px',
-    borderBottom: '1px solid #334155',
+    borderBottom: '1px solid #E7DED2',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#1e293b'
+    backgroundColor: '#FFFFFF'
   },
   cardTitle: {
     fontSize: '16px',
     fontWeight: '700',
     margin: 0,
-    color: '#fff'
+    color: '#1E293B'
   },
   badgeLike: {
-    backgroundColor: 'rgba(249, 115, 22, 0.15)', // Màu Cam Neon thương hiệu giống Auth
-    color: '#f97316',
+    backgroundColor: 'rgba(192, 90, 62, 0.15)', // Màu Cam Neon thương hiệu giống Auth
+    color: '#C05A3E',
     padding: '4px 12px',
     borderRadius: '20px',
     fontSize: '12px',
@@ -499,24 +499,24 @@ const styles = {
   labelForm: {
     fontSize: '13.5px',
     fontWeight: '700',
-    color: '#cbd5e1'
+    color: '#1E293B'
   },
   inputStyle: {
-    backgroundColor: '#0f172a',
-    border: '1px solid #334155',
+    backgroundColor: '#FAF7F0',
+    border: '1px solid #E7DED2',
     borderRadius: '8px',
     padding: '12px 16px',
-    color: '#fff',
+    color: '#1E293B',
     fontSize: '14px',
     outline: 'none',
     transition: '0.2s'
   },
   textareaStyle: {
-    backgroundColor: '#0f172a',
-    border: '1px solid #334155',
+    backgroundColor: '#FAF7F0',
+    border: '1px solid #E7DED2',
     borderRadius: '8px',
     padding: '14px',
-    color: '#fff',
+    color: '#1E293B',
     fontSize: '14px',
     outline: 'none',
     resize: 'none',
@@ -524,12 +524,12 @@ const styles = {
     lineHeight: '1.6'
   },
   alertBox: {
-    border: '1px dashed #475569',
+    border: '1px dashed #7C6F64',
     backgroundColor: 'rgba(30, 41, 59, 0.5)',
     padding: '14px',
     borderRadius: '8px',
     fontSize: '13.5px',
-    color: '#94a3b8',
+    color: '#5F6B7A',
     lineHeight: '1.5'
   },
   slotsGrid: {
@@ -538,10 +538,10 @@ const styles = {
     gap: '10px'
   },
   slotBtn: {
-    backgroundColor: '#0f172a',
-    border: '1px solid #334155',
+    backgroundColor: '#FAF7F0',
+    border: '1px solid #E7DED2',
     borderRadius: '8px',
-    color: '#fff',
+    color: '#1E293B',
     padding: '12px 10px',
     fontSize: '13.5px',
     fontWeight: '700',
@@ -549,15 +549,15 @@ const styles = {
     transition: 'all 0.2s'
   },
   slotBtnSelected: {
-    backgroundColor: '#38bdf8', // Đổi sang dải Sky Blue mới
-    borderColor: '#38bdf8',
-    color: '#0f172a',
-    boxShadow: '0 4px 12px rgba(56, 189, 248, 0.25)'
+    backgroundColor: '#C05A3E', // Đổi sang dải Sky Blue mới
+    borderColor: '#C05A3E',
+    color: '#FAF7F0',
+    boxShadow: '0 4px 12px rgba(192, 90, 62, 0.25)'
   },
   slotBtnBooked: {
-    backgroundColor: '#1e293b',
-    borderColor: '#334155',
-    color: '#475569',
+    backgroundColor: '#FFFFFF',
+    borderColor: '#E7DED2',
+    color: '#7C6F64',
     textDecoration: 'line-through',
     cursor: 'not-allowed'
   },
@@ -567,10 +567,10 @@ const styles = {
     gap: '10px'
   },
   durationBtn: {
-    backgroundColor: '#0f172a',
-    border: '1px solid #334155',
+    backgroundColor: '#FAF7F0',
+    border: '1px solid #E7DED2',
     borderRadius: '8px',
-    color: '#fff',
+    color: '#1E293B',
     padding: '14px',
     fontSize: '13.5px',
     fontWeight: '700',
@@ -579,15 +579,15 @@ const styles = {
     transition: '0.2s'
   },
   durationBtnSelected: {
-    borderColor: '#38bdf8',
-    backgroundColor: 'rgba(56, 189, 248, 0.08)',
-    color: '#38bdf8'
+    borderColor: '#C05A3E',
+    backgroundColor: 'rgba(192, 90, 62, 0.08)',
+    color: '#C05A3E'
   },
   tagBtn: {
-    backgroundColor: '#0f172a',
-    border: '1px solid #334155',
+    backgroundColor: '#FAF7F0',
+    border: '1px solid #E7DED2',
     borderRadius: '20px',
-    color: '#e2e8f0',
+    color: '#1E293B',
     padding: '6px 14px',
     fontSize: '12.5px',
     fontWeight: '600',
@@ -595,9 +595,9 @@ const styles = {
     transition: '0.2s'
   },
   tagBtnSelected: {
-    borderColor: '#38bdf8',
-    backgroundColor: 'rgba(56, 189, 248, 0.08)',
-    color: '#38bdf8'
+    borderColor: '#C05A3E',
+    backgroundColor: 'rgba(192, 90, 62, 0.08)',
+    color: '#C05A3E'
   },
   sidebar: {
     gridColumn: 'span 1',
@@ -610,28 +610,28 @@ const styles = {
     alignItems: 'center',
     gap: '14px',
     paddingBottom: '16px',
-    borderBottom: '1px solid #334155'
+    borderBottom: '1px solid #E7DED2'
   },
   avatar: {
     width: '46px',
     height: '46px',
     borderRadius: '12px', // Đồng bộ bo góc avatar thẻ vuông hiện đại giống danh sách gia sư
     objectFit: 'cover',
-    backgroundColor: '#334155'
+    backgroundColor: '#E7DED2'
   },
   tutorName: {
     margin: 0,
     fontWeight: '700',
     fontSize: '14.5px',
-    color: '#fff'
+    color: '#1E293B'
   },
   tutorTitle: {
     margin: '4px 0 0 0',
     fontSize: '12.5px',
-    color: '#94a3b8'
+    color: '#5F6B7A'
   },
   billBox: {
-    backgroundColor: '#0f172a',
+    backgroundColor: '#FAF7F0',
     padding: '16px',
     borderRadius: '8px',
     display: 'flex',
@@ -641,7 +641,7 @@ const styles = {
   },
   billLine: {
     fontSize: '13.5px',
-    color: '#cbd5e1',
+    color: '#1E293B',
     lineHeight: '1.4'
   },
   totalRow: {
@@ -659,13 +659,13 @@ const styles = {
   },
   noteText: {
     fontSize: '12px',
-    color: '#94a3b8',
+    color: '#5F6B7A',
     lineHeight: '1.6',
     margin: '4px 0'
   },
   submitBtn: {
-    backgroundColor: '#38bdf8', // Đổi chữ tối trên nền Sky sáng để tăng tính tương phản
-    color: '#0f172a',
+    backgroundColor: '#C05A3E', // Đổi chữ tối trên nền Sky sáng để tăng tính tương phản
+    color: '#FAF7F0',
     border: 'none',
     width: '100%',
     padding: '15px',
@@ -675,19 +675,19 @@ const styles = {
     cursor: 'pointer',
     transition: 'all 0.2s',
     marginTop: '4px',
-    boxShadow: '0 4px 14px rgba(56, 189, 248, 0.2)'
+    boxShadow: '0 4px 14px rgba(192, 90, 62, 0.2)'
   },
   submitBtnDisabled: {
-    backgroundColor: '#334155',
-    color: '#64748b',
+    backgroundColor: '#E7DED2',
+    color: '#8A7D72',
     cursor: 'not-allowed',
     boxShadow: 'none'
   },
   loadingBox: {
-    color: '#94a3b8',
+    color: '#5F6B7A',
     textAlign: 'center',
     padding: '120px 20px',
-    backgroundColor: '#0f172a',
+    backgroundColor: '#FAF7F0',
     minHeight: '100vh',
     fontSize: '16px',
     fontFamily: "'Inter', sans-serif"

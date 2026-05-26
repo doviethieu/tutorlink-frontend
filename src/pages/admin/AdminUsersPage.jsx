@@ -137,8 +137,8 @@ export default function AdminNguoiDung() {
                   onClick={() => setVaiTroTab(item.id)}
                   style={{
                     ...styles.tabBtn,
-                    backgroundColor: vaiTroTab === item.id ? (item.id === 'waiting_tutor' ? '#e67e22' : '#3498db') : 'transparent',
-                    color: vaiTroTab === item.id ? '#fff' : '#94a3b8'
+                    backgroundColor: vaiTroTab === item.id ? (item.id === 'waiting_tutor' ? '#e67e22' : '#C05A3E') : 'transparent',
+                    color: vaiTroTab === item.id ? '#1E293B' : '#5F6B7A'
                   }}
                 >
                   {item.label}
@@ -161,15 +161,15 @@ export default function AdminNguoiDung() {
                   <div key={uid} style={styles.tutorRow}>
                     <div>
                       {/* 🛠️ ĐÃ FIX: Chuyển sang map đúng full_name và contactEmail từ Form đăng ký */}
-                      <strong style={{ fontSize: '16px', color: '#fff' }}>{nguoi?.full_name || nguoi?.name}</strong>
-                      <span style={{ color: '#3498db', fontSize: '14px', marginLeft: '10px' }}>⚡ Đăng ký dạy: {nguoi?.subject}</span>
+                      <strong style={{ fontSize: '16px', color: '#1E293B' }}>{nguoi?.full_name || nguoi?.name}</strong>
+                      <span style={{ color: '#C05A3E', fontSize: '14px', marginLeft: '10px' }}>⚡ Đăng ký dạy: {nguoi?.subject}</span>
                       <div style={styles.tutorContactBox}>
                         <div>📞 SĐT: <strong>{nguoi?.phone || 'Chưa cập nhật'}</strong></div>
                         <div>📧 Email: <strong>{nguoi?.contactEmail || nguoi?.email}</strong></div>
                       </div>
                     </div>
                     <div style={{ display: 'flex', gap: '8px' }}>
-                      <button onClick={() => navigate(`/admin/tutors/${uid}`)} style={{ ...styles.btnMini, backgroundColor: '#2980b9' }}>👁️ Xem CV</button>
+                      <button onClick={() => navigate(`/admin/tutors/${uid}`)} style={{ ...styles.btnMini, backgroundColor: '#A94730' }}>👁️ Xem CV</button>
                       <button onClick={() => handleDuyetGiaSu(uid, 'pass')} style={{ ...styles.btnMini, backgroundColor: '#27ae60' }}>✅ Duyệt</button>
                       <button onClick={() => handleDuyetGiaSu(uid, 'fail')} style={{ ...styles.btnMini, backgroundColor: '#c0392b' }}>❌ Từ chối</button>
                     </div>
@@ -201,8 +201,8 @@ export default function AdminNguoiDung() {
                           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                             <div style={styles.avatarMock}>{displayName.charAt(0).toUpperCase()}</div>
                             <div>
-                              <div style={{ fontWeight: 'bold', color: '#fff' }}>{displayName}</div>
-                              <div style={{ fontSize: '12px', color: '#64748b' }}>{user?.email}</div>
+                              <div style={{ fontWeight: 'bold', color: '#1E293B' }}>{displayName}</div>
+                              <div style={{ fontSize: '12px', color: '#8A7D72' }}>{user?.email}</div>
                             </div>
                           </div>
                         </td>
@@ -247,8 +247,8 @@ export default function AdminNguoiDung() {
                       <h4 style={styles.reportType}>⚠️ {report?.type}</h4>
                       <span style={styles.severityBadge}>{report?.severity || 'High'}</span>
                     </div>
-                    <p style={{ margin: '5px 0', fontSize: '13px', color: '#94a3b8' }}>🎯 Đối tượng: {report?.target}</p>
-                    <p style={{ margin: '0 0 10px 0', fontSize: '13px', color: '#cbd5e1' }}>{report?.description || report?.body || report?.message || 'Không có nội dung mô tả.'}</p>
+                    <p style={{ margin: '5px 0', fontSize: '13px', color: '#5F6B7A' }}>🎯 Đối tượng: {report?.target}</p>
+                    <p style={{ margin: '0 0 10px 0', fontSize: '13px', color: '#1E293B' }}>{report?.description || report?.body || report?.message || 'Không có nội dung mô tả.'}</p>
                   </div>
                 );
               })}
@@ -262,32 +262,32 @@ export default function AdminNguoiDung() {
 
 // KHÔNG GIAN TỐI CAO CẤP TOÀN DIỆN
 const styles = {
-  container: { backgroundColor: '#0f172a', minHeight: '100vh', padding: '35px 4%', fontFamily: 'Arial, sans-serif', color: '#e2e8f0' },
-  topBadge: { backgroundColor: 'rgba(52, 152, 219, 0.15)', color: '#3498db', padding: '6px 14px', borderRadius: '20px', fontSize: '11px', fontWeight: 'bold' },
-  btnBack: { backgroundColor: 'transparent', border: '1px solid #475569', color: '#94a3b8', padding: '5px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', marginBottom: '10px' },
-  mainTitle: { fontSize: '28px', fontWeight: 'bold', margin: '6px 0', color: '#fff' },
-  subtitle: { fontSize: '14px', color: '#94a3b8', margin: 0 },
+  container: { backgroundColor: '#FAF7F0', minHeight: '100vh', padding: '35px 4%', fontFamily: 'Arial, sans-serif', color: '#1E293B' },
+  topBadge: { backgroundColor: 'rgba(52, 152, 219, 0.15)', color: '#C05A3E', padding: '6px 14px', borderRadius: '20px', fontSize: '11px', fontWeight: 'bold' },
+  btnBack: { backgroundColor: 'transparent', border: '1px solid #7C6F64', color: '#5F6B7A', padding: '5px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', marginBottom: '10px' },
+  mainTitle: { fontSize: '28px', fontWeight: 'bold', margin: '6px 0', color: '#1E293B' },
+  subtitle: { fontSize: '14px', color: '#5F6B7A', margin: 0 },
   gridContainer: { display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: '30px', alignItems: 'start' },
-  card: { backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '12px', padding: '24px' },
-  cardSectionTitle: { fontSize: '18px', fontWeight: 'bold', color: '#fff', marginTop: 0, marginBottom: '15px' },
+  card: { backgroundColor: '#FFFFFF', border: '1px solid #E7DED2', borderRadius: '12px', padding: '24px' },
+  cardSectionTitle: { fontSize: '18px', fontWeight: 'bold', color: '#1E293B', marginTop: 0, marginBottom: '15px' },
   toolbar: { display: 'flex', flexDirection: 'column', gap: '15px', marginBottom: '20px' },
-  searchWrapper: { display: 'flex', alignItems: 'center', backgroundColor: '#0f172a', border: '1px solid #334155', padding: '0 15px', borderRadius: '8px', height: '44px', color: '#fff', gap: '8px' },
-  searchInput: { backgroundColor: 'transparent', border: 'none', color: '#fff', width: '100%', outline: 'none' },
-  tabGroup: { display: 'flex', backgroundColor: '#0f172a', padding: '4px', borderRadius: '8px', border: '1px solid #334155', alignSelf: 'flex-start', flexWrap: 'wrap', gap: '4px' },
+  searchWrapper: { display: 'flex', alignItems: 'center', backgroundColor: '#FAF7F0', border: '1px solid #E7DED2', padding: '0 15px', borderRadius: '8px', height: '44px', color: '#1E293B', gap: '8px' },
+  searchInput: { backgroundColor: 'transparent', border: 'none', color: '#1E293B', width: '100%', outline: 'none' },
+  tabGroup: { display: 'flex', backgroundColor: '#FAF7F0', padding: '4px', borderRadius: '8px', border: '1px solid #E7DED2', alignSelf: 'flex-start', flexWrap: 'wrap', gap: '4px' },
   tabBtn: { border: 'none', padding: '6px 14px', borderRadius: '6px', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', transition: '0.2s' },
-  loadingText: { textAlign: 'center', color: '#94a3b8', padding: '20px 0' },
-  emptyText: { textAlign: 'center', color: '#94a3b8', padding: '20px 0', margin: 0 },
+  loadingText: { textAlign: 'center', color: '#5F6B7A', padding: '20px 0' },
+  emptyText: { textAlign: 'center', color: '#5F6B7A', padding: '20px 0', margin: 0 },
   table: { width: '100%', borderCollapse: 'collapse', fontSize: '14px' },
-  thRow: { backgroundColor: '#0f172a' },
-  th: { padding: '12px 16px', color: '#94a3b8', fontWeight: 'bold', fontSize: '12px' },
-  trRow: { borderBottom: '1px solid #334155' },
-  td: { padding: '16px', color: '#cbd5e1' },
-  avatarMock: { width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#475569', color: '#fff', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  thRow: { backgroundColor: '#FAF7F0' },
+  th: { padding: '12px 16px', color: '#5F6B7A', fontWeight: 'bold', fontSize: '12px' },
+  trRow: { borderBottom: '1px solid #E7DED2' },
+  td: { padding: '16px', color: '#1E293B' },
+  avatarMock: { width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#7C6F64', color: '#1E293B', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center' },
   btnLockToggle: { backgroundColor: 'transparent', border: '1px solid', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' },
-  reportBox: { backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '10px', padding: '16px' },
-  reportType: { margin: 0, fontSize: '15px', color: '#fff', fontWeight: 'bold' },
+  reportBox: { backgroundColor: '#FAF7F0', border: '1px solid #E7DED2', borderRadius: '10px', padding: '16px' },
+  reportType: { margin: 0, fontSize: '15px', color: '#1E293B', fontWeight: 'bold' },
   severityBadge: { backgroundColor: 'rgba(241, 196, 15, 0.15)', color: '#f1c40f', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold' },
-  tutorRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#0f172a', padding: '16px', borderRadius: '10px', border: '1px solid #334155' },
-  tutorContactBox: { marginTop: '8px', fontSize: '13px', color: '#94a3b8', backgroundColor: '#1e293b', padding: '8px 12px', borderRadius: '6px', borderLeft: '3px solid #e67e22', display: 'flex', gap: '15px' },
-  btnMini: { color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' }
+  tutorRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#FAF7F0', padding: '16px', borderRadius: '10px', border: '1px solid #E7DED2' },
+  tutorContactBox: { marginTop: '8px', fontSize: '13px', color: '#5F6B7A', backgroundColor: '#FFFFFF', padding: '8px 12px', borderRadius: '6px', borderLeft: '3px solid #e67e22', display: 'flex', gap: '15px' },
+  btnMini: { color: '#FAF7F0', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' }
 };

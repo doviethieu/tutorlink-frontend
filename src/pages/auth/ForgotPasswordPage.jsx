@@ -46,7 +46,7 @@ export default function QuenMatKhau() {
           <div style={styles.iconContainer}>📬</div>
           <h1 style={styles.title}>Kiểm tra hộp thư!</h1>
           <p style={styles.subtitle}>
-            Nếu địa chỉ email <span style={{ color: '#38bdf8', fontWeight: '700' }}>{email}</span> tồn tại trên TutorLink, một liên kết đặt lại mật khẩu đã được gửi đi thành công.
+            Nếu địa chỉ email <span style={{ color: '#C05A3E', fontWeight: '700' }}>{email}</span> tồn tại trên TutorLink, một liên kết đặt lại mật khẩu đã được gửi đi thành công.
           </p>
           
           <div style={styles.warningContainer}>
@@ -63,7 +63,7 @@ export default function QuenMatKhau() {
               onClick={() => { setSubmitted(false); setEmail(''); }} 
               style={styles.linkButton}
             >
-              Chưa nhận được email? <span style={{ color: '#38bdf8', fontWeight: '700' }}>Gửi lại yêu cầu</span>
+              Chưa nhận được email? <span style={{ color: '#C05A3E', fontWeight: '700' }}>Gửi lại yêu cầu</span>
             </button>
           </div>
         </div>
@@ -102,10 +102,10 @@ export default function QuenMatKhau() {
             disabled={loading} 
             style={{
               ...styles.buttonPrimary,
-              backgroundColor: loading ? '#334155' : '#38bdf8',
-              color: loading ? '#64748b' : '#0f172a',
+              backgroundColor: loading ? '#E7DED2' : '#C05A3E',
+              color: loading ? '#8A7D72' : '#FAF7F0',
               cursor: loading ? 'not-allowed' : 'pointer',
-              boxShadow: loading ? 'none' : '0 4px 14px rgba(56, 189, 248, 0.2)'
+              boxShadow: loading ? 'none' : '0 4px 14px rgba(192, 90, 62, 0.2)'
             }}
           >
             {loading ? '⏳ Đang truyền tải dữ liệu...' : '🚀 Gửi liên kết đặt lại mật khẩu'}
@@ -113,7 +113,7 @@ export default function QuenMatKhau() {
         </form>
 
         <p style={{ textAlign: 'center', marginTop: '28px', marginBottom: 0 }}>
-          <Link to="/login" style={{ color: '#94a3b8', textDecoration: 'none', fontWeight: '700', fontSize: '14px', transition: 'color 0.2s' }}>
+          <Link to="/login" style={{ color: '#5F6B7A', textDecoration: 'none', fontWeight: '700', fontSize: '14px', transition: 'color 0.2s' }}>
             ← Quay lại đăng nhập
           </Link>
         </p>
@@ -127,7 +127,7 @@ export default function QuenMatKhau() {
 // -------------------------------------------------------------
 const styles = {
   container: {
-    backgroundColor: '#0f172a', // Đưa về nền tối mượt mà đồng bộ với Profile/LichRanh
+    backgroundColor: '#FAF7F0', // Đưa về nền tối mượt mà đồng bộ với Profile/LichRanh
     minHeight: '100vh',
     display: 'flex',
     justifyContent: 'center',
@@ -137,14 +137,14 @@ const styles = {
     boxSizing: 'border-box'
   },
   card: {
-    backgroundColor: '#1e293b', // Chuyển từ màu cổ vịt cũ về Deep Slate sang trọng
+    backgroundColor: '#FFFFFF', // Chuyển từ màu cổ vịt cũ về Deep Slate sang trọng
     borderRadius: '16px',
     padding: '40px 32px',
     width: '100%',
     maxWidth: '440px',
     boxShadow: '0 20px 40px rgba(0, 0, 0, 0.25)',
-    border: '1px solid #334155',
-    color: '#cbd5e1',
+    border: '1px solid #E7DED2',
+    color: '#1E293B',
     boxSizing: 'border-box'
   },
   iconContainer: {
@@ -158,12 +158,12 @@ const styles = {
     fontWeight: '800',
     textAlign: 'center',
     margin: '0 0 10px 0',
-    color: '#fff',
+    color: '#1E293B',
     letterSpacing: '-0.5px'
   },
   subtitle: {
     fontSize: '14px',
-    color: '#94a3b8',
+    color: '#5F6B7A',
     textAlign: 'center',
     lineHeight: '1.6',
     margin: 0
@@ -191,16 +191,16 @@ const styles = {
   label: {
     fontWeight: '700',
     fontSize: '13px',
-    color: '#cbd5e1',
+    color: '#1E293B',
     letterSpacing: '0.3px'
   },
   input: {
     width: '100%',
     padding: '12px 16px',
     borderRadius: '8px',
-    border: '1px solid #334155',
-    backgroundColor: '#0f172a',
-    color: '#fff',
+    border: '1px solid #E7DED2',
+    backgroundColor: '#FAF7F0',
+    color: '#1E293B',
     fontSize: '14.5px',
     outline: 'none',
     boxSizing: 'border-box',
@@ -226,8 +226,8 @@ const styles = {
     width: '100%',
     padding: '12px',
     backgroundColor: 'transparent',
-    color: '#cbd5e1',
-    border: '1px solid #475569',
+    color: '#1E293B',
+    border: '1px solid #7C6F64',
     borderRadius: '8px',
     fontSize: '14px',
     fontWeight: '700',
@@ -237,7 +237,7 @@ const styles = {
   linkButton: {
     background: 'none',
     border: 'none',
-    color: '#94a3b8',
+    color: '#5F6B7A',
     cursor: 'pointer',
     fontSize: '13.5px',
     fontWeight: '500',

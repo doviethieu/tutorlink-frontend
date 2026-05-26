@@ -53,7 +53,7 @@ function ProtectedRoute({ children }) {
   const hasHydrated = useAuthStore((state) => state.hasHydrated);
 
   if (!hasHydrated && localStorage.getItem('tutorlink-auth')) {
-    return <div style={{ color: '#38bdf8', padding: '20px', backgroundColor: '#0f172a', minHeight: '100vh' }}>🔄 Đang đồng bộ phiên đăng nhập TutorLink...</div>;
+    return <div style={{ color: '#C05A3E', padding: '20px', backgroundColor: '#FAF7F0', minHeight: '100vh' }}>🔄 Đang đồng bộ phiên đăng nhập TutorLink...</div>;
   }
 
   if (!token) {
@@ -82,7 +82,7 @@ function RequireRole({ roles, children }) {
   const hasHydrated = useAuthStore((state) => state.hasHydrated);
 
   if (!hasHydrated && localStorage.getItem('tutorlink-auth')) {
-    return <div style={{ color: '#38bdf8', padding: '20px', backgroundColor: '#0f172a', minHeight: '100vh' }}>🔄 Đang đồng bộ phiên đăng nhập TutorLink...</div>;
+    return <div style={{ color: '#C05A3E', padding: '20px', backgroundColor: '#FAF7F0', minHeight: '100vh' }}>🔄 Đang đồng bộ phiên đăng nhập TutorLink...</div>;
   }
 
   if (!token) return <Navigate to="/login" replace />;
@@ -100,9 +100,9 @@ function RequireRole({ roles, children }) {
 // =========================================================================
 function AppDashboardLayout() {
   return (
-    <div style={{ display: 'flex', minHeight: '90vh', backgroundColor: '#0f172a' }}>
-      <div style={{ width: '260px', backgroundColor: '#1e293b', borderRight: '1px solid #334155', padding: '20px', display: 'flex', flexDirection: 'column', gap: '5px' }}>
-        <h3 style={{ color: '#3498db', fontSize: '14px', textTransform: 'uppercase', marginBottom: '10px', fontWeight: 'bold', letterSpacing: '0.5px' }}>Bảng điều khiển</h3>
+    <div style={{ display: 'flex', minHeight: '90vh', backgroundColor: '#FAF7F0' }}>
+      <div style={{ width: '260px', backgroundColor: '#FFFFFF', borderRight: '1px solid #E7DED2', padding: '20px', display: 'flex', flexDirection: 'column', gap: '5px' }}>
+        <h3 style={{ color: '#C05A3E', fontSize: '14px', textTransform: 'uppercase', marginBottom: '10px', fontWeight: 'bold', letterSpacing: '0.5px' }}>Bảng điều khiển</h3>
         <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <li><Link to="/dashboard" style={styles.sidebarLink}>📅 Tổng quan (Dashboard)</Link></li>
           <li><Link to="/tutor/register" style={{...styles.sidebarLink, color: '#f1c40f', border: '1px dashed rgba(241, 196, 15, 0.3)', backgroundColor: 'rgba(241, 196, 15, 0.05)'}}>📝 Đăng ký làm Gia sư</Link></li>
@@ -121,7 +121,7 @@ function AppDashboardLayout() {
         </ul>
       </div>
 
-      <div style={{ flex: 1, padding: '24px', overflowY: 'auto', backgroundColor: '#0f172a' }}>
+      <div style={{ flex: 1, padding: '24px', overflowY: 'auto', backgroundColor: '#FAF7F0' }}>
         <Outlet /> 
       </div>
     </div>
@@ -201,7 +201,7 @@ function App() {
   };
 
   return (
-    <div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#0f172a', minHeight: '100vh' }}>
+    <div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#FAF7F0', minHeight: '100vh' }}>
       <Navbar setTuKhoa={setTuKhoa} soLuongGioHang={gioHang.length} />
       <Routes>
         <Route path="/" element={<TrangChu tuKhoa={tuKhoa} handleDatLich={handleDatLich} />} />
@@ -247,7 +247,7 @@ function App() {
 }
 
 const styles = {
-  sidebarLink: { display: 'block', color: '#cbd5e1', textDecoration: 'none', padding: '10px 14px', borderRadius: '8px', fontSize: '14px', fontWeight: '500', transition: 'all 0.2s', backgroundColor: 'rgba(255,255,255,0.02)' }
+  sidebarLink: { display: 'block', color: '#1E293B', textDecoration: 'none', padding: '10px 14px', borderRadius: '8px', fontSize: '14px', fontWeight: '500', transition: 'all 0.2s', backgroundColor: 'rgba(255,255,255,0.02)' }
 };
 
 export default App;

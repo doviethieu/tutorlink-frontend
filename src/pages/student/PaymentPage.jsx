@@ -87,7 +87,7 @@ export default function CongThanhToan() {
         <div style={styles.invoiceBox}>
           <div style={styles.invoiceRow}>
             <span style={styles.label}>Mã đơn hàng:</span>
-            <span style={{ ...styles.value, color: '#38bdf8' }}>{maDonHang}</span>
+            <span style={{ ...styles.value, color: '#C05A3E' }}>{maDonHang}</span>
           </div>
           <div style={styles.invoiceRow}>
             <span style={styles.label}>Đối tác Gia sư:</span>
@@ -101,7 +101,7 @@ export default function CongThanhToan() {
           </div>
           <hr style={styles.dashedDivider} />
           <div style={styles.invoiceRow}>
-            <span style={{ ...styles.label, fontSize: '16px', fontWeight: 'bold', color: '#fff' }}>Tổng thanh toán:</span>
+            <span style={{ ...styles.label, fontSize: '16px', fontWeight: 'bold', color: '#1E293B' }}>Tổng thanh toán:</span>
             <span style={{ ...styles.value, fontSize: '20px', color: '#10b981', fontWeight: '900' }}>
               {soTienThanhToan.toLocaleString('vi-VN')} đ
             </span>
@@ -117,11 +117,11 @@ export default function CongThanhToan() {
             <div style={styles.qrCornerTopRight} />
             <div style={styles.qrCornerBottomLeft} />
             <div style={styles.qrCenterLogo}>TutorLink</div>
-            <div style={{ color: '#64748b', fontSize: '12px', marginTop: '45px' }}>[ VietQR NAPAS 247 ]</div>
+            <div style={{ color: '#8A7D72', fontSize: '12px', marginTop: '45px' }}>[ VietQR NAPAS 247 ]</div>
           </div>
           <div style={styles.qrFooter}>
-            <p style={{ margin: '0 0 4px 0', fontSize: '13px' }}>Nội dung CK: <strong style={{ color: '#f97316' }}>TLINK {maDonHang}</strong></p>
-            <p style={{ margin: 0, fontSize: '11px', color: '#64748b' }}>Hệ thống tự động duyệt sau khi nhận đủ tiền</p>
+            <p style={{ margin: '0 0 4px 0', fontSize: '13px' }}>Nội dung CK: <strong style={{ color: '#C05A3E' }}>TLINK {maDonHang}</strong></p>
+            <p style={{ margin: 0, fontSize: '11px', color: '#8A7D72' }}>Hệ thống tự động duyệt sau khi nhận đủ tiền</p>
           </div>
         </div>
 
@@ -148,7 +148,7 @@ export default function CongThanhToan() {
 // --- HỆ THỐNG CSS INLINE CAO CẤP ĐỒNG BỘ DARK-MODE & CAM THƯƠNG HIỆU ---
 const styles = {
   container: {
-    backgroundColor: '#0f172a',
+    backgroundColor: '#FAF7F0',
     minHeight: '90vh',
     display: 'flex',
     alignItems: 'center',
@@ -157,8 +157,8 @@ const styles = {
     fontFamily: "'Inter', sans-serif"
   },
   card: {
-    backgroundColor: '#1e293b',
-    border: '1px solid #334155',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E7DED2',
     borderRadius: '16px',
     width: '100%',
     maxWidth: '460px',
@@ -170,8 +170,8 @@ const styles = {
   },
   accentBadge: {
     alignSelf: 'center',
-    backgroundColor: 'rgba(249, 115, 22, 0.15)',
-    color: '#f97316',
+    backgroundColor: 'rgba(192, 90, 62, 0.15)',
+    color: '#C05A3E',
     padding: '4px 12px',
     borderRadius: '20px',
     fontSize: '11px',
@@ -188,28 +188,28 @@ const styles = {
   mainTitle: {
     fontSize: '24px',
     fontWeight: '800',
-    color: '#fff',
+    color: '#1E293B',
     margin: 0
   },
   subtitle: {
     fontSize: '13px',
-    color: '#94a3b8',
+    color: '#5F6B7A',
     margin: '6px 0 0 0',
     lineHeight: '1.5'
   },
   divider: {
     border: 'none',
-    borderTop: '1px solid #334155',
+    borderTop: '1px solid #E7DED2',
     margin: 0
   },
   dashedDivider: {
     border: 'none',
-    borderTop: '1px dashed #334155',
+    borderTop: '1px dashed #E7DED2',
     margin: '10px 0'
   },
   invoiceBox: {
-    backgroundColor: '#0f172a',
-    border: '1px solid #334155',
+    backgroundColor: '#FAF7F0',
+    border: '1px solid #E7DED2',
     borderRadius: '10px',
     padding: '16px',
     display: 'flex',
@@ -224,24 +224,24 @@ const styles = {
   },
   label: {
     fontSize: '13.5px',
-    color: '#94a3b8'
+    color: '#5F6B7A'
   },
   value: {
     fontSize: '14px',
     fontWeight: '600',
-    color: '#f1f5f9'
+    color: '#1E293B'
   },
   qrContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: '#1E293B',
     borderRadius: '12px',
     padding: '15px',
     textAlign: 'center',
-    color: '#0f172a'
+    color: '#FAF7F0'
   },
   qrHeader: {
     fontSize: '11px',
     fontWeight: '800',
-    color: '#475569',
+    color: '#7C6F64',
     letterSpacing: '0.5px',
     marginBottom: '12px'
   },
@@ -249,7 +249,7 @@ const styles = {
     width: '140px',
     height: '140px',
     margin: '0 auto',
-    border: '4px solid #0f172a',
+    border: '4px solid #FAF7F0',
     position: 'relative',
     display: 'flex',
     flexDirection: 'column',
@@ -257,13 +257,13 @@ const styles = {
     alignItems: 'center',
     backgroundColor: '#f8fafc'
   },
-  qrCornerTopLeft: { position: 'absolute', top: '6px', left: '6px', width: '25px', height: '25px', border: '6px solid #0f172a' },
-  qrCornerTopRight: { position: 'absolute', top: '6px', right: '6px', width: '25px', height: '25px', border: '6px solid #0f172a' },
-  qrCornerBottomLeft: { position: 'absolute', bottom: '6px', left: '6px', width: '25px', height: '25px', border: '6px solid #0f172a' },
-  qrCenterLogo: { position: 'absolute', backgroundColor: '#f97316', color: '#fff', fontSize: '10px', padding: '2px 6px', fontWeight: 'bold', borderRadius: '4px' },
+  qrCornerTopLeft: { position: 'absolute', top: '6px', left: '6px', width: '25px', height: '25px', border: '6px solid #FAF7F0' },
+  qrCornerTopRight: { position: 'absolute', top: '6px', right: '6px', width: '25px', height: '25px', border: '6px solid #FAF7F0' },
+  qrCornerBottomLeft: { position: 'absolute', bottom: '6px', left: '6px', width: '25px', height: '25px', border: '6px solid #FAF7F0' },
+  qrCenterLogo: { position: 'absolute', backgroundColor: '#C05A3E', color: '#FAF7F0', fontSize: '10px', padding: '2px 6px', fontWeight: 'bold', borderRadius: '4px' },
   qrFooter: {
     marginTop: '12px',
-    borderTop: '1px solid #e2e8f0',
+    borderTop: '1px solid #1E293B',
     paddingTop: '8px'
   },
   btnGrid: {
@@ -276,7 +276,7 @@ const styles = {
     width: '100%',
     backgroundColor: '#10b981',
     border: 'none',
-    color: '#fff',
+    color: '#1E293B',
     padding: '14px',
     borderRadius: '8px',
     fontWeight: 'bold',
@@ -288,8 +288,8 @@ const styles = {
   btnOutline: {
     width: '100%',
     backgroundColor: 'transparent',
-    border: '1px solid #475569',
-    color: '#94a3b8',
+    border: '1px solid #7C6F64',
+    color: '#5F6B7A',
     padding: '12px',
     borderRadius: '8px',
     fontWeight: 'bold',

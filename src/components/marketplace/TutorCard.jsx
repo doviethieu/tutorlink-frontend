@@ -59,7 +59,7 @@ export function TutorCard({ tutor, favorite = false }) {
                 <div className="flex flex-wrap items-center gap-2">
                   <a
                     href={`/tutors/${tutor?.id}`}
-                    className="font-semibold text-gray-900 dark:text-gray-100 transition hover:text-blue-600"
+                    className="font-semibold text-gray-900 dark:text-gray-100 transition hover:text-[#C05A3E]"
                   >
                     {tutor?.name}
                   </a>
@@ -234,7 +234,7 @@ function ScheduleDialog({ tutor, onClose }) {
                   }}
                   className={cn(
                     'flex h-16 flex-col items-center justify-center rounded-lg text-xs transition border border-transparent',
-                    active ? 'border-blue-600 bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/40 dark:text-blue-400' : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-900'
+                    active ? 'border-blue-600 bg-blue-50 font-bold text-[#C05A3E] dark:bg-blue-950/40 dark:text-[#C05A3E]' : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-900'
                   )}
                 >
                   <span>{dayName(day.date)}</span>

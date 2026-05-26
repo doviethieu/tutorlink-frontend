@@ -94,7 +94,7 @@ export default function DanhSachGiaSu() {
                 // Kích hoạt hiệu ứng nhấc thẻ card mượt mà kèm đổi màu border cam neon đồng bộ
                 transform: hoveredCard === (tutor.id || tutor._id) ? 'translateY(-5px)' : 'translateY(0)',
                 boxShadow: hoveredCard === (tutor.id || tutor._id) ? '0 20px 25px -5px rgba(0, 0, 0, 0.5)' : '0 4px 6px -1px rgba(0,0,0,0.1)',
-                borderColor: hoveredCard === (tutor.id || tutor._id) ? '#f97316' : '#334155'
+                borderColor: hoveredCard === (tutor.id || tutor._id) ? '#C05A3E' : '#E7DED2'
               }}
               onMouseEnter={() => setHoveredCard(tutor.id || tutor._id)}
               onMouseLeave={() => setHoveredCard(null)}
@@ -123,7 +123,7 @@ export default function DanhSachGiaSu() {
                   <span style={styles.priceLabel}>Học phí chỉ từ:</span>
                   <div style={styles.priceValue}>
                     {tutor.price?.toLocaleString('vi-VN')}đ
-                    <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 'normal' }}> / giờ</span>
+                    <span style={{ fontSize: '12px', color: '#5F6B7A', fontWeight: 'normal' }}> / giờ</span>
                   </div>
                 </div>
                 <Link 
@@ -131,7 +131,7 @@ export default function DanhSachGiaSu() {
                   style={{
                     ...styles.btnDetail,
                     // Đã thay bằng màu xanh Sky sáng chuẩn thiết kế mới
-                    backgroundColor: hoveredBtn === (tutor.id || tutor._id) ? '#0284c7' : '#38bdf8'
+                    backgroundColor: hoveredBtn === (tutor.id || tutor._id) ? '#0284c7' : '#C05A3E'
                   }}
                   onMouseEnter={() => setHoveredBtn(tutor.id || tutor._id)}
                   onMouseLeave={() => setHoveredBtn(null)}
@@ -151,11 +151,11 @@ export default function DanhSachGiaSu() {
 // --- 🛠️ ĐÃ CẬP NHẬT: BỘ CSS INLINE CHUẨN SLATE DARK-MODE ĐỒNG BỘ 100% ---
 const styles = {
   container: { 
-    backgroundColor: '#0f172a', 
+    backgroundColor: '#FAF7F0', 
     minHeight: '100vh', 
     padding: '40px 6%', 
     fontFamily: "'Inter', sans-serif", 
-    color: '#e2e8f0' 
+    color: '#1E293B' 
   },
   topBadge: { 
     backgroundColor: 'rgba(16, 185, 129, 0.15)', 
@@ -171,12 +171,12 @@ const styles = {
     fontSize: '34px', 
     fontWeight: '800', 
     margin: '15px 0 10px 0', 
-    color: '#fff',
+    color: '#1E293B',
     letterSpacing: '-0.5px'
   },
   subtitle: { 
     fontSize: '14px', 
-    color: '#94a3b8', 
+    color: '#5F6B7A', 
     maxWidth: '600px', 
     margin: '0 auto',
     lineHeight: '1.6'
@@ -192,8 +192,8 @@ const styles = {
     minWidth: '280px', 
     display: 'flex', 
     alignItems: 'center', 
-    backgroundColor: '#1e293b', 
-    border: '1px solid #334155', 
+    backgroundColor: '#FFFFFF', 
+    border: '1px solid #E7DED2', 
     padding: '0 15px', 
     borderRadius: '10px', 
     height: '46px' 
@@ -201,15 +201,15 @@ const styles = {
   searchInput: { 
     backgroundColor: 'transparent', 
     border: 'none', 
-    color: '#fff', 
+    color: '#1E293B', 
     width: '100%', 
     outline: 'none', 
     fontSize: '14px' 
   },
   selectFilter: { 
-    backgroundColor: '#1e293b', 
-    border: '1px solid #334155', 
-    color: '#fff', 
+    backgroundColor: '#FFFFFF', 
+    border: '1px solid #E7DED2', 
+    color: '#1E293B', 
     padding: '0 15px', 
     borderRadius: '10px', 
     height: '46px', 
@@ -220,7 +220,7 @@ const styles = {
   },
   centerText: { 
     textAlign: 'center', 
-    color: '#94a3b8', 
+    color: '#5F6B7A', 
     padding: '60px 0', 
     fontSize: '15px' 
   },
@@ -230,8 +230,8 @@ const styles = {
     gap: '25px' 
   },
   tutorCard: { 
-    backgroundColor: '#1e293b', 
-    border: '1px solid #334155', 
+    backgroundColor: '#FFFFFF', 
+    border: '1px solid #E7DED2', 
     borderRadius: '14px', 
     padding: '24px', 
     display: 'flex', 
@@ -243,8 +243,8 @@ const styles = {
     width: '52px', 
     height: '52px', 
     borderRadius: '12px', 
-    backgroundColor: 'rgba(249, 115, 22, 0.15)', // Đổi sang tông Cam thương hiệu của trang Login
-    color: '#f97316', 
+    backgroundColor: 'rgba(192, 90, 62, 0.15)', // Đổi sang tông Cam thương hiệu của trang Login
+    color: '#C05A3E', 
     fontWeight: '800', 
     fontSize: '22px', 
     display: 'flex', 
@@ -254,7 +254,7 @@ const styles = {
   tutorName: { 
     margin: 0, 
     fontSize: '18px', 
-    color: '#fff', 
+    color: '#1E293B', 
     fontWeight: '700' 
   },
   rateBadge: { 
@@ -268,23 +268,23 @@ const styles = {
   tutorSubject: { 
     margin: '4px 0 2px 0', 
     fontSize: '14px', 
-    color: '#38bdf8', // Đồng bộ dải màu Sky Blue với nút bấm
+    color: '#C05A3E', // Đồng bộ dải màu Sky Blue với nút bấm
     fontWeight: '600' 
   },
   tutorLevel: { 
     margin: 0, 
     fontSize: '13px', 
-    color: '#94a3b8' 
+    color: '#5F6B7A' 
   },
   tutorBio: { 
     fontSize: '13px', 
-    color: '#cbd5e1', 
+    color: '#1E293B', 
     lineHeight: '1.6', 
     margin: '18px 0', 
     flexGrow: 1 
   },
   cardFooter: { 
-    borderTop: '1px solid #334155', 
+    borderTop: '1px solid #E7DED2', 
     paddingTop: '15px', 
     display: 'flex', 
     justifyContent: 'space-between', 
@@ -292,7 +292,7 @@ const styles = {
   },
   priceLabel: { 
     fontSize: '12px', 
-    color: '#94a3b8', 
+    color: '#5F6B7A', 
     display: 'block' 
   },
   priceValue: { 
@@ -301,7 +301,7 @@ const styles = {
     color: '#10b981' // Màu Emerald Green giống bên trang hóa đơn của sếp
   },
   btnDetail: { 
-    color: '#0f172a', // Đổi chữ màu tối để tương phản cực nét trên nền Sky sáng
+    color: '#FAF7F0', // Đổi chữ màu tối để tương phản cực nét trên nền Sky sáng
     padding: '10px 18px', 
     borderRadius: '8px', 
     textDecoration: 'none', 

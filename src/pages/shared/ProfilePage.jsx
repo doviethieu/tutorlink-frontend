@@ -172,7 +172,7 @@ export default function Profile() {
           <span style={styles.roleBadge}>{user?.role === "tutor" ? "Gia Sư" : user?.role === "admin" ? "Quản Trị Viên" : "Học Viên"}</span>
           <p style={styles.emailText}>📧 {user?.email}</p>
           <div style={styles.balanceWidget}>
-            <span style={{ fontSize: "12px", color: "#94a3b8" }}>Số dư khả dụng</span>
+            <span style={{ fontSize: "12px", color: "#5F6B7A" }}>Số dư khả dụng</span>
             <span style={styles.balanceValue}>{wallet.balance.toLocaleString('vi-VN')} đ</span>
           </div>
         </div>
@@ -217,7 +217,7 @@ export default function Profile() {
                   <input type="password" value={passwordData.confirmPassword} onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})} style={styles.input} required />
                 </div>
               </div>
-              <button type="submit" disabled={loading} style={{ ...styles.btnSave, backgroundColor: "#38bdf8", color: "#0f172a" }}>{loading ? "⏳ Đang xử lý..." : "🔑 Đổi mật khẩu"}</button>
+              <button type="submit" disabled={loading} style={{ ...styles.btnSave, backgroundColor: "#C05A3E", color: "#FAF7F0" }}>{loading ? "⏳ Đang xử lý..." : "🔑 Đổi mật khẩu"}</button>
             </form>
           )}
 
@@ -271,7 +271,7 @@ export default function Profile() {
             <div>
               <h3 style={styles.sectionTitle}>Lịch sử lớp học của sếp</h3>
               {history.length === 0 ? (
-                <p style={{ color: "#94a3b8" }}>Chưa có lịch sử hoạt động lớp học nào.</p>
+                <p style={{ color: "#5F6B7A" }}>Chưa có lịch sử hoạt động lớp học nào.</p>
               ) : (
                 <div style={styles.tableResponsive}>
                   <table style={styles.table}>
@@ -292,8 +292,8 @@ export default function Profile() {
                           <td style={styles.td}>
                             <span style={{
                               padding: "4px 8px", borderRadius: "4px", fontSize: "11px", fontWeight: "700",
-                              backgroundColor: h.status === "completed" ? "rgba(16, 185, 129, 0.12)" : "rgba(56, 189, 248, 0.12)",
-                              color: h.status === "completed" ? "#10b981" : "#38bdf8"
+                              backgroundColor: h.status === "completed" ? "rgba(16, 185, 129, 0.12)" : "rgba(192, 90, 62, 0.12)",
+                              color: h.status === "completed" ? "#10b981" : "#C05A3E"
                             }}>
                               {h.status === "completed" ? "Đã hoàn thành" : "Đã lên lịch"}
                             </span>
@@ -316,40 +316,40 @@ export default function Profile() {
 // 🎨 DESIGN SYSTEM CHUẨN DARK MODE CỦA TUTORLINK
 // =========================================================================
 const styles = {
-  container: { color: "#cbd5e1", fontFamily: "'Inter', sans-serif" },
+  container: { color: "#1E293B", fontFamily: "'Inter', sans-serif" },
   header: { marginBottom: "24px" },
-  title: { fontSize: "24px", fontWeight: "800", color: "#fff", margin: 0 },
-  subtitle: { fontSize: "13px", color: "#94a3b8", margin: "4px 0 0 0" },
+  title: { fontSize: "24px", fontWeight: "800", color: "#1E293B", margin: 0 },
+  subtitle: { fontSize: "13px", color: "#5F6B7A", margin: "4px 0 0 0" },
   alert: { padding: "12px 16px", borderRadius: "8px", fontSize: "13px", fontWeight: "600", marginBottom: "16px" },
-  tabNav: { display: "flex", gap: "8px", borderBottom: "1px solid #334155", paddingBottom: "12px", marginBottom: "20px" },
-  tabBtn: { backgroundColor: "transparent", border: "none", color: "#94a3b8", padding: "8px 16px", borderRadius: "6px", fontSize: "13px", fontWeight: "600", cursor: "pointer" },
-  tabBtnActive: { backgroundColor: "#1e293b", border: "1px solid #334155", color: "#38bdf8", padding: "8px 16px", borderRadius: "6px", fontSize: "13px", fontWeight: "700" },
+  tabNav: { display: "flex", gap: "8px", borderBottom: "1px solid #E7DED2", paddingBottom: "12px", marginBottom: "20px" },
+  tabBtn: { backgroundColor: "transparent", border: "none", color: "#5F6B7A", padding: "8px 16px", borderRadius: "6px", fontSize: "13px", fontWeight: "600", cursor: "pointer" },
+  tabBtnActive: { backgroundColor: "#FFFFFF", border: "1px solid #E7DED2", color: "#C05A3E", padding: "8px 16px", borderRadius: "6px", fontSize: "13px", fontWeight: "700" },
   gridContainer: { display: "grid", gridTemplateColumns: "280px 1fr", gap: "20px", alignItems: "start" },
-  sidebarCard: { backgroundColor: "#1e293b", border: "1px solid #334155", borderRadius: "12px", padding: "20px", textAlign: "center" },
+  sidebarCard: { backgroundColor: "#FFFFFF", border: "1px solid #E7DED2", borderRadius: "12px", padding: "20px", textAlign: "center" },
   avatarWrapper: { position: "relative", width: "100px", height: "100px", margin: "0 auto 12px auto" },
-  avatarImg: { width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover", border: "2px solid #38bdf8" },
-  avatarLabel: { position: "absolute", bottom: 0, right: 0, backgroundColor: "#38bdf8", color: "#0f172a", fontSize: "10px", fontWeight: "700", padding: "4px 6px", borderRadius: "4px", cursor: "pointer" },
-  profileName: { fontSize: "16px", fontWeight: "700", color: "#fff", margin: "0 0 4px 0" },
-  roleBadge: { display: "inline-block", backgroundColor: "rgba(56, 189, 248, 0.1)", color: "#38bdf8", padding: "2px 8px", borderRadius: "4px", fontSize: "11px", fontWeight: "700", marginBottom: "12px" },
-  emailText: { fontSize: "12px", color: "#94a3b8", margin: "0 0 16px 0" },
-  balanceWidget: { backgroundColor: "#0f172a", padding: "12px", borderRadius: "8px", display: "flex", flexDirection: "column", gap: "4px", textAlign: "left" },
+  avatarImg: { width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover", border: "2px solid #C05A3E" },
+  avatarLabel: { position: "absolute", bottom: 0, right: 0, backgroundColor: "#C05A3E", color: "#FAF7F0", fontSize: "10px", fontWeight: "700", padding: "4px 6px", borderRadius: "4px", cursor: "pointer" },
+  profileName: { fontSize: "16px", fontWeight: "700", color: "#1E293B", margin: "0 0 4px 0" },
+  roleBadge: { display: "inline-block", backgroundColor: "rgba(192, 90, 62, 0.1)", color: "#C05A3E", padding: "2px 8px", borderRadius: "4px", fontSize: "11px", fontWeight: "700", marginBottom: "12px" },
+  emailText: { fontSize: "12px", color: "#5F6B7A", margin: "0 0 16px 0" },
+  balanceWidget: { backgroundColor: "#FAF7F0", padding: "12px", borderRadius: "8px", display: "flex", flexDirection: "column", gap: "4px", textAlign: "left" },
   balanceValue: { fontSize: "16px", fontWeight: "800", color: "#10b981" },
-  mainContentCard: { backgroundColor: "#1e293b", border: "1px solid #334155", borderRadius: "12px", padding: "24px" },
-  sectionTitle: { fontSize: "16px", fontWeight: "700", color: "#fff", margin: "0 0 16px 0" },
-  walletNotice: { backgroundColor: "rgba(56, 189, 248, 0.08)", border: "1px solid rgba(56, 189, 248, 0.18)", color: "#bae6fd", padding: "12px 14px", borderRadius: "8px", fontSize: "13px", lineHeight: "1.6", marginBottom: "16px" },
+  mainContentCard: { backgroundColor: "#FFFFFF", border: "1px solid #E7DED2", borderRadius: "12px", padding: "24px" },
+  sectionTitle: { fontSize: "16px", fontWeight: "700", color: "#1E293B", margin: "0 0 16px 0" },
+  walletNotice: { backgroundColor: "rgba(192, 90, 62, 0.08)", border: "1px solid rgba(192, 90, 62, 0.18)", color: "#bae6fd", padding: "12px 14px", borderRadius: "8px", fontSize: "13px", lineHeight: "1.6", marginBottom: "16px" },
   form: { display: "flex", flexDirection: "column", gap: "12px" },
   formGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" },
   formGroup: { display: "flex", flexDirection: "column", gap: "6px" },
-  label: { fontSize: "12px", color: "#94a3b8", fontWeight: "600" },
-  input: { backgroundColor: "#0f172a", border: "1px solid #334155", padding: "10px 12px", borderRadius: "6px", color: "#fff", fontSize: "13px", outline: "none" },
-  btnSave: { backgroundColor: "#10b981", color: "#fff", border: "none", padding: "10px 16px", borderRadius: "6px", fontSize: "13px", fontWeight: "700", cursor: "pointer", marginTop: "12px", alignSelf: "flex-end" },
-  depositForm: { display: "grid", gridTemplateColumns: "1fr auto", gap: "12px", alignItems: "flex-end", backgroundColor: "#0f172a", padding: "16px", borderRadius: "8px" },
-  btnDeposit: { backgroundColor: "#10b981", color: "#fff", border: "none", padding: "11px 16px", borderRadius: "6px", fontSize: "13px", fontWeight: "700", cursor: "pointer" },
+  label: { fontSize: "12px", color: "#5F6B7A", fontWeight: "600" },
+  input: { backgroundColor: "#FAF7F0", border: "1px solid #E7DED2", padding: "10px 12px", borderRadius: "6px", color: "#1E293B", fontSize: "13px", outline: "none" },
+  btnSave: { backgroundColor: "#10b981", color: "#1E293B", border: "none", padding: "10px 16px", borderRadius: "6px", fontSize: "13px", fontWeight: "700", cursor: "pointer", marginTop: "12px", alignSelf: "flex-end" },
+  depositForm: { display: "grid", gridTemplateColumns: "1fr auto", gap: "12px", alignItems: "flex-end", backgroundColor: "#FAF7F0", padding: "16px", borderRadius: "8px" },
+  btnDeposit: { backgroundColor: "#10b981", color: "#1E293B", border: "none", padding: "11px 16px", borderRadius: "6px", fontSize: "13px", fontWeight: "700", cursor: "pointer" },
   tableResponsive: { overflowX: "auto" },
   table: { width: "100%", borderCollapse: "collapse", textAlign: "left" },
-  thRow: { borderBottom: "1px solid #334155" },
-  th: { padding: "10px 12px", color: "#94a3b8", fontSize: "12px", fontWeight: "700" },
+  thRow: { borderBottom: "1px solid #E7DED2" },
+  th: { padding: "10px 12px", color: "#5F6B7A", fontSize: "12px", fontWeight: "700" },
   tdRow: { borderBottom: "1px solid #233149" },
-  td: { padding: "12px", fontSize: "13px", color: "#cbd5e1" },
-  badge: { backgroundColor: "rgba(56, 189, 248, 0.08)", color: "#38bdf8", padding: "2px 6px", borderRadius: "4px", fontSize: "11px" }
+  td: { padding: "12px", fontSize: "13px", color: "#1E293B" },
+  badge: { backgroundColor: "rgba(192, 90, 62, 0.08)", color: "#C05A3E", padding: "2px 6px", borderRadius: "4px", fontSize: "11px" }
 };

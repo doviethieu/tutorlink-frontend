@@ -154,7 +154,7 @@ export default function TrangChat() {
                 onClick={() => setActiveRoomId(room.id)}
                 style={{
                   ...styles.roomItem,
-                  backgroundColor: room.id === activeRoomId ? '#334155' : 'transparent',
+                  backgroundColor: room.id === activeRoomId ? '#E7DED2' : 'transparent',
                 }}
               >
                 <div style={styles.avatarMini}>{room.name.charAt(0).toUpperCase()}</div>
@@ -202,7 +202,7 @@ export default function TrangChat() {
 
 const styles = {
   container: {
-    backgroundColor: '#0f172a',
+    backgroundColor: '#FAF7F0',
     height: 'calc(100vh - 70px)',
     padding: '24px',
     boxSizing: 'border-box',
@@ -212,26 +212,26 @@ const styles = {
     maxWidth: '1200px',
     height: '100%',
     margin: '0 auto',
-    backgroundColor: '#1e293b',
-    border: '1px solid #334155',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E7DED2',
     borderRadius: '14px',
     display: 'grid',
     gridTemplateColumns: '330px 1fr',
     overflow: 'hidden',
   },
   sidebar: {
-    borderRight: '1px solid #334155',
-    backgroundColor: '#0f172a',
+    borderRight: '1px solid #E7DED2',
+    backgroundColor: '#FAF7F0',
     display: 'flex',
     flexDirection: 'column',
     minWidth: 0,
   },
   sidebarHeader: {
     padding: '22px 18px',
-    borderBottom: '1px solid #334155',
+    borderBottom: '1px solid #E7DED2',
   },
   sidebarTitle: {
-    color: '#fff',
+    color: '#1E293B',
     margin: 0,
     fontSize: '17px',
     fontWeight: 800,
@@ -257,19 +257,19 @@ const styles = {
     marginBottom: '6px',
     border: 'none',
     textAlign: 'left',
-    color: '#e2e8f0',
+    color: '#1E293B',
   },
   avatarMini: {
     width: '40px',
     height: '40px',
     borderRadius: '50%',
-    backgroundColor: '#1e293b',
-    color: '#38bdf8',
+    backgroundColor: '#FFFFFF',
+    color: '#C05A3E',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     fontWeight: 800,
-    border: '1px solid rgba(56, 189, 248, 0.24)',
+    border: '1px solid rgba(192, 90, 62, 0.24)',
     flexShrink: 0,
   },
   roomMeta: {
@@ -282,7 +282,7 @@ const styles = {
     gap: '8px',
   },
   roomName: {
-    color: '#fff',
+    color: '#1E293B',
     fontWeight: 700,
     fontSize: '14px',
     overflow: 'hidden',
@@ -290,13 +290,13 @@ const styles = {
     whiteSpace: 'nowrap',
   },
   roomTime: {
-    color: '#64748b',
+    color: '#8A7D72',
     fontSize: '11px',
     flexShrink: 0,
   },
   roomRole: {
     margin: '4px 0 0',
-    color: '#38bdf8',
+    color: '#C05A3E',
     fontSize: '12px',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
@@ -304,7 +304,7 @@ const styles = {
   },
   lastMessage: {
     margin: '4px 0 0',
-    color: '#94a3b8',
+    color: '#5F6B7A',
     fontSize: '12px',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
@@ -318,8 +318,8 @@ const styles = {
     gap: '12px',
   },
   chatHeader: {
-    backgroundColor: '#0f172a',
-    border: '1px solid #334155',
+    backgroundColor: '#FAF7F0',
+    border: '1px solid #E7DED2',
     borderRadius: '10px',
     padding: '14px 16px',
     display: 'flex',
@@ -329,13 +329,13 @@ const styles = {
   },
   activeTitle: {
     margin: 0,
-    color: '#fff',
+    color: '#1E293B',
     fontSize: '16px',
     fontWeight: 800,
   },
   activeSubtitle: {
     margin: '5px 0 0',
-    color: '#94a3b8',
+    color: '#5F6B7A',
     fontSize: '13px',
   },
   videoBtn: {
@@ -349,14 +349,14 @@ const styles = {
     whiteSpace: 'nowrap',
   },
   noSelect: {
-    color: '#94a3b8',
+    color: '#5F6B7A',
     height: '100%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
   },
   stateText: {
-    color: '#94a3b8',
+    color: '#5F6B7A',
     padding: '20px 14px',
     fontSize: '13px',
   },

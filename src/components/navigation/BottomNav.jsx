@@ -44,14 +44,14 @@ export function BottomNav() {
                   className={cn(
                     'flex min-w-[60px] flex-col items-center gap-0.5 rounded-lg px-3 py-1.5 text-[11px] font-medium transition',
                     active
-                      ? 'text-blue-600 dark:text-blue-400 font-semibold'
+                      ? 'text-[#C05A3E] dark:text-[#C05A3E] font-semibold'
                       : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100',
                   )}
                 >
                   <Icon 
                     className={cn(
                       'h-5 w-5 transition-transform group-active:scale-95', 
-                      active && 'text-blue-600 dark:text-blue-400 fill-blue-500/10'
+                      active && 'text-[#C05A3E] dark:text-[#C05A3E] fill-blue-500/10'
                     )} 
                   />
                   {label}

@@ -171,8 +171,8 @@ function TroGiup() {
             disabled={loading}
             style={{
               ...styles.btnSubmit,
-              backgroundColor: loading ? '#475569' : '#38bdf8',
-              color: loading ? '#94a3b8' : '#0f172a',
+              backgroundColor: loading ? '#7C6F64' : '#C05A3E',
+              color: loading ? '#5F6B7A' : '#FAF7F0',
               cursor: loading ? 'not-allowed' : 'pointer'
             }}
           >
@@ -229,14 +229,14 @@ function statusStyle(status) {
     whiteSpace: 'nowrap'
   };
   if (status === 'resolved') return { ...base, color: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.12)' };
-  if (status === 'dismissed') return { ...base, color: '#94a3b8', backgroundColor: 'rgba(148, 163, 184, 0.12)' };
+  if (status === 'dismissed') return { ...base, color: '#5F6B7A', backgroundColor: 'rgba(148, 163, 184, 0.12)' };
   return { ...base, color: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.12)' };
 }
 
 // --- 🛠️ BỘ HỆ THỐNG DESIGN SYSTEM SLATE PREMIUM DARK MODE ĐỒNG BỘ ---
 const styles = {
   container: {
-    backgroundColor: '#0f172a',
+    backgroundColor: '#FAF7F0',
     minHeight: 'calc(100vh - 70px)',
     padding: '40px 20px',
     display: 'flex',
@@ -246,13 +246,13 @@ const styles = {
     boxSizing: 'border-box'
   },
   cardBox: {
-    backgroundColor: '#1e293b',
+    backgroundColor: '#FFFFFF',
     borderRadius: '16px',
     boxShadow: '0 20px 40px rgba(0, 0, 0, 0.25)',
     width: '100%',
     maxWidth: '780px',
     padding: '40px',
-    border: '1px solid #334155',
+    border: '1px solid #E7DED2',
     boxSizing: 'border-box'
   },
   headerArea: {
@@ -260,8 +260,8 @@ const styles = {
     marginBottom: '32px'
   },
   topBadge: {
-    backgroundColor: 'rgba(56, 189, 248, 0.1)',
-    color: '#38bdf8',
+    backgroundColor: 'rgba(192, 90, 62, 0.1)',
+    color: '#C05A3E',
     fontSize: '11px',
     fontWeight: '700',
     padding: '6px 14px',
@@ -271,14 +271,14 @@ const styles = {
     marginBottom: '12px'
   },
   title: {
-    color: '#fff',
+    color: '#1E293B',
     fontSize: '26px',
     fontWeight: '800',
     margin: '0 0 10px 0',
     letterSpacing: '-0.5px'
   },
   subtitle: {
-    color: '#94a3b8',
+    color: '#5F6B7A',
     fontSize: '14px',
     margin: 0,
     lineHeight: '1.6'
@@ -300,16 +300,16 @@ const styles = {
     display: 'block',
     marginBottom: '8px',
     fontWeight: '600',
-    color: '#cbd5e1',
+    color: '#1E293B',
     fontSize: '13.5px'
   },
   input: {
     width: '100%',
     padding: '12px 16px',
     borderRadius: '8px',
-    backgroundColor: '#0f172a',
-    border: '1px solid #334155',
-    color: '#fff',
+    backgroundColor: '#FAF7F0',
+    border: '1px solid #E7DED2',
+    color: '#1E293B',
     fontSize: '14.5px',
     outline: 'none',
     boxSizing: 'border-box',
@@ -319,9 +319,9 @@ const styles = {
     width: '100%',
     padding: '12px',
     borderRadius: '8px',
-    backgroundColor: '#0f172a',
-    border: '1px solid #334155',
-    color: '#fff',
+    backgroundColor: '#FAF7F0',
+    border: '1px solid #E7DED2',
+    color: '#1E293B',
     fontSize: '14.5px',
     outline: 'none',
     boxSizing: 'border-box'
@@ -330,9 +330,9 @@ const styles = {
     width: '100%',
     padding: '14px 16px',
     borderRadius: '8px',
-    backgroundColor: '#0f172a',
-    border: '1px solid #334155',
-    color: '#fff',
+    backgroundColor: '#FAF7F0',
+    border: '1px solid #E7DED2',
+    color: '#1E293B',
     fontSize: '14.5px',
     outline: 'none',
     resize: 'vertical',
@@ -346,13 +346,13 @@ const styles = {
     borderRadius: '8px',
     fontSize: '15px',
     fontWeight: '700',
-    boxShadow: '0 4px 14px rgba(56, 189, 248, 0.2)',
+    boxShadow: '0 4px 14px rgba(192, 90, 62, 0.2)',
     transition: 'all 0.15s ease',
     marginTop: '10px'
   },
   ticketHistory: {
     marginTop: '30px',
-    borderTop: '1px solid #334155',
+    borderTop: '1px solid #E7DED2',
     paddingTop: '24px'
   },
   ticketHeader: {
@@ -364,12 +364,12 @@ const styles = {
   },
   ticketTitle: {
     margin: 0,
-    color: '#fff',
+    color: '#1E293B',
     fontSize: '17px',
     fontWeight: 800
   },
   ticketCount: {
-    color: '#38bdf8',
+    color: '#C05A3E',
     fontSize: '12px',
     fontWeight: 700
   },
@@ -379,8 +379,8 @@ const styles = {
     gap: '12px'
   },
   ticketItem: {
-    backgroundColor: '#0f172a',
-    border: '1px solid #334155',
+    backgroundColor: '#FAF7F0',
+    border: '1px solid #E7DED2',
     borderRadius: '10px',
     padding: '14px'
   },
@@ -391,11 +391,11 @@ const styles = {
     gap: '12px'
   },
   ticketSubject: {
-    color: '#fff',
+    color: '#1E293B',
     fontSize: '14px'
   },
   ticketMessage: {
-    color: '#cbd5e1',
+    color: '#1E293B',
     fontSize: '13px',
     lineHeight: 1.5,
     margin: '10px 0 0 0'
@@ -411,7 +411,7 @@ const styles = {
     padding: '10px'
   },
   emptyText: {
-    color: '#94a3b8',
+    color: '#5F6B7A',
     fontSize: '13px',
     margin: 0
   },

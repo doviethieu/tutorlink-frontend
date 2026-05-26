@@ -45,7 +45,7 @@ export default function KetQuaThanhToan() {
         <div style={styles.infoBox}>
           <div style={styles.infoRow}>
             <span style={styles.infoLabel}>Mã booking</span>
-            <span style={{ ...styles.infoValue, fontFamily: 'monospace', letterSpacing: '1px', color: '#38bdf8' }}>{bookingId}</span>
+            <span style={{ ...styles.infoValue, fontFamily: 'monospace', letterSpacing: '1px', color: '#C05A3E' }}>{bookingId}</span>
           </div>
           <div style={styles.infoRow}>
             <span style={styles.infoLabel}>Trạng thái</span>
@@ -89,7 +89,7 @@ export default function KetQuaThanhToan() {
 // --- 🛠️ HỆ THỐNG CSS INLINE PRESET DARK SLATE PREMIUM MƯỚT MẮT ---
 const styles = {
   container: {
-    backgroundColor: '#0f172a',
+    backgroundColor: '#FAF7F0',
     minHeight: '100vh', // Nâng cấp từ 85vh lên 100vh để chống hụt chân giao diện
     display: 'flex',
     alignItems: 'center',
@@ -105,13 +105,13 @@ const styles = {
     right: '-15%',
     width: '400px',
     height: '400px',
-    background: 'radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, rgba(0,0,0,0) 70%)',
+    background: 'radial-gradient(circle, rgba(192, 90, 62, 0.12) 0%, rgba(0,0,0,0) 70%)',
     zIndex: 1,
     pointerEvents: 'none'
   },
   card: {
-    backgroundColor: '#1e293b',
-    border: '1px solid #334155',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E7DED2',
     borderRadius: '24px', // Tăng độ bo góc cho thêm phần mềm mại
     width: '100%',
     maxWidth: '440px',
@@ -139,19 +139,19 @@ const styles = {
   mainTitle: {
     fontSize: '24px',
     fontWeight: '800',
-    color: '#fff',
+    color: '#1E293B',
     margin: '0 0 12px 0',
     letterSpacing: '-0.5px'
   },
   subtitle: {
     fontSize: '14.5px',
-    color: '#94a3b8',
+    color: '#5F6B7A',
     margin: 0,
     lineHeight: '1.6'
   },
   infoBox: {
-    backgroundColor: 'rgba(15, 23, 42, 0.6)',
-    border: '1px solid #334155',
+    backgroundColor: 'rgba(250, 247, 240, 0.6)',
+    border: '1px solid #E7DED2',
     borderRadius: '14px',
     padding: '18px',
     display: 'flex',
@@ -165,11 +165,11 @@ const styles = {
     fontSize: '14px'
   },
   infoLabel: {
-    color: '#94a3b8',
+    color: '#5F6B7A',
     fontWeight: '500'
   },
   infoValue: {
-    color: '#fff',
+    color: '#1E293B',
     fontWeight: '700'
   },
   btnGrid: {
@@ -181,8 +181,8 @@ const styles = {
   btnOutline: {
     width: '100%',
     backgroundColor: 'transparent',
-    border: '1px solid #475569',
-    color: '#fff',
+    border: '1px solid #7C6F64',
+    color: '#1E293B',
     padding: '12.5px',
     borderRadius: '8px',
     fontWeight: '700',
@@ -192,15 +192,15 @@ const styles = {
   },
   btnPrimary: {
     width: '100%',
-    backgroundColor: '#38bdf8', // Đồng bộ Sky Blue cao cấp
+    backgroundColor: '#C05A3E', // Đồng bộ Sky Blue cao cấp
     border: 'none',
-    color: '#0f172a', // Chữ màu tối trên nền sáng tạo tương phản cực mạnh
+    color: '#FAF7F0', // Chữ màu tối trên nền sáng tạo tương phản cực mạnh
     padding: '12.5px',
     borderRadius: '8px',
     fontWeight: '700',
     cursor: 'pointer',
     fontSize: '14px',
     transition: 'all 0.2s',
-    boxShadow: '0 4px 14px rgba(56, 189, 248, 0.2)'
+    boxShadow: '0 4px 14px rgba(192, 90, 62, 0.2)'
   }
 };

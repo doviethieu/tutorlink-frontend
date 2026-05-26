@@ -52,27 +52,27 @@ export function ReviewDialog({ open, onClose, tutorName, subject, bookingId, tut
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/60 p-4 backdrop-blur-sm sm:items-center"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-[#1E293B]/35 p-4 backdrop-blur-sm sm:items-center"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-lg overflow-hidden rounded-2xl border border-slate-700 bg-[#111827] shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+        className="w-full max-w-lg overflow-hidden rounded-2xl border border-[#E7DED2] bg-white shadow-2xl animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* HEADER MODAL */}
-        <div className="flex items-start justify-between border-b border-slate-800 p-6">
+        <div className="flex items-start justify-between border-b border-[#E7DED2] p-6">
           <div>
-            <h2 className="text-xl font-bold text-white">
+            <h2 className="text-xl font-bold text-[#1E293B]">
               Đánh giá buổi học
             </h2>
-            <p className="mt-1 text-sm text-slate-400">
-              Gia sư: <span className="text-orange-400 font-semibold">{tutorName}</span> · Lớp: {subject}
+            <p className="mt-1 text-sm text-[#5F6B7A]">
+              Gia sư: <span className="text-[#C05A3E] font-semibold">{tutorName}</span> · Lớp: {subject}
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-800 hover:text-white"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-[#5F6B7A] transition hover:bg-[#FAF7F0] hover:text-[#1E293B]"
           >
             <X className="h-5 w-5" />
           </button>
@@ -82,7 +82,7 @@ export function ReviewDialog({ open, onClose, tutorName, subject, bookingId, tut
         <div className="space-y-5 p-6">
           {/* Khu vực chọn số Sao (Rating) */}
           <div>
-            <p className="text-sm font-semibold text-slate-200">Mức độ hài lòng của bạn</p>
+            <p className="text-sm font-semibold text-[#1E293B]">Mức độ hài lòng của bạn</p>
             <div className="mt-3 flex gap-1">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
@@ -96,15 +96,15 @@ export function ReviewDialog({ open, onClose, tutorName, subject, bookingId, tut
                   <Star
                     className={`h-8 w-8 transition-colors duration-150 ${
                       (hover || rating) >= star
-                        ? 'fill-orange-500 text-orange-500'
-                        : 'text-slate-600'
+                        ? 'fill-[#C05A3E] text-[#C05A3E]'
+                        : 'text-[#7C6F64]'
                     }`}
                   />
                 </button>
               ))}
             </div>
             {rating > 0 && (
-              <p className="mt-2 text-xs font-semibold text-orange-400">
+              <p className="mt-2 text-xs font-semibold text-[#C05A3E]">
                 👉 {['Cần cải thiện 🌟', 'Tạm được ⭐⭐', 'Khá tốt ⭐⭐⭐', 'Rất tốt ⭐⭐⭐⭐', 'Tuyệt vời dịch vụ 5 sao! 🔥'][rating - 1]}
               </p>
             )}
@@ -112,7 +112,7 @@ export function ReviewDialog({ open, onClose, tutorName, subject, bookingId, tut
 
           {/* Khu vực nhập nội dung bình luận (Comment) */}
           <div>
-            <label className="text-sm font-semibold text-slate-200" htmlFor="comment">
+            <label className="text-sm font-semibold text-[#1E293B]" htmlFor="comment">
               Nhận xét chi tiết
             </label>
             <textarea
@@ -121,17 +121,17 @@ export function ReviewDialog({ open, onClose, tutorName, subject, bookingId, tut
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder="Chia sẻ trải nghiệm thực tế của bạn để giúp gia sư và cộng đồng học viên khác nhé..."
-              className="mt-2 w-full h-28 px-3 py-2 text-sm rounded-xl bg-[#0f172a] border border-slate-700 text-white placeholder-slate-500 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition resize-none"
+              className="mt-2 w-full h-28 px-3 py-2 text-sm rounded-xl bg-[#FAF7F0] border border-[#E7DED2] text-[#1E293B] placeholder-[#7C6F64] focus:border-[#C05A3E] focus:ring-1 focus:ring-[#C05A3E] outline-none transition resize-none"
             />
           </div>
         </div>
 
         {/* FOOTER ACTION BUTTONS */}
-        <div className="flex justify-end gap-2 border-t border-slate-800 bg-slate-900/40 p-4">
+        <div className="flex justify-end gap-2 border-t border-[#E7DED2] bg-[#FAF7F0] p-4">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 h-10 rounded-xl text-slate-300 font-semibold text-sm hover:bg-slate-800 transition"
+            className="px-4 h-10 rounded-xl text-[#1E293B] font-semibold text-sm hover:bg-[#E7DED2] transition"
           >
             Hủy bỏ
           </button>
@@ -139,7 +139,7 @@ export function ReviewDialog({ open, onClose, tutorName, subject, bookingId, tut
             type="button"
             onClick={handleSubmit}
             disabled={isPending}
-            className={`px-4 h-10 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-sm transition flex items-center justify-center gap-2 ${
+            className={`px-4 h-10 rounded-xl bg-[#C05A3E] hover:bg-[#A94730] text-[#FAF7F0] font-bold text-sm transition flex items-center justify-center gap-2 ${
               isPending ? 'opacity-60 cursor-not-allowed' : ''
             }`}
           >

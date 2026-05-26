@@ -61,9 +61,9 @@ export default function TutorPanel() {
       case 'confirmed': 
         return <span style={{ ...styles.badge, backgroundColor: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.2)' }}>Đã nhận</span>;
       case 'completed': 
-        return <span style={{ ...styles.badge, backgroundColor: 'rgba(56, 189, 248, 0.1)', color: '#38bdf8', border: '1px solid rgba(56, 189, 248, 0.2)' }}>Đã xong</span>;
+        return <span style={{ ...styles.badge, backgroundColor: 'rgba(192, 90, 62, 0.1)', color: '#C05A3E', border: '1px solid rgba(192, 90, 62, 0.2)' }}>Đã xong</span>;
       default: 
-        return <span style={{ ...styles.badge, backgroundColor: '#334155', color: '#94a3b8' }}>{status}</span>;
+        return <span style={{ ...styles.badge, backgroundColor: '#E7DED2', color: '#5F6B7A' }}>{status}</span>;
     }
   };
 
@@ -89,7 +89,7 @@ export default function TutorPanel() {
             style={{
               ...styles.btnOutline,
               backgroundColor: isHoverProfile ? 'rgba(255,255,255,0.05)' : 'transparent',
-              borderColor: isHoverProfile ? '#cbd5e1' : '#475569'
+              borderColor: isHoverProfile ? '#1E293B' : '#7C6F64'
             }}
             onMouseOver={() => setIsHoverProfile(true)}
             onMouseOut={() => setIsHoverProfile(false)}
@@ -100,7 +100,7 @@ export default function TutorPanel() {
             to="/tutor/availability" 
             style={{
               ...styles.btnPrimary,
-              backgroundColor: isHoverAvailability ? '#0ea5e9' : '#38bdf8'
+              backgroundColor: isHoverAvailability ? '#A94730' : '#C05A3E'
             }}
             onMouseOver={() => setIsHoverAvailability(true)}
             onMouseOut={() => setIsHoverAvailability(false)}
@@ -123,7 +123,7 @@ export default function TutorPanel() {
           <h2 style={styles.statValue}>{confirmedCount} <span style={styles.statUnit}>ca dạy</span></h2>
         </div>
         <div style={styles.statCard}>
-          <div style={{ ...styles.iconBox, color: '#38bdf8', backgroundColor: 'rgba(56, 189, 248, 0.12)' }}>⭐</div>
+          <div style={{ ...styles.iconBox, color: '#C05A3E', backgroundColor: 'rgba(192, 90, 62, 0.12)' }}>⭐</div>
           <p style={styles.statLabel}>Buổi học đã hoàn thành</p>
           <h2 style={styles.statValue}>{completedCount} <span style={styles.statUnit}>lớp</span></h2>
         </div>
@@ -154,7 +154,7 @@ export default function TutorPanel() {
                 <div style={styles.bookingMeta}>
                   <p style={styles.bookingSubject}>{booking.subject || "Môn học trực tuyến"}</p>
                   <p style={styles.bookingTimeDetails}>
-                     Mã đơn: <b style={{ color: '#cbd5e1' }}>{booking.id || booking._id}</b> · 📅 {booking.date} · ⏰ {booking.time}
+                     Mã đơn: <b style={{ color: '#1E293B' }}>{booking.id || booking._id}</b> · 📅 {booking.date} · ⏰ {booking.time}
                   </p>
                 </div>
                 <div>
@@ -176,8 +176,8 @@ export default function TutorPanel() {
             to="/tutor/availability" 
             style={{
               ...styles.btnFullWidth,
-              backgroundColor: isHoverConfig ? 'rgba(56, 189, 248, 0.08)' : 'transparent',
-              borderColor: '#38bdf8'
+              backgroundColor: isHoverConfig ? 'rgba(192, 90, 62, 0.08)' : 'transparent',
+              borderColor: '#C05A3E'
             }}
             onMouseOver={() => setIsHoverConfig(true)}
             onMouseOut={() => setIsHoverConfig(false)}
@@ -195,18 +195,18 @@ export default function TutorPanel() {
 // --- 🛠️ DESIGN SYSTEM SLATE PREMIUM DARK MODE HOÀN CHỈNH ---
 const styles = {
   container: { 
-    backgroundColor: '#0f172a', 
+    backgroundColor: '#FAF7F0', 
     minHeight: '100vh', 
     padding: '40px 24px', 
     fontFamily: "'Inter', sans-serif", 
-    color: '#f1f5f9', 
+    color: '#1E293B', 
     boxSizing: 'border-box' 
   },
   bannerGrid: { 
     maxWidth: '1200px', 
     margin: '0 auto 24px auto', 
-    backgroundColor: '#1e293b', 
-    border: '1px solid #334155', 
+    backgroundColor: '#FFFFFF', 
+    border: '1px solid #E7DED2', 
     borderRadius: '16px', 
     padding: '24px 32px', 
     display: 'flex', 
@@ -217,8 +217,8 @@ const styles = {
     boxShadow: '0 10px 30px rgba(0, 0, 0, 0.15)' 
   },
   accentBadge: { 
-    backgroundColor: 'rgba(56, 189, 248, 0.1)', 
-    color: '#38bdf8', 
+    backgroundColor: 'rgba(192, 90, 62, 0.1)', 
+    color: '#C05A3E', 
     fontSize: '11px', 
     fontWeight: '700', 
     padding: '6px 12px', 
@@ -231,10 +231,10 @@ const styles = {
     fontWeight: '800', 
     margin: '12px 0 6px 0', 
     letterSpacing: '-0.5px', 
-    color: '#fff' 
+    color: '#1E293B' 
   },
   subtitle: { 
-    color: '#94a3b8', 
+    color: '#5F6B7A', 
     fontSize: '14px', 
     margin: 0, 
     lineHeight: '1.5' 
@@ -244,8 +244,8 @@ const styles = {
     gap: '12px' 
   },
   btnOutline: { 
-    border: '1px solid #475569', 
-    color: '#cbd5e1', 
+    border: '1px solid #7C6F64', 
+    color: '#1E293B', 
     padding: '11px 20px', 
     borderRadius: '8px', 
     textDecoration: 'none', 
@@ -255,13 +255,13 @@ const styles = {
     display: 'inline-block'
   },
   btnPrimary: { 
-    color: '#0f172a', 
+    color: '#FAF7F0', 
     padding: '11px 20px', 
     borderRadius: '8px', 
     textDecoration: 'none', 
     fontSize: '14px', 
     fontWeight: '800', 
-    boxShadow: '0 4px 12px rgba(56, 189, 248, 0.2)', 
+    boxShadow: '0 4px 12px rgba(192, 90, 62, 0.2)', 
     transition: 'all 0.2s ease-in-out',
     display: 'inline-block'
   },
@@ -273,8 +273,8 @@ const styles = {
     gap: '20px' 
   },
   statCard: { 
-    backgroundColor: '#1e293b', 
-    border: '1px solid #334155', 
+    backgroundColor: '#FFFFFF', 
+    border: '1px solid #E7DED2', 
     borderRadius: '16px', 
     padding: '24px',
     boxShadow: '0 4px 20px rgba(0,0,0,0.05)'
@@ -290,7 +290,7 @@ const styles = {
     fontWeight: 'bold' 
   },
   statLabel: { 
-    color: '#94a3b8', 
+    color: '#5F6B7A', 
     fontSize: '14px', 
     margin: '16px 0 6px 0', 
     fontWeight: '500' 
@@ -299,12 +299,12 @@ const styles = {
     fontSize: '32px', 
     fontWeight: '800', 
     margin: 0, 
-    color: '#fff', 
+    color: '#1E293B', 
     letterSpacing: '-0.5px' 
   },
   statUnit: { 
     fontSize: '14px', 
-    color: '#64748b', 
+    color: '#8A7D72', 
     fontWeight: '400', 
     marginLeft: '4px' 
   },
@@ -315,8 +315,8 @@ const styles = {
     gap: '24px' 
   },
   panelCard: { 
-    backgroundColor: '#1e293b', 
-    border: '1px solid #334155', 
+    backgroundColor: '#FFFFFF', 
+    border: '1px solid #E7DED2', 
     borderRadius: '16px', 
     padding: '24px',
     boxShadow: '0 10px 30px rgba(0,0,0,0.1)'
@@ -326,17 +326,17 @@ const styles = {
     justifyContent: 'space-between', 
     alignItems: 'center', 
     marginBottom: '20px', 
-    borderBottom: '1px solid #334155', 
+    borderBottom: '1px solid #E7DED2', 
     paddingBottom: '16px' 
   },
   panelTitle: { 
     fontSize: '18px', 
     fontWeight: '700', 
     margin: 0, 
-    color: '#fff' 
+    color: '#1E293B' 
   },
   linkViewAll: { 
-    color: '#38bdf8', 
+    color: '#C05A3E', 
     textDecoration: 'none', 
     fontSize: '13.5px', 
     fontWeight: '700' 
@@ -348,7 +348,7 @@ const styles = {
   },
   centeredText: { 
     textAlign: 'center', 
-    color: '#64748b', 
+    color: '#8A7D72', 
     padding: '30px 0', 
     fontSize: '14px' 
   },
@@ -357,16 +357,16 @@ const styles = {
     alignItems: 'center', 
     gap: '16px', 
     padding: '14px 16px', 
-    border: '1px solid #334155', 
+    border: '1px solid #E7DED2', 
     borderRadius: '12px', 
-    backgroundColor: '#0f172a' 
+    backgroundColor: '#FAF7F0' 
   },
   avatarMini: { 
     width: '40px', 
     height: '40px', 
     borderRadius: '50%', 
-    backgroundColor: '#334155', 
-    color: '#38bdf8', 
+    backgroundColor: '#E7DED2', 
+    color: '#C05A3E', 
     display: 'flex', 
     alignItems: 'center', 
     justifyContent: 'center', 
@@ -381,7 +381,7 @@ const styles = {
     margin: '0 0 4px 0', 
     fontWeight: '700', 
     fontSize: '14.5px', 
-    color: '#fff', 
+    color: '#1E293B', 
     whiteSpace: 'nowrap', 
     overflow: 'hidden', 
     textOverflow: 'ellipsis' 
@@ -389,7 +389,7 @@ const styles = {
   bookingTimeDetails: { 
     margin: 0, 
     fontSize: '12.5px', 
-    color: '#94a3b8' 
+    color: '#5F6B7A' 
   },
   badge: { 
     fontSize: '11px', 
@@ -399,8 +399,8 @@ const styles = {
     whiteSpace: 'nowrap' 
   },
   sideCard: { 
-    backgroundColor: '#1e293b', 
-    border: '1px solid #334155', 
+    backgroundColor: '#FFFFFF', 
+    border: '1px solid #E7DED2', 
     borderRadius: '16px', 
     padding: '32px 24px', 
     display: 'flex', 
@@ -418,17 +418,17 @@ const styles = {
     margin: '0 0 6px 0', 
     fontSize: '17px', 
     fontWeight: '700', 
-    color: '#fff' 
+    color: '#1E293B' 
   },
   sideDesc: { 
-    color: '#94a3b8', 
+    color: '#5F6B7A', 
     fontSize: '13.5px', 
     margin: '0 0 24px 0', 
     lineHeight: '1.5' 
   },
   btnFullWidth: { 
-    border: '1px solid #38bdf8', 
-    color: '#38bdf8', 
+    border: '1px solid #C05A3E', 
+    color: '#C05A3E', 
     padding: '12px', 
     borderRadius: '8px', 
     textAlign: 'center', 

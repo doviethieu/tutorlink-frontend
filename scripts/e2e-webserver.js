@@ -1,6 +1,5 @@
 const { spawn } = require('child_process');
 
-// Đổi cổng mặc định từ 3000 sang 5173 để khớp tuyệt đối với Vite của TutorLink
 const url = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:5173';
 
 async function isReachable() {
@@ -20,10 +19,10 @@ async function run() {
   } else {
     console.log(`🚀 [TutorLink Test] Server chưa bật. Đang tự động kích hoạt Vite trên cổng 5173...`);
     
-    // Tự động gõ lệnh chạy dự án frontend cho sếp bằng lệnh npm run dev -- --port 5173
+    // Tự động gõ lệnh chạy dự án frontend bằng lệnh npm run dev -- --port 5173
     const child = spawn('npm', ['run', 'dev', '--', '--port', '5173'], {
       stdio: 'inherit',
-      shell: process.platform === 'win32', // Tương thích mượt mà nếu sếp dùng Windows
+      shell: process.platform === 'win32', // Tương thích mượt mà nếu dùng Windows
     });
 
     const stop = () => child.kill('SIGTERM');

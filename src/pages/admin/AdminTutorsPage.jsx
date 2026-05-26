@@ -58,7 +58,7 @@ export default function AdminDuyetGiaSu() {
 
   if (loading) {
     return (
-      <div style={{ color: '#fff', backgroundColor: '#0f172a', padding: '40px', textAlign: 'center', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px' }}>
+      <div style={{ color: '#1E293B', backgroundColor: '#FAF7F0', padding: '40px', textAlign: 'center', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px' }}>
         ⏳ Đang kết nối MongoDB tải hồ sơ gia sư thực tế...
       </div>
     );
@@ -66,7 +66,7 @@ export default function AdminDuyetGiaSu() {
 
   if (!profile) {
     return (
-      <div style={{ color: '#fff', backgroundColor: '#0f172a', padding: '40px', textAlign: 'center', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ color: '#1E293B', backgroundColor: '#FAF7F0', padding: '40px', textAlign: 'center', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <p style={{ color: '#e74c3c', fontSize: '18px', fontWeight: 'bold' }}>⚠️ Không tìm thấy hồ sơ gia sư trong cơ sở dữ liệu thực tế!</p>
         <button onClick={() => navigate('/admin')} style={styles.backLinkBtn}>Quay lại Bảng quản trị</button>
       </div>
@@ -139,7 +139,7 @@ export default function AdminDuyetGiaSu() {
                   profile.experience.map((exp, idx) => (
                     <div key={idx} style={{marginBottom: '10px'}}>
                       <p style={{...styles.infoValue, fontWeight: 'bold'}}>• {exp.noiLamViec}:</p>
-                      <p style={{...styles.infoValue, paddingLeft: '10px', color: '#94a3b8'}}>{exp.moTa}</p>
+                      <p style={{...styles.infoValue, paddingLeft: '10px', color: '#5F6B7A'}}>{exp.moTa}</p>
                     </div>
                   ))
                 ) : (
@@ -166,7 +166,7 @@ export default function AdminDuyetGiaSu() {
         {/* KHU VỰC BÊN PHẢI: THANH THAO TÁC DUYỆT */}
         <div style={styles.rightColumn}>
           <div style={styles.sidebarCard}>
-            <h3 style={{ fontSize: '16px', fontWeight: 'bold', color: '#1e293b', borderBottom: '2px solid #cbd5e1', paddingBottom: '10px', marginTop: 0 }}>
+            <h3 style={{ fontSize: '16px', fontWeight: 'bold', color: '#FFFFFF', borderBottom: '2px solid #1E293B', paddingBottom: '10px', marginTop: 0 }}>
               🛡️ Thao tác kiểm duyệt
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '15px' }}>
@@ -215,25 +215,25 @@ function InfoBox({ label, value }) {
 }
 
 const styles = {
-  container: { backgroundColor: '#0f172a', minHeight: '100vh', padding: '35px 5%', fontFamily: 'Arial, sans-serif', color: '#f8fafc' },
-  backLinkBtn: { backgroundColor: 'transparent', border: '1px solid #475569', color: '#3498db', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px', fontWeight: 'bold', marginBottom: '25px', display: 'inline-block' },
+  container: { backgroundColor: '#FAF7F0', minHeight: '100vh', padding: '35px 5%', fontFamily: 'Arial, sans-serif', color: '#f8fafc' },
+  backLinkBtn: { backgroundColor: 'transparent', border: '1px solid #7C6F64', color: '#C05A3E', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px', fontWeight: 'bold', marginBottom: '25px', display: 'inline-block' },
   gridContainer: { display: 'grid', gridTemplateColumns: '1fr 340px', gap: '30px', alignItems: 'start' },
   leftColumn: { display: 'flex', flexDirection: 'column', gap: '20px' },
   rightColumn: { position: 'sticky', top: '25px' },
-  card: { backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '12px', padding: '24px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.2)' },
-  sidebarCard: { backgroundColor: '#ffffff', borderRadius: '12px', padding: '24px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.4)', border: '1px solid #e2e8f0' },
+  card: { backgroundColor: '#FFFFFF', border: '1px solid #E7DED2', borderRadius: '12px', padding: '24px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.2)' },
+  sidebarCard: { backgroundColor: '#FFFFFF', borderRadius: '12px', padding: '24px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.4)', border: '1px solid #1E293B' },
   profileHeader: { display: 'flex', alignItems: 'center', gap: '22px' },
-  avatarMock: { width: '75px', height: '75px', borderRadius: '50%', backgroundColor: '#3498db', color: '#fff', fontSize: '30px', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  avatarImage: { width: '75px', height: '75px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #3498db' },
-  badge: { padding: '4px 12px', borderRadius: '20px', fontSize: '11px', fontWeight: 'bold', color: '#fff', display: 'inline-block', marginBottom: '8px', textTransform: 'uppercase' },
-  mainTitle: { fontSize: '26px', fontWeight: 'bold', margin: '0 0 5px 0', color: '#fff' },
-  headlineText: { fontSize: '14px', color: '#94a3b8', margin: '0 0 8px 0', lineHeight: '1.4' },
-  emailText: { fontSize: '13px', color: '#cbd5e1', margin: '0 0 4px 0' },
-  cardTitle: { fontSize: '16px', fontWeight: 'bold', margin: '0 0 18px 0', color: '#fff', borderLeft: '3px solid #3498db', paddingLeft: '10px' },
-  infoBox: { backgroundColor: '#0f172a', border: '1px solid #334155', padding: '16px', borderRadius: '8px' },
-  infoLabel: { fontSize: '11px', fontWeight: 'bold', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 6px 0' },
-  infoValue: { fontSize: '14px', color: '#cbd5e1', margin: 0, lineHeight: '1.5', whiteSpace: 'pre-wrap' },
-  arrayItem: { fontSize: '14px', color: '#cbd5e1', margin: '0 0 5px 0' },
-  textarea: { width: '100%', padding: '14px', backgroundColor: '#0f172a', color: '#fff', border: '1px solid #334155', borderRadius: '8px', fontSize: '14px', outline: 'none', boxSizing: 'border-box', lineHeight: '1.4' },
-  btnAction: { width: '100%', padding: '12px', color: 'white', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'center', transition: 'opacity 0.2s' }
+  avatarMock: { width: '75px', height: '75px', borderRadius: '50%', backgroundColor: '#C05A3E', color: '#FAF7F0', fontSize: '30px', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  avatarImage: { width: '75px', height: '75px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #C05A3E' },
+  badge: { padding: '4px 12px', borderRadius: '20px', fontSize: '11px', fontWeight: 'bold', color: '#1E293B', display: 'inline-block', marginBottom: '8px', textTransform: 'uppercase' },
+  mainTitle: { fontSize: '26px', fontWeight: 'bold', margin: '0 0 5px 0', color: '#1E293B' },
+  headlineText: { fontSize: '14px', color: '#5F6B7A', margin: '0 0 8px 0', lineHeight: '1.4' },
+  emailText: { fontSize: '13px', color: '#1E293B', margin: '0 0 4px 0' },
+  cardTitle: { fontSize: '16px', fontWeight: 'bold', margin: '0 0 18px 0', color: '#1E293B', borderLeft: '3px solid #C05A3E', paddingLeft: '10px' },
+  infoBox: { backgroundColor: '#FAF7F0', border: '1px solid #E7DED2', padding: '16px', borderRadius: '8px' },
+  infoLabel: { fontSize: '11px', fontWeight: 'bold', color: '#8A7D72', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 6px 0' },
+  infoValue: { fontSize: '14px', color: '#1E293B', margin: 0, lineHeight: '1.5', whiteSpace: 'pre-wrap' },
+  arrayItem: { fontSize: '14px', color: '#1E293B', margin: '0 0 5px 0' },
+  textarea: { width: '100%', padding: '14px', backgroundColor: '#FAF7F0', color: '#1E293B', border: '1px solid #E7DED2', borderRadius: '8px', fontSize: '14px', outline: 'none', boxSizing: 'border-box', lineHeight: '1.4' },
+  btnAction: { width: '100%', padding: '12px', color: '#FAF7F0', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'center', transition: 'opacity 0.2s' }
 };

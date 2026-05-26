@@ -13,9 +13,9 @@ export function SimpleBars({ data = [], height = 180, className }) {
           alignItems: 'center',
           justifyContent: 'center',
           borderRadius: '12px',
-          border: '1px dashed #334155',
-          backgroundColor: '#0f172a',
-          color: '#64748b',
+          border: '1px dashed #E7DED2',
+          backgroundColor: '#FAF7F0',
+          color: '#8A7D72',
           fontSize: '14px'
         }}>
           📊 Chưa có dữ liệu thống kê
@@ -43,7 +43,7 @@ export function SimpleBars({ data = [], height = 180, className }) {
       <defs>
         {/* Tạo màu Gradient mượt mà từ Xanh Dương sang Xanh Tím Neon phù hợp Cyberpunk Dark Mode */}
         <linearGradient id="tutorlink-bar-fill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#38bdf8" />   {/* Sky 400 */}
+          <stop offset="0%" stopColor="#C05A3E" />   {/* Sky 400 */}
           <stop offset="100%" stopColor="#6366f1" /> {/* Indigo 500 */}
         </linearGradient>
       </defs>
@@ -73,7 +73,7 @@ export function SimpleBars({ data = [], height = 180, className }) {
               y={height - 4} 
               textAnchor="middle" 
               fontSize="12" 
-              fill="#94a3b8" 
+              fill="#5F6B7A" 
               fontWeight="500"
             >
               {d.label}
@@ -86,7 +86,7 @@ export function SimpleBars({ data = [], height = 180, className }) {
               textAnchor="middle" 
               fontSize="12" 
               fontWeight="600" 
-              fill="#f1f5f9"
+              fill="#1E293B"
             >
               {d.value.toLocaleString('vi-VN')}
             </text>
