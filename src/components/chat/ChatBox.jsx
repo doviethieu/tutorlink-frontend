@@ -9,12 +9,48 @@ const socket = io(SOCKET_URL, {
   transports: ['websocket', 'polling'],
 });
 
+function getMessageId(message) {
+  return message?._id ? String(message._id) : '';
+}
+
+function getMessageFingerprint(message) {
+  const createdAt = message?.createdAt ? new Date(message.createdAt).getTime() : 0;
+  const minuteBucket = Number.isFinite(createdAt) && createdAt > 0
+    ? Math.floor(createdAt / 60000)
+    : String(message?.thoiGian || '').slice(0, 5);
+
+  return [
+    message?.roomId || message?.room || '',
+    message?.senderId?._id || message?.senderId || message?.emailGui || '',
+    String(message?.content || message?.noiDung || '').trim().toLowerCase(),
+    minuteBucket,
+  ].map((part) => String(part || '')).join('|');
+}
+
+function mergeMessages(current, nextMessage) {
+  const nextId = getMessageId(nextMessage);
+  const nextFingerprint = getMessageFingerprint(nextMessage);
+
+  const exists = current.some((message) => {
+    const currentId = getMessageId(message);
+    if (nextId && currentId && nextId === currentId) return true;
+    return getMessageFingerprint(message) === nextFingerprint;
+  });
+
+  return exists ? current : [...current, nextMessage];
+}
+
+function uniqueMessages(messages) {
+  return messages.reduce((result, message) => mergeMessages(result, message), []);
+}
+
 const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
   const { id } = useParams(); 
   
   const [tinNhanMoi, setTinNhanMoi] = useState('');
   const [tinNhanHienThi, setTinNhanHienThi] = useState([]);
   const scrollRef = useRef();
+  const sendingRef = useRef(false);
 
   // TẠO PHÒNG CHUNG ĐỂ 2 NGƯỜI LUÔN CHẠM MẶT NHAU
   const emailCuaToi = currentUser?.email || '';
@@ -43,7 +79,7 @@ const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
       api.get(`/chat/messages/${encodeURIComponent(roomID)}`)
         .then((res) => {
           const rows = unwrap(res.data);
-          setTinNhanHienThi(Array.isArray(rows) ? rows : []);
+          setTinNhanHienThi(Array.isArray(rows) ? uniqueMessages(rows) : []);
         })
         .catch((err) => console.error("Lỗi tải tin nhắn từ DB:", err));
     }
@@ -59,16 +95,8 @@ const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
   // 2. LẮNG NGHE TIN NHẮN REALTIME TỪ SERVER
   useEffect(() => {
     const handleReceive = (data) => {
-      setTinNhanHienThi((prev) => {
-        // Chặn trùng tin nhắn do cơ chế StrictMode hoặc trùng lặp gói tin mạng
-        const isDuplicated = prev.some(m => 
-          (m._id && data._id && m._id === data._id) || 
-          (m.noiDung === data.noiDung && m.thoiGian === data.thoiGian && m.emailGui === data.emailGui) 
-        );
-        
-        if (isDuplicated) return prev; 
-        return [...prev, data];
-      });
+      if ((data?.roomId || data?.room) !== roomID) return;
+      setTinNhanHienThi((prev) => mergeMessages(prev, data));
     };
 
     socket.on("receive_message", handleReceive);
@@ -76,10 +104,12 @@ const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
     return () => {
       socket.off("receive_message", handleReceive);
     };
-  }, []);
+  }, [roomID]);
 
   // 3. XỬ LÝ GỬI TIN NHẮN (ĐÃ ĐỒNG BỘ LƯU DATABASE MongoDB)
   const handleSend = async () => {
+    if (sendingRef.current) return;
+
     if (!roomID) {
       alert("❌ Lỗi: Không thể khởi tạo phòng chat chung!");
       return;
@@ -97,17 +127,18 @@ const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
       };
 
       try {
+        sendingRef.current = true;
         const res = await api.post('/chat/messages', dataTinNhan);
         
         // Sử dụng data trả về từ DB (có kèm theo định danh `_id` thật) để tránh lỗi key lặp
         const savedMsg = unwrap(res.data) || dataTinNhan;
 
-        setTinNhanHienThi((prev) => (
-          prev.some((m) => m._id && savedMsg._id && m._id === savedMsg._id) ? prev : [...prev, savedMsg]
-        ));
+        setTinNhanHienThi((prev) => mergeMessages(prev, savedMsg));
         setTinNhanMoi('');
       } catch (err) {
         alert(err.response?.data?.error?.message || 'Không thể gửi tin nhắn. Vui lòng thử lại.');
+      } finally {
+        sendingRef.current = false;
       }
     }
   };
@@ -155,7 +186,7 @@ const ChatBox = ({ nguoiDangChat, currentUser, idTuUrl }) => {
             const currentId = String(currentUser?._id || currentUser?.id || '');
             const isMyMessage = currentUser && (msg.emailGui === currentUser.email || senderId === currentId);
             return (
-              <div key={msg._id || index} style={{ 
+              <div key={getMessageId(msg) || getMessageFingerprint(msg) || index} style={{ 
                 alignSelf: isMyMessage ? 'flex-end' : 'flex-start', 
                 backgroundColor: isMyMessage ? '#1E3A8A' : '#F3F4F6', 
                 color: isMyMessage ? 'white' : '#1F2937', 

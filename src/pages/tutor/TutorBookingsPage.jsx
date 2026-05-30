@@ -66,10 +66,10 @@ export default function LichDayGiaSu() {
   const handleComplete = async (id) => {
     try {
       setActionLoadingId(id);
-      await bookingService.complete(id);
+      const updated = await bookingService.complete(id);
       
-      setBookings(prev => prev.map(b => b.id === id ? { ...b, status: 'completed' } : b));
-      alert("🏆 Chúc mừng sếp đã hoàn thành xuất sắc buổi dạy! Doanh thu đã được cộng vào ví.");
+      setBookings(prev => prev.map(b => (b.id || b._id) === id ? { ...b, ...updated, status: 'completion_pending' } : b));
+      alert("Đã gửi xác nhận hoàn thành. Doanh thu vẫn giữ trong escrow cho tới khi học viên xác nhận hoặc hết thời gian phản hồi.");
     } catch (error) {
       alert("Lỗi xác nhận hoàn thành lớp học!");
     } finally {
@@ -86,6 +86,10 @@ export default function LichDayGiaSu() {
         return <span style={{ ...styles.badge, backgroundColor: 'rgba(16, 185, 129, 0.15)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.25)' }}>✓ Đã xác nhận</span>;
       case 'completed': 
         return <span style={{ ...styles.badge, backgroundColor: 'rgba(192, 90, 62, 0.15)', color: '#C05A3E', border: '1px solid rgba(192, 90, 62, 0.25)' }}>🏆 Đã hoàn thành</span>;
+      case 'completion_pending':
+        return <span style={{ ...styles.badge, backgroundColor: 'rgba(251, 191, 36, 0.16)', color: '#b45309', border: '1px solid rgba(251, 191, 36, 0.35)' }}>⏳ Chờ học viên xác nhận</span>;
+      case 'disputed':
+        return <span style={{ ...styles.badge, backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#dc2626', border: '1px solid rgba(239, 68, 68, 0.25)' }}>⚠️ Đang khiếu nại</span>;
       case 'rejected': 
         return <span style={{ ...styles.badge, backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.25)' }}>✕ Đã từ chối</span>;
       default: 

@@ -15,7 +15,7 @@ export default defineConfig({
     strictPort: true,
     cors: true,
     watch: {
-      ignored: ['**/node_modules_broken/**', '**/.git-broken-*/**', '**/dist/**', '**/.next/**'],
+      ignored: ['**/node_modules_broken/**', '**/.git-broken-*/**', '**/dist/**', '**/.next/**', '**/src/test/**'],
     },
   },
   test: {

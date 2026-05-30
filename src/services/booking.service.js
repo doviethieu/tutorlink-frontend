@@ -44,6 +44,16 @@ export const bookingService = {
     return unwrap(data);
   },
 
+  async confirmCompletion(id) {
+    const { data } = await api.patch(`/bookings/${encodeURIComponent(id)}/confirm-completion`);
+    return unwrap(data);
+  },
+
+  async dispute(id, reason) {
+    const { data } = await api.patch(`/bookings/${encodeURIComponent(id)}/dispute`, { reason });
+    return unwrap(data);
+  },
+
   async exportCsv() {
     const { data } = await api.get('/bookings/export.csv', { responseType: 'blob' });
     return data;

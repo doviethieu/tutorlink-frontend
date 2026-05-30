@@ -105,6 +105,30 @@ export default function LichHocHocVien() {
     }
   };
 
+  const handleConfirmCompletion = async (id) => {
+    if (!window.confirm('Xác nhận bạn đã học xong buổi này? Sau khi xác nhận, tiền escrow sẽ được cộng vào ví gia sư.')) return;
+    try {
+      const updated = await bookingService.confirmCompletion(id);
+      setBookings(safeBookings.map(b => (b._id || b.id) === id ? { ...b, ...updated } : b));
+      alert('Đã xác nhận hoàn thành buổi học. Bạn có thể đánh giá gia sư.');
+    } catch (err) {
+      alert(err?.response?.data?.error?.message || 'Không xác nhận được buổi học.');
+    }
+  };
+
+  const handleDisputeCompletion = async (id) => {
+    const reason = window.prompt('Nhập lý do khiếu nại buổi học này:');
+    if (!reason) return;
+
+    try {
+      const updated = await bookingService.dispute(id, reason);
+      setBookings(safeBookings.map(b => (b._id || b.id) === id ? { ...b, ...updated } : b));
+      alert('Đã gửi khiếu nại. Escrow sẽ tiếp tục được giữ để admin xử lý.');
+    } catch (err) {
+      alert(err?.response?.data?.error?.message || 'Không gửi được khiếu nại.');
+    }
+  };
+
   // --- HÀM XUẤT CSV ---
   const handleExportCsv = async () => {
     try {
@@ -238,6 +262,12 @@ export default function LichHocHocVien() {
                         {booking.paymentStatus !== 'paid' && ['pending', 'confirmed'].includes(booking.status) && (
                           <button onClick={() => handleGoToPayment(booking)} style={styles.btnPayMini}>Thanh toán</button>
                         )}
+                        {booking.status === 'completion_pending' && (
+                          <>
+                            <button onClick={() => handleConfirmCompletion(booking.id)} style={styles.btnConfirmMini}>Xác nhận đã học</button>
+                            <button onClick={() => handleDisputeCompletion(booking.id)} style={styles.btnDangerMini}>Khiếu nại</button>
+                          </>
+                        )}
                         {booking.status === 'completed' && (
                           booking.hasReview ? (
                             <button type="button" disabled style={styles.btnReviewedMini}>Đã đánh giá</button>
@@ -280,6 +310,12 @@ export default function LichHocHocVien() {
                       {['pending', 'confirmed'].includes(booking.status) && <button onClick={() => handleCancelBooking(booking.id)} style={{ ...styles.btnDangerMini, flex: 1 }}>Hủy lịch</button>}
                       {booking.paymentStatus !== 'paid' && ['pending', 'confirmed'].includes(booking.status) && (
                         <button onClick={() => handleGoToPayment(booking)} style={{ ...styles.btnPayMini, flex: 1 }}>Thanh toán</button>
+                      )}
+                      {booking.status === 'completion_pending' && (
+                        <>
+                          <button onClick={() => handleConfirmCompletion(booking.id)} style={{ ...styles.btnConfirmMini, flex: 1 }}>Xác nhận đã học</button>
+                          <button onClick={() => handleDisputeCompletion(booking.id)} style={{ ...styles.btnDangerMini, flex: 1 }}>Khiếu nại</button>
+                        </>
                       )}
                       {booking.status === 'completed' && (
                         booking.hasReview ? (
@@ -344,7 +380,9 @@ function translateStatus(status) {
   switch (status) {
     case 'confirmed': return 'Đã xác nhận';
     case 'pending': return 'Chờ phản hồi';
+    case 'completion_pending': return 'Chờ bạn xác nhận';
     case 'completed': return 'Đã hoàn thành';
+    case 'disputed': return 'Đang khiếu nại';
     case 'cancelled': return 'Đã hủy bỏ';
     default: return status;
   }
@@ -355,6 +393,8 @@ function renderStatusStyle(status) {
   const base = { fontSize: '11px', padding: '3px 9px', borderRadius: '6px', fontWeight: '700' };
   if (status === 'confirmed') return { ...base, backgroundColor: 'rgba(16, 185, 129, 0.12)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.2)' };
   if (status === 'pending') return { ...base, backgroundColor: 'rgba(245, 158, 11, 0.12)', color: '#f59e0b', border: '1px solid rgba(245, 158, 11, 0.2)' };
+  if (status === 'completion_pending') return { ...base, backgroundColor: 'rgba(251, 191, 36, 0.16)', color: '#b45309', border: '1px solid rgba(251, 191, 36, 0.35)' };
+  if (status === 'disputed') return { ...base, backgroundColor: 'rgba(239, 68, 68, 0.12)', color: '#dc2626', border: '1px solid rgba(239, 68, 68, 0.2)' };
   if (status === 'cancelled') return { ...base, backgroundColor: 'rgba(239, 68, 68, 0.12)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.2)' };
   // 🛠️ ĐÃ THÊM: Đồng bộ màu sắc lục bảo quý tộc cho trạng thái Hoàn thành lớp học
   if (status === 'completed') return { ...base, backgroundColor: 'rgba(192, 90, 62, 0.12)', color: '#C05A3E', border: '1px solid rgba(192, 90, 62, 0.2)' };
@@ -385,6 +425,7 @@ const styles = {
   btnLinkAction: { backgroundColor: '#a855f7', color: '#1E293B', padding: '7px 14px', borderRadius: '6px', fontSize: '12.5px', fontWeight: '700', textDecoration: 'none', display: 'inline-block', boxShadow: '0 4px 12px rgba(168, 85, 247, 0.2)' },
   btnDangerMini: { backgroundColor: 'transparent', border: '1px solid #f87171', color: '#f87171', padding: '6px 12px', borderRadius: '6px', fontSize: '12.5px', cursor: 'pointer', fontWeight: '600' },
   btnPayMini: { backgroundColor: '#10b981', color: '#1E293B', border: 'none', padding: '7px 14px', borderRadius: '6px', fontSize: '12.5px', cursor: 'pointer', fontWeight: '700' },
+  btnConfirmMini: { backgroundColor: '#C05A3E', color: '#FFFFFF', border: 'none', padding: '7px 14px', borderRadius: '6px', fontSize: '12.5px', cursor: 'pointer', fontWeight: '700' },
   btnReviewMini: { backgroundColor: '#FFFFFF', color: '#1E293B', border: '1px solid rgba(251, 191, 36, 0.45)', padding: '7px 14px', borderRadius: '6px', fontSize: '12.5px', cursor: 'pointer', fontWeight: '700' },
   reviewStar: { color: '#FBBF24', marginRight: 4 },
   btnReviewedMini: { backgroundColor: '#E7DED2', color: '#5F6B7A', border: '1px solid #7C6F64', padding: '7px 14px', borderRadius: '6px', fontSize: '12.5px', cursor: 'not-allowed', fontWeight: '700' },
