@@ -75,3 +75,20 @@ vi.mock('socket.io-client', () => ({
     disconnect: vi.fn(),
   })),
 }));
+vi.mock('../services/tutor.service', () => ({
+  tutorService: {
+    list: vi.fn(() => ok([tutor])),
+    get: vi.fn(() => ok(tutor)),
+    getMyProfile: vi.fn(() => ok(tutor)),
+    createProfile: vi.fn(() => ok(tutor)),
+    updateProfile: vi.fn(() => ok(tutor)),
+  },
+}));
+
+vi.mock('../services/availability.service', () => ({
+  availabilityService: {
+    getMine: vi.fn(() => ok([{ dayIdx: 0, hour: 8, start: '08:00' }])),
+    replaceMine: vi.fn(() => ok({ count: 1 })),
+    getTutorAvailability: vi.fn(() => ok([{ date: '2099-05-25', slots: [{ start: '08:00', status: 'available' }] }])),
+  },
+}));
