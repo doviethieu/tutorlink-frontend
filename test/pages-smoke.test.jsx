@@ -92,3 +92,50 @@ vi.mock('../services/availability.service', () => ({
     getTutorAvailability: vi.fn(() => ok([{ date: '2099-05-25', slots: [{ start: '08:00', status: 'available' }] }])),
   },
 }));
+vi.mock('../services/booking.service', () => ({
+  bookingService: {
+    list: vi.fn(() => ok([booking])),
+    listForTutor: vi.fn(() => ok([booking])),
+    listForStudent: vi.fn(() => ok([booking])),
+    get: vi.fn(() => ok(booking)),
+    create: vi.fn(() => ok(booking)),
+    accept: vi.fn(() => ok({ ...booking, status: 'confirmed' })),
+    reject: vi.fn(() => ok({ ...booking, status: 'rejected' })),
+    cancel: vi.fn(() => ok({ ...booking, status: 'cancelled' })),
+    complete: vi.fn(() => ok({ ...booking, status: 'completed' })),
+    exportCsv: vi.fn(() => ok(new Blob(['id']))),
+  },
+}));
+
+vi.mock('../services/availability.service', () => ({
+  availabilityService: {
+    getMine: vi.fn(() => ok([{ dayIdx: 0, hour: 8, start: '08:00' }])),
+    replaceMine: vi.fn(() => ok({ count: 1 })),
+    getTutorAvailability: vi.fn(() => ok([{ date: '2099-05-25', slots: [{ start: '08:00', status: 'available' }] }])),
+  },
+}));
+
+vi.mock('../services/review.service', () => ({
+  reviewService: {
+    listByTutor: vi.fn(() => ok([review])),
+    create: vi.fn(() => ok(review)),
+    update: vi.fn(() => ok(review)),
+    reply: vi.fn(() => ok(review)),
+  },
+}));
+
+vi.mock('../services/favorite.service', () => ({
+  favoriteService: {
+    list: vi.fn(() => ok([tutor])),
+    add: vi.fn(() => ok({})),
+    remove: vi.fn(() => ok({})),
+  },
+}));
+
+vi.mock('../services/chat.service', () => ({
+  chatService: {
+    listRooms: vi.fn(() => ok([{ roomId: 'booking-booking-1', title: 'Toán', booking }])),
+    getHistory: vi.fn(() => ok([{ _id: 'msg-1', roomId: 'booking-booking-1', content: 'Xin chào', senderId: 'student-1' }])),
+    sendMessage: vi.fn(() => ok({ _id: 'msg-2', content: 'OK' })),
+  },
+}));
